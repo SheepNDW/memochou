@@ -145,7 +145,7 @@ function makeSelection(selection) {
 ```
 
 ## Vue 版
-在透過 Vue 重構此專案時沒注意踩了一個坑，由於是透過 v-for 遍歷所有結果的，如果沒有掛上<font color="#AE3C3E">**唯一的 key 值**</font>會出現 bug。所以我額外引入了 nanoid 套件替每回合的結果掛上唯一的 id 值。
+在透過 Vue 重構此專案時沒注意踩了一個坑，由於是透過 v-for 遍歷所有結果的，如果沒有掛上<font v-pre color="#AE3C3E">**唯一的 key 值**</font>會出現 bug。所以我額外引入了 nanoid 套件替每回合的結果掛上唯一的 id 值。
 
 ### HTML的重構：
 ```html
