@@ -16,10 +16,12 @@ export default {
     nav: nav(),
     sidebar: {
       '/vue/': sidebarVue(),
+      '/git/': sidebarGit(),
+      '/typescript/': sidebarTS(),
+      '/game-development/': sidebarGameDev(),
     },
     footer: {
-      message: 'Released under the MIT License.',
-      copyright: 'Copyright © 2019-present Evan You',
+      copyright: `Copyright © 2019-${new Date().getFullYear()} Sheep Yang`,
     },
     outlineTitle: '頁面大綱',
     docFooter: {
@@ -27,7 +29,7 @@ export default {
       next: 'Next',
     },
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/vuejs/vitepress' },
+      { icon: 'github', link: 'https://github.com/SheepNDW/memochou' },
     ],
   },
   markdown: {
@@ -42,6 +44,13 @@ function nav() {
   return [
     { text: '關於', link: '/about/', activeMatch: '/about/' },
     { text: 'Vue', link: '/vue/', activeMatch: '/vue/' },
+    { text: 'Git', link: '/git/', activeMatch: '/git/' },
+    { text: 'TypeScript', link: '/typescript/', activeMatch: '/typescript/' },
+    {
+      text: 'Game Dev',
+      link: '/game-development/',
+      activeMatch: '/game-development/',
+    },
   ];
 }
 
@@ -67,6 +76,62 @@ function sidebarVue() {
       items: [
         { text: '初識 Pinia', link: '/vue/pinia-guide' },
         { text: 'Pinia 案例 - 購物車', link: '/vue/pinia-cart' },
+      ],
+    },
+    {
+      text: 'Vue.js challenges',
+      collapsible: true,
+      items: [
+        { text: 'Built-ins', link: '/vue/challenges/built-ins' },
+        { text: 'CSS Features', link: '/vue/challenges/css-features' },
+        { text: 'Components', link: '/vue/challenges/components' },
+        { text: 'Composable Function', link: '/vue/challenges/composable' },
+        { text: 'Composition API', link: '/vue/challenges/composition' },
+        { text: 'Directives', link: '/vue/challenges/directives' },
+        { text: 'Event Handling', link: '/vue/challenges/event-handling' },
+      ],
+    },
+  ];
+}
+
+function sidebarGit() {
+  return [
+    {
+      text: 'Git 學習筆記',
+      items: [
+        { text: '安裝並配置 Git', link: '/git/' },
+        { text: 'Git 的基本操作', link: '/git/git-basics' },
+        { text: 'Git 分支', link: '/git/git-branch' },
+        { text: 'Git 遠端分支操作', link: '/git/git-remote' },
+      ],
+    },
+  ];
+}
+
+function sidebarTS() {
+  return [
+    {
+      text: 'TypeScript Handbook',
+      collapsible: true,
+      items: [
+        { text: 'The Basic', link: '/typescript/' },
+        { text: 'Everyday Types', link: '/typescript/everyday-types' },
+      ],
+    },
+  ];
+}
+
+function sidebarGameDev() {
+  return [
+    {
+      text: 'JS 小遊戲',
+      collapsible: true,
+      items: [
+        {
+          text: 'Rock paper scissors',
+          link: '/game-development/rock-paper-scissors',
+        },
+        { text: 'Tic Tac Toe', link: '/game-development/tic-tac-toe' },
       ],
     },
   ];

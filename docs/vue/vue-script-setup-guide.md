@@ -9,7 +9,7 @@
 ## 專案建立
 
 快速搭建一個基於 Vite 的 Vue 專案
-```shell
+```sh
 npm init vue@latest
 ``` 
 

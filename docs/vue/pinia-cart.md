@@ -5,20 +5,20 @@
 瞭解了 Pinia 的基本操作後，接著就來試著用在實戰裡，這次的目標為使用 Pinia 完成購物車的業務。
 
 
-### 簡介
+## 簡介
 這次依然是使用 Vite 來進行開發，這是開發完成的 [repo](https://github.com/SheepNDW/vue3-pinia-shopping-cart) 以及 [線上demo](https://sheepndw.github.io/vue3-pinia-shopping-cart/#/)。
 預覽圖：
 ![](https://i.imgur.com/QR2czwr.png)
 
-### 專案設定
+## 專案設定
 * 安裝 pinia
 * 安裝 bootstrap
 * 安裝 axios
 * 安裝 nprogress (非必要)
 
-### 初期設置
+## 初期設置
 
-#### bootstrap
+### bootstrap
 執行`npm add -D sass`後，把 bootstrap 的 scss 給引入
 `src/assets/styles/all.scss`
 ```scss
@@ -37,7 +37,7 @@
 
 這是因為在 vite 中把 sass-loader 給拿掉了，波浪符是從它來的，所以會出現上方的錯誤。[參考連結](https://stackoverflow.com/questions/37106230/node-sass-does-not-understand-tilde)
 
-#### Vite 中的環境變數
+### Vite 中的環境變數
 
 這裡告訴大家一件事，文檔請看仔細，不看清楚至少看遷移指南，不然你會跟我一樣卡很久在這...
 在 Cli => Vite 的[遷移指南](https://vueschool.io/articles/vuejs-tutorials/how-to-migrate-from-vue-cli-to-vite/)中 Step #6: Update Environment Variables 有提到這件事，白話一點就是原本的 `process` 變數被換成了 `import.meta.env`，原本的 `VUE_APP_` 也換成了 `VITE_`，使用起來就會像這樣：
@@ -57,7 +57,7 @@ console.log(process.env.VUE_APP_PATH)
 console.log(import.meta.env.VITE_API_PATH)
 ```
 
-#### NProgress 套件
+### NProgress 套件
 
 這是一款 Loading 效果的套件，想說既然都要玩玩新東西了，就換點口味這次就不用 vue-loading-overlay 了。
 1. 安裝它 `npm install --save nprogress`
@@ -96,7 +96,7 @@ console.log(import.meta.env.VITE_API_PATH)
 
 補充：它還可以設定在 Router 裡，在 router.beforeEach 時打開，在 router.afterEach (路由載入完成後) 關閉。
 
-### productStore
+## productStore
 
 首先來設定產品列表的 Store，在 stores 資料夾下新建一個 `productStore.js`
 ```javascript
@@ -143,7 +143,7 @@ export default {
 </script>
 ```
 
-### statusStore
+## statusStore
 
 新建一個 statusStore 來管理所有狀態
 ```javascript
@@ -158,7 +158,7 @@ export const useStatusStore = defineStore('statusStore', {
 )
 ```
 
-### cartStore
+## cartStore
 
 再來設定一個購物車的 Store，在 stores 資料夾下新建一個 `cartStore.js`
 ```javascript
@@ -254,7 +254,7 @@ export default {
 </script>
 ```
 
-### Toast 元件
+## Toast 元件
 
 到這邊為止功能已經完成，最後一步就是加入 Toast 彈出訊息效果。來到 `statusStore.js` 加上 messages 相關的資料及方法：
 ```javascript

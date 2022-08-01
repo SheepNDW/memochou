@@ -11,20 +11,20 @@ hero:
   image: https://raw.githubusercontent.com/vitejs/vite/main/docs/images/vite.svg
   actions:
     - theme: brand
-      text: 進入
+      text: Get Started
       link: /about/
     - theme: alt
       text: View on GitHub
-      link: https://github.com/vuejs/vitepress
+      link: https://github.com/SheepNDW/memochou
 
 features:
-  - icon: ⚡️
-    title: Vite, The DX that can't be beat
-    details: Lorem ipsum...
-  - icon: 🖖
-    title: Power of Vue meets Markdown
-    details: Lorem ipsum...
+  - icon: 💻
+    title: Languages
+    details: JavaScript
+  - icon: 📚
+    title: Frameworks
+    details: Vue.js、Windi CSS、Bootstrap 5
   - icon: 🛠️
-    title: Simple and minimal, always
-    details: Lorem ipsum...
+    title: Tools
+    details: Vite、Webpack
 ---
