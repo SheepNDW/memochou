@@ -116,6 +116,7 @@ function sidebarTS() {
       items: [
         { text: 'The Basic', link: '/typescript/' },
         { text: 'Everyday Types', link: '/typescript/everyday-types' },
+        { text: 'Narrowing', link: '/typescript/narrowing' },
       ],
     },
   ];
