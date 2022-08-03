@@ -51,11 +51,11 @@ JavaScript 提供了一個 `typeof` 運算子，它會檢驗運算元的型別�
 
 ```ts
 function printAll(strs: string | string[] | null) {
-  if (typeof strs === "object") {
+  if (typeof strs === 'object') {
     for (const s of strs) { // 這行的 strs 報了一個錯: Object is possibly 'null'.
       console.log(s);
     }
-  } else if (typeof strs === "string") {
+  } else if (typeof strs === 'string') {
     console.log(strs);
   } else {
     // ...
@@ -121,11 +121,11 @@ function printAll(strs: string | string[] | null) {
   //  DON'T DO THIS!
   // !!!!!!!!!!!!!!!!
   if (strs) {
-    if (typeof strs === "object") {
+    if (typeof strs === 'object') {
       for (const s of strs) {
         console.log(s);
       }
-    } else if (typeof strs === "string") {
+    } else if (typeof strs === 'string') {
       console.log(strs);
     }
   }
@@ -203,4 +203,73 @@ function multiplyValue(container: Container, factor: number) {
 multiplyValue({ value: 5 }, 6);         // 5
 multiplyValue({ value: undefined }, 6); // 不打印
 multiplyValue({ value: null }, 6);      // 不打印
+```
+
+## The `in` operator narrowing
+
+在 JS 中有 `in` 運算子能夠用來確定某一個屬性在特定的物件或其原型鏈中，而  TS 將這視為一種縮小潛在型別的方式。
+
+例如這段程式碼：`"value" in x`，`value` 是一個字串字面值而 `x` 是一個聯合型別的變數。如果是 `true` 則 `x` 具有可選或必需屬性的型別的值，如果是 `false` 則 `x` 具有可選或缺失屬性型別的值。
+
+```ts
+type Fish = { swim: () => void };
+type Bird = { fly: () => void };
+
+function move(animal: Fish | Bird) {
+  if ('swim' in animal) {
+    return animal.swim();
+  }
+
+  return animal.fly();
+}
+```
+
+再次重申，可選屬性會存在於 narrow 後的兩側，例如人類既可游泳也可以飛行，因此應該出現在 `in` 檢查的兩側：
+
+```ts {3}
+type Fish = { swim: () => void };
+type Bird = { fly: () => void };
+type Human = { swim?: () => void; fly?: () => void }; // 加上一個 Human 型別
+
+function move(animal: Fish | Bird | Human) {
+  if ('swim' in animal) {
+    // (parameter) animal: Fish | Human
+    return animal.swim();
+  }
+
+  // (parameter) animal: Bird | Human
+  return animal.fly();
+}
+```
+> 此時兩個 animal 都會飄紅並提示 `無法呼叫可能為 'undefined' 的物件。ts(2722)`
+
+這裡可以使用型別斷言去解決報錯問題
+
+```ts
+function move(animal: Fish | Bird | Human) {
+  if ('swim' in animal) {
+    return (animal as Fish).swim();
+  }
+
+  return (animal as Bird).fly();
+}
+```
+
+## `instanceof` narrowing
+
+在 JS 中 `instanceof` 運算子可以用來判斷一個值是否是另一個值的實例 (instance)，比較的是原型 (prototype)，例如 `x instanceof Foo` 即檢查 Foo.prototype 是否存在於 x 的原型鍊 (prototype chain) 裡。
+
+而 `instanceof` 也是一種型別保護 (type guard)，TS 會藉由 `instanceof` 縮小被 instanceof 保護的分支：
+
+```ts
+function logValue(x: Date | string) {
+  if (x instanceof Date) {
+    console.log(x.toUTCString()); // (parameter) x: Date
+  } else {
+    console.log(x.toUpperCase()); // (parameter) x: string
+  }
+}
+
+logValue(new Date()); // Wed, 03 Aug 2022 10:32:20 GMT
+logValue('hello ts'); // HELLO TS
 ```

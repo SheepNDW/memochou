@@ -16,6 +16,7 @@ export default {
     nav: nav(),
     sidebar: {
       '/vue/': sidebarVue(),
+      '/vite/': sidebarVite(),
       '/git/': sidebarGit(),
       '/typescript/': sidebarTS(),
       '/game-development/': sidebarGameDev(),
@@ -44,6 +45,7 @@ function nav() {
   return [
     { text: '關於', link: '/about/', activeMatch: '/about/' },
     { text: 'Vue', link: '/vue/', activeMatch: '/vue/' },
+    { text: 'Vite', link: '/vite/', activeMatch: '/vite/' },
     { text: 'Git', link: '/git/', activeMatch: '/git/' },
     { text: 'TypeScript', link: '/typescript/', activeMatch: '/typescript/' },
     {
@@ -89,6 +91,19 @@ function sidebarVue() {
         { text: 'Composition API', link: '/vue/challenges/composition' },
         { text: 'Directives', link: '/vue/challenges/directives' },
         { text: 'Event Handling', link: '/vue/challenges/event-handling' },
+      ],
+    },
+  ];
+}
+
+function sidebarVite() {
+  return [
+    {
+      text: 'Vite 開發記錄',
+      collapsible: true,
+      items: [
+        { text: '關於', link: '/vite/' },
+        { text: '在 vite 使用 MPA 開發', link: '/vite/vite-plugin-mpa' },
       ],
     },
   ];
