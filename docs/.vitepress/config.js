@@ -22,16 +22,14 @@ export default {
       '/game-development/': sidebarGameDev(),
     },
     footer: {
-      copyright: `Copyright © 2019-${new Date().getFullYear()} Sheep Yang`,
+      copyright: `Copyright © ${new Date().getFullYear()} Sheep Yang`,
     },
     outlineTitle: '頁面大綱',
     docFooter: {
       prev: 'Previous',
       next: 'Next',
     },
-    socialLinks: [
-      { icon: 'github', link: 'https://github.com/SheepNDW/memochou' },
-    ],
+    socialLinks: [{ icon: 'github', link: 'https://github.com/SheepNDW' }],
   },
   markdown: {
     theme: 'vitesse-dark',
