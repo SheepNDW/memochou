@@ -94,7 +94,7 @@ greet(42) // 類型 'number' 的引數不可指派給類型 'string' 的參數
 greet('sheep')
 ```
 
-### 返回值型別註記 Return Type Annotations
+### 回傳值型別註記 Return Type Annotations
 
 ```typescript
 function getFavoriteNumber(): number {
@@ -102,7 +102,7 @@ function getFavoriteNumber(): number {
 }
 ```
 
-與變數型別註記很相似，通常不需要返回型別註記，因為 TypeScript 將根據其返回語句推斷函式的返回型別。
+與變數型別註記很相似，通常不需要回傳型別註記，因為 TypeScript 將根據其回傳語句推斷函式的回傳型別。
 
 ### 匿名函式 Anonymous Functions
 
@@ -116,7 +116,7 @@ names.forEach((name) => {
   console.log(name.toUpperCase());
 });
 ```
-> 即使 name 沒有寫上型別註記，TypeScript 還是使用了 forEach 函式的型別以及推斷的數組型別來確定 name 將具有的型別。
+> 即使 name 沒有寫上型別註記，TypeScript 還是使用了 forEach 函式的型別以及推斷的陣列型別來確定 name 將具有的型別。
 
 
 ## 物件的型別 Object Types
