@@ -135,6 +135,7 @@ function sidebarTS() {
         { text: 'The Basic', link: '/typescript/' },
         { text: 'Everyday Types', link: '/typescript/everyday-types' },
         { text: 'Narrowing', link: '/typescript/narrowing' },
+        { text: 'More on Functions', link: '/typescript/more-on-functions' },
       ],
     },
   ];
