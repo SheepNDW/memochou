@@ -24,10 +24,10 @@ export default {
     footer: {
       copyright: `Copyright © ${new Date().getFullYear()} Sheep Yang`,
     },
-    outlineTitle: '頁面大綱',
+    outlineTitle: 'ON THIS PAGE',
     docFooter: {
-      prev: 'Previous',
-      next: 'Next',
+      prev: '前一篇',
+      next: '下一篇',
     },
     socialLinks: [{ icon: 'github', link: 'https://github.com/SheepNDW' }],
   },
@@ -43,9 +43,14 @@ function nav() {
   return [
     { text: '關於', link: '/about/', activeMatch: '/about/' },
     { text: 'Vue', link: '/vue/', activeMatch: '/vue/' },
-    { text: 'Vite', link: '/vite/', activeMatch: '/vite/' },
-    { text: 'Git', link: '/git/', activeMatch: '/git/' },
     { text: 'TypeScript', link: '/typescript/', activeMatch: '/typescript/' },
+    {
+      text: 'Tools',
+      items: [
+        { text: 'Vite', link: '/vite/', activeMatch: '/vite/' },
+        { text: 'Git', link: '/git/', activeMatch: '/git/' },
+      ],
+    },
     {
       text: 'Game Dev',
       link: '/game-development/',
