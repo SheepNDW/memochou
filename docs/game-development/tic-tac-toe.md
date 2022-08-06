@@ -271,8 +271,8 @@ const useCheckWin = () => {
 }
 ```
 
-#### 重製 v-for 渲染出的 cell 上的點擊事件：
-由於我在 @click 有下 .once 修飾符，如果只是把 cell 上的 class 清除會出現空格無法典籍的情況發生，但是在 Vue 裡又不能像原生 JS 那樣直接操縱 cell 去 removeEventListener 或 addEventListener，於是這裡我的解法就是去讓 v-for 重新渲染，這樣就能做到一樣的效果。
+#### 重置 v-for 渲染出的 cell 上的點擊事件：
+由於我在 @click 有下 .once 修飾子，如果只是把 cell 上的 class 清除會出現空格無法點擊的情況發生，但是在 Vue 裡又不能像原生 JS 那樣直接操縱 cell 去 removeEventListener 或 addEventListener，於是這裡我的解法就是去讓 v-for 重新渲染，這樣就能做到一樣的效果。
 
 使用更新 key 值實現 v-for 的重新渲染：
 
