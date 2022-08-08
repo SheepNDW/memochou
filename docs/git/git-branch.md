@@ -18,7 +18,7 @@
 
 由於工程師不能直接在 master 分支上進行功能的開發，所以就有了功能分支的概念。
 
-<font v-pre color="#A10710">**功能分支**</font>指的是<font v-pre color="#A10710">專門用來開發新功能的分支</font>，它是臨時從 master 主分支上分叉出來的，當新功能開發且測試完畢後，最終需要合併到 master 主分支上，如上面的範例圖。
+<font v-pre color="#A10710"><strong>功能分支</strong></font>指的是<font v-pre color="#A10710">專門用來開發新功能的分支</font>，它是臨時從 master 主分支上分叉出來的，當新功能開發且測試完畢後，最終需要合併到 master 主分支上，如上面的範例圖。
 
 ## 查看分支列表
 
