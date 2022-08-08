@@ -8,7 +8,7 @@
 
 ---
 
-函式是任何應用程式的基本構件，無論是本地的函式、從別的模組中匯入的函式又或者是來自一個類別 (class) 中的方法。它們也是 value，和其他的 value 一樣在 TypeScript 中有很多方式去描述這些函式是如何被呼叫的，讓我們開始學習如何撰寫型別去描述函式。
+函式是任何應用程式的基本構件，無論是區域函式 (local functions)、從別的模組中匯入的函式又或者是來自一個類別 (class) 中的方法。它們也是 value，和其他的 value 一樣在 TypeScript 中有很多方式去描述這些函式是如何被呼叫的，讓我們開始學習如何撰寫型別去描述函式。
 
 ## Function Type Expressions
 
@@ -118,3 +118,44 @@ function fn(date: CallOrConstructor) {
   let n = date(100);
 }
 ```
+
+## Generic Functions
+
+我們經常會寫出這種函式：輸入的型別與輸出的型別有關，或是兩個輸入的型別以某種形式互相關聯。
+現在讓我們來考慮一下假如有一個函式，它會回傳陣列裡的第一個元素：
+
+```ts
+function firstElement(arr: any[]) {
+  return arr[0];
+}
+```
+
+此時函式 return 回來的型別是 `any`，如果他能夠 return 這個陣列元素的具體型別就好了。
+
+在 TypeScript 中，泛型 (*generics*) 被用來描述兩個值之間的關聯。 我們通過在 function signature 中宣告一個型別參數 (*type parameter*) 來做到這一點：
+
+```ts
+function firstElement<Type>(arr: Type[]): Type | undefined {
+  return arr[0];
+}
+```
+
+透過給函式加上一個型別參數 `Type`，並在兩個地方使用，這樣我們就已經在函式的輸入 (陣列) 和輸出 (回傳值) 之間搭建了一個連繫。
+現在當我們去呼叫它時，會出現一個更具體的型別：
+
+```ts
+// s is of type 'string'
+const s = firstElement(['a', 'b', 'c']);
+// n is of type 'number'
+const n = firstElement([1, 2, 3]);
+// u is of type undefined
+const u = firstElement([]);
+```
+
+### Inference
+
+::: tip Note
+在上面的例子中，我們沒有明確指定 `Type` 的型別，型別是被 TypeScript 自動推斷出來的。
+:::
+
+
