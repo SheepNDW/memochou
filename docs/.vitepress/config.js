@@ -3,7 +3,7 @@ export default {
   lang: 'zh-Hant-TW',
   title: 'シープの雑談メモ帳',
   description: '前端筆記&日常',
-  lastUpdated: true,
+  // lastUpdated: true,
   head: [
     [
       'link',
