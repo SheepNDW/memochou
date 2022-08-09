@@ -12,7 +12,18 @@
 npm install -g typescript
 ```
 
-以上命令會在全域性環境下安裝 tsc 命令，安裝完成之後，我們就可以在任何地方執行 tsc 命令了。
+以上指令會在全域性環境下安裝 tsc 指令，安裝完成之後，我們就可以在任何地方執行 tsc 指令了。
+
+### ※ 補充：[ts-node](https://www.npmjs.com/package/ts-node)
+
+使用 `ts-node` 可以省去每次我們要查看執行結果時都要切到編譯後的 JS 檔裡跑 `node` 指令
+
+```sh
+# 全域安裝
+npm install -g ts-node
+```
+
+使用方式：`ts-node script.ts`
 
 ## Hello TypeScript
 
@@ -57,7 +68,7 @@ function greet(person, date) {
 greet('Sheep') // 不傳第二個參數給它, 它仍會產生一個 JS 檔並且可以執行
 ```
 
-此時如果要阻止它繼續編譯產生 JS 檔，可以使用`tsc --noEmitOnError`命令，或是在`tsconfig.json`中配置`noEmitOnError`即可。
+此時如果要阻止它繼續編譯產生 JS 檔，可以使用`tsc --noEmitOnError`指令，或是在`tsconfig.json`中配置`noEmitOnError`即可。
 此時把剛剛的 JS 刪掉再重新編譯就會發現不會有 JS 出現了。
 
 ## 顯式型別 Explicit Types
