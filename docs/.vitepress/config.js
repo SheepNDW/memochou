@@ -64,11 +64,6 @@ function nav() {
 function sidebarVue() {
   return [
     {
-      text: 'Vue Notes',
-      collapsible: true,
-      items: [{ text: '關於', link: '/vue/' }],
-    },
-    {
       text: 'Vue 3',
       collapsible: true,
       items: [
@@ -106,10 +101,7 @@ function sidebarVite() {
     {
       text: 'Vite 開發記錄',
       collapsible: true,
-      items: [
-        { text: '關於', link: '/vite/' },
-        { text: '在 vite 使用 MPA 開發', link: '/vite/vite-plugin-mpa' },
-      ],
+      items: [{ text: '在 vite 使用 MPA 開發', link: '/vite/vite-plugin-mpa' }],
     },
   ];
 }
