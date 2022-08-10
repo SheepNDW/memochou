@@ -358,3 +358,245 @@ function greet(s: string) {
 ```
 
 請記住，參數型別用於關聯多個值之間的型別，如果一個參數型別只在函式簽章 (function signature) 中出現一次，那它就沒有跟任何東西有關聯。
+
+
+## Optional Parameters
+
+JavaScript 的函式經常會被傳入非固定數量的參數，例如，`number` 的 `toFixed` 方法就支持選擇性傳入一個小數位 (digits) 參數：
+
+```ts
+function f(n: number) {
+  console.log(n.toFixed()); // 0 arguments
+  console.log(n.toFixed(3)); // 1 argument
+}
+
+f(123.45); // 123, 123.450
+f(); // 報錯: 應有 1 個引數，但得到 0 個。ts(2554)
+```
+
+在 TypeScript 裡我們可以使用 `?` 來表示此參數是選擇性傳入的：
+
+```ts
+function f(x?: number) {
+  // ...
+}
+f(); // OK
+f(10); // OK
+```
+
+雖然參數被指定為 `number` 型別，但實際上它的型別為 `number | undefined`，這是因為在 JavaScript 裡沒有指定值的函式參數會被賦予 `undefined`。
+
+你也可以提供一個參數預設值給它：
+
+```ts
+function f(x = 10) {
+  // ...
+}
+```
+
+現在這個 `f` 函式體內，`x` 的型別為 `number`，因為任何未定義的參數都會被替換成 `10`。
+這裡要注意的是，如果參數是可選的，使用者還是可以傳入 `undefined` 作為參數：
+
+```ts
+declare function f(x?: number): void;
+// cut
+// All OK
+f();
+f(10);
+f(undefined);
+```
+
+另外需要注意 `?` 不能與預設參數同時存在：
+
+```ts
+function f(n?: number = 10) { // 參數不得有問號及初始設定式。ts(1015)
+  // ...
+}
+```
+
+### Optional Parameters in Callbacks
+
+在學習過可選參數和函式表達式後，你很容易會在撰寫帶有 callback 的函式中犯了以下錯誤：
+
+```ts
+function myForEach(arr: any[], callback: (arg: any, index?: number) => void) {
+  for (let i = 0; i < arr.length; i++) {
+    callback(arr[i], i);
+  }
+}
+```
+
+將索引值寫成可選參數 `index?` 是為了想要讓下面的呼叫方式是合法的：
+
+```ts
+myForEach([1, 2, 3], (a) => console.log(a));
+myForEach([1, 2, 3], (a, i) => console.log(a, i));
+```
+
+但實際上 TypeScript 會認為這個 callback 被呼叫時可能只會傳入一個引數 (argument)，也就是說這個 `myForEach` 函式也可能會是這樣：
+
+```ts
+function myForEach(arr: any[], callback: (arg: any, index?: number) => void) {
+  for (let i = 0; i < arr.length; i++) {
+    // 我今天不想提供 index 值
+    callback(arr[i]);
+  }
+}
+```
+
+TypeScript 會按此理解並報了一個實際上並不可能發生的錯：
+
+```ts
+myForEach([1, 2, 3], (a, i) => {
+  console.log(i.toFixed());
+  // Object is possibly 'undefined'.
+});
+```
+
+那如何修改呢？不設置為可選參數其實就可以了：
+
+```ts
+function myForEach(arr: any[], callback: (arg: any, index: number) => void) {
+  for (let i = 0; i < arr.length; i++) {
+    callback(arr[i], i);
+  }
+}
+
+myForEach([1, 2, 3], (a, i) => {
+  console.log(a);
+});
+```
+
+在 JavaScript 裡，如果你呼叫一個函式並傳入了比需要還更多的參數進去，這些額外的參數會被忽略掉，而 TypeScript 亦是如此。
+
+::: info 當要為 callback 寫一個函式型別時，永遠不要寫可選參數，除非你打算在不傳參的情況下呼叫這個函式。
+:::
+
+## Function Overloads
+
+一些 JavaScript 函式在呼叫的時候可以傳入不同數量或型別的引數 (argument)。舉例來說，撰寫一個函式來生成一個 `Date`，這個函式接收一個時間戳 (一個引數) 或者一個月/日/年的格式 (三個引數)。
+
+在 TypeScript 裡，我們可以透過撰寫多載簽章 (*overload signatures*) 來指定一個函式的不同呼叫方法。
+為此，我們需要寫一些函式簽章 (通常為兩個或是以上)，然後再寫函式主體：
+
+```ts
+/* overload signatures */
+function makeDate(timestamp: number): Date;
+function makeDate(m: number, d: number, y: number): Date;
+/* function implementation */
+function makeDate(mOrTimestamp: number, d?: number, y?: number): Date {
+  if (d !== undefined && y !== undefined) {
+    return new Date(y, mOrTimestamp, d);
+  } else {
+    return new Date(mOrTimestamp);
+  }
+}
+
+const d1 = makeDate(12345678);
+const d2 = makeDate(5, 5, 5);
+const d3 = makeDate(1, 3); // 沒有任何多載需要 2 引數，但有多載需要 1 或 3 引數。ts(2575)
+```
+
+在這個例子裡，我們撰寫了兩個 overload，一個接受一個引數 (argument)，另一個接受三個引數。
+這前兩個函式定義 (signature) 又被稱為多載簽章 (*overload signatures*)
+
+然後我們又寫了一個滿足所有的 overload signatures 的函式實作 (function implementation)，又稱作實作簽章 (implementation signature)。
+這個簽章並不能直接去呼叫，就算我們已經在函式的定義中寫了一個必填參數和兩個可選參數，它依然不能被傳入兩個參數去進行呼叫，因為它必須符合我們前面寫的 overload 所定義好的規則。
+
+再來看看這個例子 (取自[TypeScript 新手指南](https://willh.gitbook.io/typescript-tutorial/basics/type-of-function#guo-zai))，實現一個函式 `reverse`，輸入數字 `123` 的時候，輸出反轉的數字 `321`，輸入字串 `'hello'` 的時候，輸出反轉的字串 `'olleh'`。
+
+利用聯合型別，我們可以這麼去實現：
+
+```ts
+function reverse(x: number | string): number | string {
+  if (typeof x === 'number') {
+    return Number(x.toString().split('').reverse().join(''));
+  } else if (typeof x === 'string') {
+    return x.split('').reverse().join('');
+  } else {
+    return x;
+  }
+}
+
+const aaa = reverse(123);   // aaa: string | number
+const bbb = reverse('abc'); // bbb: string | number
+```
+
+但是這樣寫有一個缺點，沒辦法精確的表達，輸入為數字的時候，輸出也應該為數字，輸入為字串的時候，輸出也應該為字串。
+
+此時就可以使用 overload 定義多個 `reverse` 的函式型別：
+
+```ts
+function reverse(x: number): number;
+function reverse(x: string): string;
+function reverse(x: number | string): number | string {
+  if (typeof x === 'number') {
+    return Number(x.toString().split('').reverse().join(''));
+  } else if (typeof x === 'string') {
+    return x.split('').reverse().join('');
+  } else {
+    return x;
+  }
+}
+
+const aaa = reverse(123);   // aaa: number
+const bbb = reverse('abc'); // bbb: string
+```
+
+在上面例子裡，我們重複定義了多次函式 `reverse`，前幾次都是 overload signature，最後一次是函式實作，透過撰寫 function overload 我們就可以得到精確的輸出型別。
+
+### Overload Signatures and the Implementation Signature
+
+下面是一個常見的困擾來源，人們常常像這樣去寫程式碼但是又不明白為何會報錯：
+
+```ts
+function fn(x: string): void;
+function fn() {
+  console.log('hello');
+}
+// 希望能夠不傳任何參數去呼叫
+fn(); // 報錯: 應有 1 個引數，但得到 0 個。ts(2554)
+```
+
+再次強調，寫進函式實作的 signature 對外部來說是"不可見"的，也就意味著外界"看不到"它的 signature，自然也就不能按照實作簽章 (implementation signature) 的方式去呼叫，正確的做法是撰寫多載簽章 (overload signature)。
+
+> implementation signature 對外界來說不可見，當在寫一個多載函式的時候，你應該總是在函式實作之上寫兩個或以上的 signature。
+
+此外實作簽章還必須要和多載簽章相容 (compatible)，舉個例子，下面這些函式之所以報錯，是因為它們的實作簽章沒有正確的匹配到多載簽章：
+
+```ts
+function func(x: boolean): void;
+function func(x: string): void; // 此多載簽章與其實作簽章不相容。ts(2394)
+function func(x: boolean) {}
+```
+
+正確的寫法是在實作簽章上定義聯合型別來滿足所有多載簽章定義的型別：
+
+```ts
+function func(x: boolean): void;
+function func(x: string): void;
+function func(x: boolean | string) {}
+```
+
+接下來再來看一個例子，如果我們定義了函式的回傳值型別：
+
+```ts
+function func(x: string): string;
+function func(x: boolean): boolean; // 此多載簽章與其實作簽章不相容。ts(2394)
+function func(x: string | boolean) {
+  return 'hello';
+}
+```
+
+可以看到因為回傳值為一個字串導致第二個 overload signature 出現了報錯。
+
+解決方式也很簡單，只要給實作簽章定義回傳值的型別即可：
+
+```ts
+function func(x: string): string;
+function func(x: boolean): boolean;
+function func(x: string | boolean): string | boolean {
+  return 'hello';
+}
+```
+
