@@ -126,7 +126,7 @@ function sidebarTS() {
       text: 'TypeScript Handbook',
       collapsible: true,
       items: [
-        { text: 'The Basic', link: '/typescript/' },
+        { text: 'The Basic', link: '/typescript/the-basic' },
         { text: 'Everyday Types', link: '/typescript/everyday-types' },
         { text: 'Narrowing', link: '/typescript/narrowing' },
         { text: 'More on Functions', link: '/typescript/more-on-functions' },
