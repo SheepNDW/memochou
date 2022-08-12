@@ -809,5 +809,143 @@ function doSomething(f: Function) {
 
 ## Rest Parameters and Arguments
 
+> 參數 (parameters) 指的是在定義函式時設置的參數名，而引數 (arguments) 指的是使用者實際傳入函式的參數值，本節會特別對這兩個一般口語都稱做參數的名詞做區分。
+
+### 剩餘參數 Rest Parameters
+
+除了使用 optional parameter 或是 overload 來定義可以接收各種固定數量參數的函式之外，我們還可以使用剩餘參數 (*rest parameters*) 去定義一個可以接收不限制 (unbounded) 參數數量的函式。
+
+剩餘參數必須在所有參數的後面，並使用 `...` 語法：
+
+```ts
+function multiply(n: number, ...m: number[]) {
+  return m.map((x) => n * x);
+}
+// 'a' gets value [10, 20, 30, 40]
+const a = multiply(10, 1, 2, 3, 4);
+```
+
+在 TypeScript 中，剩餘參數會被隱式 (implicitly) 推論為 `any[]` 而不是 `any`，如果要給它定義具體型別，則必須是 `Array<T>` 或者 `T[]` 的形式，再不然就是元組型別 (tuple type)
+
+### 剩餘引數 Rest Arguments
+
+反過來，我們也可以藉由使用一個 `...` 語法的陣列去為函式提供不定數量的引數 (argument)，舉例來說，陣列方法中的 `push` 就可以接收任意數量的引數：
+
+```ts
+const arr1 = [1, 2, 3];
+const arr2 = [4, 5, 6];
+arr1.push(...arr2);
+```
+
+要注意 TypeScript 一般不會假定這個陣列是不可變的 (immutable)，這會導致一些意外發生：
+
+```ts
+// 推論型別為 number[] -- '一個陣列有 0 個或多個數字'
+// 不會限定兩個數字
+const args = [8, 5];
+
+const angle = Math.atan2(...args);
+// 擴張引數必須具有元組類型或傳遞給 REST 參數。ts(2556)
+```
+
+因為 `Math.atan2` 只接收兩個數字做為參數，但是 `args` 的型別推斷是 `number[]`，這種情況下通常使用 `as const` 是最直接的解決方案：
+
+```ts
+// Inferred as 2-length tuple
+// args: readonly [8, 5]
+const args = [8, 5] as const;
+// OK
+const angle = Math.atan2(...args);
+```
+
+通過 `as const` 語法將其變為唯讀的元組便可以解決這個問題。
 
 
+## Parameter Destructuring
+
+你可以使用參數解構 (parameter destructuring) 去方便的將作為參數提供的物件解構成函式體內一個或多個局部變數，在 JavaScript 中就像這樣：
+
+```js
+function sum({ a, b, c }) {
+  console.log(a + b + c);
+}
+sum({ a: 10, b: 3, c: 9 });
+```
+
+在解構語法後面加上 TypeScript 的型別註記：
+
+```ts
+function sum({ a, b, c }: { a: number; b: number; c: number }) {
+  console.log(a + b + c);
+}
+```
+
+這看起來有點冗，你也可以直接這樣去寫它：
+
+```ts
+// 這和上面的例子是一樣的
+type ABC = { a: number; b: number; c: number };
+function sum({ a, b, c }: ABC) {
+  console.log(a + b + c);
+}
+```
+
+## Assignability of Functions
+
+### Return type `void`
+
+函式的 `void` 回傳型別會產生一些不尋常但是可預期的行為。
+
+當基於上下文的型別推論 (Contextual typing) 推論出來的回傳型別為 `void` 的時候，並不會強制函式一定不可以回傳內容。
+換句話說，如果這樣一個回傳 `void` 的函式型別 (`type vf = () => void`)，當它被執行時，也是可以回傳任何值的，但是回傳出來的值會被忽略掉。
+
+因此，下面這些 `() => void` 型別實作都是有效的：
+
+```ts
+type voidFunc = () => void;
+
+const f1: voidFunc = () => {
+  return true;
+};
+
+const f2: voidFunc = () => true;
+
+const f3: voidFunc = function () {
+  return true;
+};
+```
+
+而且即使把這些函式的回傳值賦值給其他變數，它仍會保有型別 `void`：
+
+```ts
+const v1: boolean = f1(); // 類型 'void' 不可指派給類型 'boolean'。ts(2322)
+
+const v2 = f2(); // v2: void
+
+const v3 = f3(); // v3: void
+```
+
+也正是因為有這個特性存在，下面的程式碼才能有效：
+
+```ts
+const src = [1, 2, 3];
+const dst = [0];
+
+src.forEach((el) => dst.push(el));
+```
+
+儘管 `Array.prototype.push` 回傳一個數字而 `Array.prototype.forEach` 方法預期回傳 `void` 型別的函式，但仍然沒有報錯，就是因為基於上下文的推論，推論出 `forEach` 函式的 return type 是 `void`，而因為不強制函式一定不能回傳內容，所以 `return dst.push(el)` 的寫法才沒有報錯。
+
+另外還有一個特殊例子需要注意，當一個函式字面值定義有一個 return type 為 `void`，那這個函式就必定不能有回傳值。
+
+```ts
+function f4(): void {
+  // 類型 'boolean' 不可指派給類型 'void'。ts(2322)
+  return true;
+}
+
+const f5 = function (): void {
+  // 類型 'boolean' 不可指派給類型 'void'。ts(2322)
+  return true;
+};
+```
