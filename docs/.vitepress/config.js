@@ -3,7 +3,7 @@ export default {
   lang: 'zh-Hant-TW',
   title: 'シープの雑談メモ帳',
   description: '前端筆記&日常',
-  // lastUpdated: true,
+  lastUpdated: true,
   head: [
     [
       'link',
@@ -21,6 +21,7 @@ export default {
       '/vite/': sidebarVite(),
       '/git/': sidebarGit(),
       '/typescript/': sidebarTS(),
+      '/css/': sidebarCSS(),
       '/game-development/': sidebarGameDev(),
     },
     footer: {
@@ -46,6 +47,7 @@ function nav() {
     { text: '關於', link: '/about/', activeMatch: '/about/' },
     { text: 'Vue', link: '/vue/', activeMatch: '/vue/' },
     { text: 'TypeScript', link: '/typescript/', activeMatch: '/typescript/' },
+    { text: 'CSS', link: '/css/', activeMatch: '/css/' },
     {
       text: 'Tools',
       items: [
@@ -96,6 +98,19 @@ function sidebarVue() {
   ];
 }
 
+function sidebarCSS() {
+  return [
+    {
+      text: 'Tailwind CSS',
+      collapsible: true,
+      items: [
+        { text: '安裝 Tailwind', link: '/css/tailwind/installation' },
+        { text: '客製化 Tailwind', link: '/css/tailwind/customization' },
+      ],
+    },
+  ];
+}
+
 function sidebarVite() {
   return [
     {
@@ -130,6 +145,7 @@ function sidebarTS() {
         { text: 'Everyday Types', link: '/typescript/everyday-types' },
         { text: 'Narrowing', link: '/typescript/narrowing' },
         { text: 'More on Functions', link: '/typescript/more-on-functions' },
+        { text: 'Object Types', link: '/typescript/object-types' },
       ],
     },
   ];
