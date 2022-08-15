@@ -1,3 +1,3 @@
 # CSS 筆記存放區
 
-- [Tailwind CSS](./tailwind/Installation.md)
+- [Tailwind CSS](/css/tailwind/installation)
