@@ -1,8 +1,10 @@
+---
+outline: deep
+---
+
 # Object Types
 
 ###### tags: `TypeScript`
-
-[Toc]
 
 ---
 

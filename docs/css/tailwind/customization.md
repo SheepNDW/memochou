@@ -1,3 +1,7 @@
+---
+outline: deep
+---
+
 # 客製化 Tailwind CSS
 
 Tailwind 支援使用著去擴充或是客製化，可以去 `tailwind.config.js` 或是專案中引入 tailwind 指令的入口檔案中設定

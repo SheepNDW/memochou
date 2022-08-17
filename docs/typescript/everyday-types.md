@@ -1,10 +1,13 @@
+---
+outline: deep
+---
+
 # Everyday Types
 
 ###### tags: `TypeScript`
 
 參考資料: [TypeScript 新手指南](https://willh.gitbook.io/typescript-tutorial/)、[TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html)
 
-[Toc]
 
 ## 常用原始型別 The primitives: string, number, and boolean
 

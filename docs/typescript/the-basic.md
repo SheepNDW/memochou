@@ -1,10 +1,12 @@
+---
+outline: deep
+---
+
 # The Basic
 
 ###### tags: `TypeScript`
 
 參考資料: [TypeScript 新手指南](https://willh.gitbook.io/typescript-tutorial/)、[TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html)
-
-[Toc]
 
 ## 安裝 TypeScript
 

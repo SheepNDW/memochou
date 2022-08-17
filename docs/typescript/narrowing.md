@@ -4,8 +4,6 @@
 
 參考資料: [TypeScript 新手指南](https://willh.gitbook.io/typescript-tutorial/)、[TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html)
 
-[Toc]
-
 ---
 
 假設有一個 function 叫做 `padLeft`，如果 `padding` 是數值，它就會在 input 前加入多少 number 的空格，如果 `padding` 是字串，那就直接在加在 input 前面，試著寫出來後呈現如下：
