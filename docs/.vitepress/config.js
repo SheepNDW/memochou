@@ -156,6 +156,16 @@ function sidebarTS() {
         { text: 'Narrowing', link: '/typescript/narrowing' },
         { text: 'More on Functions', link: '/typescript/more-on-functions' },
         { text: 'Object Types', link: '/typescript/object-types' },
+        {
+          text: 'Type Manipulation',
+          items: [
+            {
+              text: 'Creating Types from Types',
+              link: '/typescript/creating-types-from-types',
+            },
+            { text: 'Generics', link: '/typescript/generics' },
+          ],
+        },
       ],
     },
   ];
