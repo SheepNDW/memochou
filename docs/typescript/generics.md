@@ -106,3 +106,63 @@ function loggingIdentity<Type>(arg: Array<Type>): Array<Type> {
   return arg;
 }
 ```
+
+## Generic Types
+
+在前一個章節裡，我們已經建立了一個泛型 identity 函式，並且可以支持傳入各種型別的參數。在這個章節裡，我們將探索函式本身的型別，以及如何建立泛型介面 (interface)。
+
+泛型函式的形式就跟其他非泛型函式的一樣，都需要先列一個參數型別清單，這有點像函式宣告：
+
+```ts
+function identity<Type>(arg: Type): Type {
+  return arg;
+}
+
+let myIdentity: <Type>(arg: Type) => Type = identity;
+```
+
+泛型的參數型別可以使用不同的名字，只要數量和使用方式上一致即可：
+
+```ts
+function identity<Type>(arg: Type): Type {
+  return arg;
+}
+
+let myIdentity: <Input>(arg: Input) => Input = identity;
+```
+
+我們也可以以物件型別的呼叫簽章 (call signature) 的形式，書寫這個泛型：
+
+```ts
+function identity<Type>(arg: Type): Type {
+  return arg;
+}
+
+let myIdentity: { <Type>(arg: Type): Type } = identity;
+```
+
+我們可以進一步將上面這個物件字面值抽離出來，寫成一個 interface：
+
+```ts
+interface GenericIdentityFn {
+  <Type>(arg: Type): Type;
+}
+
+let myIdentity: GenericIdentityFn = identity;
+```
+
+有的時候，我們會希望將泛型參數作為整個介面的參數，這可以讓我們清楚的知道傳入的是什麼參數(舉個例子：`Dictionary<string>` 而不是 `Dictionary`)。而且介面裡其他的成員也可以看到。
+
+```ts
+interface GenericIdentityFn<Type> {
+  (arg: Type): Type;
+}
+
+let myIdentity: GenericIdentityFn<number> = identity;
+```
+
+注意在這個例子裡，我們只做了少許改動。不再描述一個泛型函式，而是將一個非泛型函式簽章，作為泛型的一部分。
+
+現在當我們使用 `GenericIdentityFn` 的時候，需要明確給出參數的型別。(在這個例子中，是 `number`)，有效的鎖定了呼叫簽章使用的型別。
+
+當要描述一個包含泛型的型別時，理解什麼時候把參數型別放在呼叫簽章里，什麼時候把它放在介面裡是很有用的。
