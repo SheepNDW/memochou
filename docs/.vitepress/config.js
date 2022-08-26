@@ -164,6 +164,7 @@ function sidebarTS() {
               link: '/typescript/creating-types-from-types',
             },
             { text: 'Generics', link: '/typescript/generics' },
+            { text: 'Keyof Type Operator', link: '/typescript/keyof-types' },
           ],
         },
       ],
