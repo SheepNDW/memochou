@@ -84,7 +84,7 @@ doSomething(fn1);
 ## Construct Signatures
 
 JavaScript 的函式也可以使用 `new` 運算子來呼叫，當函式被呼叫時，TypeScript 會將其認為是建構函式 (constructors)，因為它們通常會建立一個新的物件。<br>
-你可以藉由在 call signature 前面加上一個 `new` 來撰寫建構函式簽章 (*construct signature*)：
+你可以藉由在 call signature 前面加上一個 `new` 來撰寫建構簽章 (*construct signature*)：
 
 ```ts
 class SomeObject {

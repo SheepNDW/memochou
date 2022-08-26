@@ -166,3 +166,147 @@ let myIdentity: GenericIdentityFn<number> = identity;
 現在當我們使用 `GenericIdentityFn` 的時候，需要明確給出參數的型別。(在這個例子中，是 `number`)，有效的鎖定了呼叫簽章使用的型別。
 
 當要描述一個包含泛型的型別時，理解什麼時候把參數型別放在呼叫簽章里，什麼時候把它放在介面裡是很有用的。
+
+
+## Generic Classes
+
+泛型 class 和泛型 interface 的寫法很像，在泛型 class 的名字後面加上一個尖括號(`<>`)包裹住參數型別列表。
+
+```ts
+class GenericNumber<NumType> {
+  zeroValue: NumType;
+  add: (x: NumType, y: NumType) => NumType;
+}
+
+let myGenericNumber = new GenericNumber<number>();
+myGenericNumber.zeroValue = 0;
+myGenericNumber.add = function (x, y) {
+  return x + y;
+};
+```
+> 你可能會在寫這個泛型時遇到了關於沒有初始化的報錯，這裡可以先將 `tsconfig.json` 裡的 `"strictPropertyInitialization"` 調成 `false`，後面會再提到關於 class 的型別問題。
+
+在這個例子中你可能已經注意到了這個 `GenericNumber` class 並沒有限制你只能使用 `number` 型別，我們也可以使用 `string` 會是其他更複雜的型別：
+
+```ts
+let stringNumeric = new GenericNumber<string>();
+stringNumeric.zeroValue = '';
+stringNumeric.add = function (x, y) {
+  return x + y;
+};
+
+console.log(stringNumeric.add(stringNumeric.zeroValue, 'test')); // 'test'
+```
+
+和 interface 一樣，將參數型別放在 class 上可以確保 class 裡所有的屬性都使用一樣的型別。
+
+正如我們在 Class 章節提過的，一個 class 它的型別有兩部分：靜態部分 (static side) 和實例部分 (instance side)。泛型 class 僅僅對實例部分生效，所以當我們使用 class 的時候，要注意靜態成員並不能使用參數型別。
+
+
+## Generic Constraints
+
+在之前我們用泛型寫過這個 `loggingIdentity` 函式，假設我們想要獲取參數 `arg` 的 `.length` 屬性，但是編譯器並不能證明每種型別都有 `.length` 屬性，所以它會報錯：
+
+```ts
+function loggingIdentity<Type>(arg: Type): Type {
+  console.log(arg.length); // 類型 'Type' 沒有屬性 'length'。ts(2339)
+  return arg;
+}
+```
+
+我們希望將此函式限制為只能使用也具有 `.length` 屬性的型別，只要型別有這個成員，我們就允許使用它，但必須至少要有這個成員。為此，我們需要列出對 `Type` 限制的必要條件。
+
+為了實現它，我們可以寫一個 interface 來描述我們的限制條件，我們在這寫了一個只有一個 `.length` 屬性的 interface 然後使用 `extends` 關鍵字去對泛型進行限制：
+
+```ts
+interface Lengthwise {
+  length: number;
+}
+
+function loggingIdentity<Type extends Lengthwise>(arg: Type): Type {
+  console.log(arg.length);
+  return arg;
+}
+
+loggingIdentity('hello');             // OK
+loggingIdentity(['hello', 'world']);  // OK
+```
+
+因為我們已經對這個泛型函式做了限制，所以它將不再適用於所有型別：
+
+```ts
+loggingIdentity(3); 
+// 類型 'number' 的引數不可指派給類型 'Lengthwise' 的參數。ts(2345)
+```
+
+需要傳入符合限制條件的屬性值：
+
+```ts
+loggingIdentity({ length: 10, value: 3 });
+```
+
+## Using Type Parameters in Generic Constraints
+
+你可以宣告一個受另一個參數型別限制的參數型別。舉例來說，我們想要從一個物件中拿到給定屬性名的值，我們必須確保我們不會意外抓取物件上不存在的屬性，因此我們要在這兩種型別中放置一個限制 (constraints)：
+
+```ts
+function getProperty<Type, Key extends keyof Type>(obj: Type, key: Key) {
+  return obj[key];
+}
+
+let x = { a: 1, b: 2, c: 3, d: 4 };
+
+getProperty(x, 'a');
+getProperty(x, 'm');
+// 類型 '"m"' 的引數不可指派給類型 '"a" | "b" | "c" | "d"' 的參數。ts(2345)
+```
+
+在實作的時候，你可能會注意到 vscode 會正確提示你可以輸入的屬性名：
+
+![](https://i.imgur.com/k38ttfT.png)
+
+## Using Class Types in Generics
+
+在 TypeScript 中使用泛型建立工廠函式 (factory) 時，有必要透過其建構函式 (constructor function) 來引用類別的型別，例如：
+
+```ts
+function create<Type>(c: { new (): Type }): Type {
+  return new c();
+}
+```
+
+接著是一個更複雜的範例，使用原型屬性來推論和限制建構函式和類別型別的實例之間的關係：
+
+```ts
+class BeeKeeper {
+  hasMask: boolean = true;
+}
+
+class ZooKeeper {
+  nametag: string = 'sheep';
+}
+
+class Animal {
+  numLegs: number = 4;
+}
+
+class Bee extends Animal {
+  keeper: BeeKeeper = new BeeKeeper();
+}
+
+class Lion extends Animal {
+  keeper: ZooKeeper = new ZooKeeper();
+}
+
+function createInstance<A extends Animal>(c: new () => A): A {
+  return new c();
+}
+
+console.log(createInstance(Lion).keeper.nametag); // sheep
+console.log(createInstance(Bee).keeper.hasMask);  // true
+console.log(createInstance(BeeKeeper));
+/*
+類型 'typeof BeeKeeper' 的引數不可指派給類型 'new () => Animal' 的參數。
+  類型 'BeeKeeper' 缺少屬性 'numLegs'，但類型 'Animal' 必須有該屬性。ts(2345)
+*/
+```
