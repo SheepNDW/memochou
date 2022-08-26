@@ -165,6 +165,7 @@ function sidebarTS() {
             },
             { text: 'Generics', link: '/typescript/generics' },
             { text: 'Keyof Type Operator', link: '/typescript/keyof-types' },
+            { text: 'Typeof Type Operator', link: '/typescript/typeof-types' },
           ],
         },
       ],
