@@ -51,7 +51,7 @@ type P = {
 */
 ```
 
-## Limitations
+## 限制 Limitations
 
 TypeScript 有意的限制了可以使用 `typeof` 的表達式的種類。
 
@@ -67,4 +67,84 @@ let shouldContinue: typeof msgbox('Are you sure you want to continue?');
 
 ```ts
 let shouldContinue: ReturnType<typeof msgbox>
+```
+
+(註：原文到這就結束了，以下引用自冴羽大大在他的 TS 系列文章的補充)
+
+## 對物件使用 `typeof`
+
+我們可以對一個物件使用 `typeof`：
+
+```ts
+const person = { name: 'sheep', age: '18' };
+type Sheep = typeof person;
+// type Sheep = {
+//   name: string;
+//   age: string;
+// }
+```
+
+## 對函式使用 `typeof`
+
+我們也可以對一個函式使用 `typeof`：
+
+```ts
+function identity<T>(arg: T): T {
+  return arg;
+}
+
+type result = typeof identity;
+// type result = <T>(arg: T) => T
+```
+
+## 對 enum 使用 `typeof`
+
+在 TypeScript 中，enum 是一種新的資料型別，但在具體運行的時候，它會被編譯成物件。
+
+```ts
+enum UserResponse {
+  No = 0,
+  Yes = 1,
+}
+```
+
+編譯過後的 JavaScript 程式碼為：
+
+```js
+var UserResponse;
+(function (UserResponse) {
+    UserResponse[UserResponse["No"] = 0] = "No";
+    UserResponse[UserResponse["Yes"] = 1] = "Yes";
+})(UserResponse || (UserResponse = {}));
+```
+
+用 log 打印一下這個 `UserResponse`：
+
+```ts
+console.log(UserResponse);
+// { '0': 'No', '1': 'Yes', No: 0, Yes: 1 }
+```
+
+而如果我們對 `UserResponse` 使用 `typeof`：
+
+```ts
+type result = typeof UserResponse;
+
+const a: result = {
+  'No': 2,
+  'Yes': 3,
+};
+
+// result 的型別類似於:
+// {
+//	'No': number,
+//  'YES': number
+// } 
+```
+
+不過對一個 `enum` 型別只使用 `typeof` 一般沒什麼用，通常還會搭配 `keyof` 運算子用於獲取屬性名的聯合字串：
+
+```ts
+type result = keyof typeof UserResponse;
+// type result = "No" | "Yes"
 ```
