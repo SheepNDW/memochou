@@ -170,6 +170,10 @@ function sidebarTS() {
               text: 'Indexed Access Types',
               link: '/typescript/indexed-access-types',
             },
+            {
+              text: 'Conditional Types',
+              link: '/typescript/conditional-types',
+            },
           ],
         },
       ],
