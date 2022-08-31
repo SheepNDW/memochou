@@ -211,7 +211,7 @@ type MainID = ASCIICacheKey<'my_app'>;
 // type MainID = "ID-MY_APP"
 ```
 
-### Lowercase<StringType>
+### `Lowercase<StringType>`
 
 將字串中的每個字符都改成小寫：
 
@@ -225,7 +225,7 @@ type MainID = ASCIICacheKey<'MY_APP'>;
 // type MainID = "id-my_app"
 ```
 
-### Capitalize<StringType>
+### `Capitalize<StringType>`
 
 將字串中的第一個字符轉換為大寫字母：
 
@@ -234,7 +234,7 @@ type LowercaseGreeting = 'hello, world';
 type Greeting = Capitalize<LowercaseGreeting>;
 // type Greeting = "Hello, world"
 ```
-### Uncapitalize<StringType>
+### `Uncapitalize<StringType>`
 
 將字串中的第一個字符轉換為小寫字母：
 
