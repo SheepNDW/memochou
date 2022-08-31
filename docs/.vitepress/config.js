@@ -175,6 +175,10 @@ function sidebarTS() {
               link: '/typescript/conditional-types',
             },
             { text: 'Mapped Types', link: '/typescript/mapped-types' },
+            {
+              text: 'Template Literal Types',
+              link: '/typescript/template-literal-types',
+            },
           ],
         },
       ],
