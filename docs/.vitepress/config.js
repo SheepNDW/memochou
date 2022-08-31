@@ -174,6 +174,7 @@ function sidebarTS() {
               text: 'Conditional Types',
               link: '/typescript/conditional-types',
             },
+            { text: 'Mapped Types', link: '/typescript/mapped-types' },
           ],
         },
       ],
