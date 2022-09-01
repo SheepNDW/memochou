@@ -138,7 +138,7 @@ type result = keyof Person;
 
 ## 實戰
 
-在前一節[泛型](/typescript/generics.html#using-type-parameters-in-generic-constraints)裡就寫到了一個 `keyof` 的應用： 
+在前一節[泛型](/typescript/handbook/generics.html#using-type-parameters-in-generic-constraints)裡就寫到了一個 `keyof` 的應用： 
 
 > 我們想要從一個物件中拿到給定屬性名的值，我們必須確保我們不會意外抓取物件上不存在的屬性，因此我們要在這兩種型別中放置一個限制：
 

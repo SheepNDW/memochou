@@ -151,33 +151,42 @@ function sidebarTS() {
       text: 'TypeScript Handbook',
       collapsible: true,
       items: [
-        { text: 'The Basic', link: '/typescript/the-basic' },
-        { text: 'Everyday Types', link: '/typescript/everyday-types' },
-        { text: 'Narrowing', link: '/typescript/narrowing' },
-        { text: 'More on Functions', link: '/typescript/more-on-functions' },
-        { text: 'Object Types', link: '/typescript/object-types' },
+        { text: 'The Basic', link: '/typescript/handbook/the-basic' },
+        { text: 'Everyday Types', link: '/typescript/handbook/everyday-types' },
+        { text: 'Narrowing', link: '/typescript/handbook/narrowing' },
+        {
+          text: 'More on Functions',
+          link: '/typescript/handbook/more-on-functions',
+        },
+        { text: 'Object Types', link: '/typescript/handbook/object-types' },
         {
           text: 'Type Manipulation',
           items: [
             {
               text: 'Creating Types from Types',
-              link: '/typescript/creating-types-from-types',
+              link: '/typescript/handbook/creating-types-from-types',
             },
-            { text: 'Generics', link: '/typescript/generics' },
-            { text: 'Keyof Type Operator', link: '/typescript/keyof-types' },
-            { text: 'Typeof Type Operator', link: '/typescript/typeof-types' },
+            { text: 'Generics', link: '/typescript/handbook/generics' },
+            {
+              text: 'Keyof Type Operator',
+              link: '/typescript/handbook/keyof-types',
+            },
+            {
+              text: 'Typeof Type Operator',
+              link: '/typescript/handbook/typeof-types',
+            },
             {
               text: 'Indexed Access Types',
-              link: '/typescript/indexed-access-types',
+              link: '/typescript/handbook/indexed-access-types',
             },
             {
               text: 'Conditional Types',
-              link: '/typescript/conditional-types',
+              link: '/typescript/handbook/conditional-types',
             },
-            { text: 'Mapped Types', link: '/typescript/mapped-types' },
+            { text: 'Mapped Types', link: '/typescript/handbook/mapped-types' },
             {
               text: 'Template Literal Types',
-              link: '/typescript/template-literal-types',
+              link: '/typescript/handbook/template-literal-types',
             },
           ],
         },
