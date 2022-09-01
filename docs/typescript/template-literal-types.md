@@ -244,3 +244,21 @@ type UncomfortableGreeting = Uncapitalize<UppercaseGreeting>;
 // type UncomfortableGreeting = "hELLO WORLD"
 ```
 
+::: details 字串操作型別的技術細節
+從 TypeScript 4.1 開始，這些內置函式會直接使用 JavaScript 字串執行時函式，而不是 locale aware。
+```ts
+function applyStringMapping(symbol: Symbol, str: string) {
+  switch (intrinsicTypeKinds.get(symbol.escapedName as string)) {
+    case IntrinsicTypeKind.Uppercase:
+      return str.toUpperCase();
+    case IntrinsicTypeKind.Lowercase:
+      return str.toLowerCase();
+    case IntrinsicTypeKind.Capitalize:
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    case IntrinsicTypeKind.Uncapitalize:
+      return str.charAt(0).toLowerCase() + str.slice(1);
+  }
+  return str;
+}
+```
+:::
