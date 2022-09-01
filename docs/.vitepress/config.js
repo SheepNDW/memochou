@@ -190,6 +190,7 @@ function sidebarTS() {
             },
           ],
         },
+        { text: 'Classes', link: '/typescript/handbook/classes' },
       ],
     },
   ];
