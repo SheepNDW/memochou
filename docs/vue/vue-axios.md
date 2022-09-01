@@ -42,7 +42,7 @@ import axios from 'axios'
 axios.default.baseURL = 'http://api.com'
 
 // 將 axios 掛載為 app 的全域自定義屬性
-// 每個元件都能透過 this 直接訪問到全域掛載的自定義屬性
+// 每個元件都能透過 this 直接存取到全域掛載的自定義屬性
 app.config.globalProperties.$http = axios
 ```
 原本的程式碼就可以改成用下方的形式書寫：

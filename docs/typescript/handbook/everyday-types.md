@@ -154,7 +154,7 @@ printName({ first: 'sheep' });
 printName({ first: 'sheep', last: 'yang' });
 ```
 
-在 JavaScript 中，如果你訪問一個不存在的屬性，你會得到 undefined 而不是執行時錯誤。因此，當你從可選屬性中讀取資料時，你必須在使用它之前檢查 undefined
+在 JavaScript 中，如果你存取一個不存在的屬性，你會得到 undefined 而不是執行時錯誤。因此，當你從可選屬性中讀取資料時，你必須在使用它之前檢查 undefined
 
 ```typescript
 function printName(obj: { first: string; last?: string }) {
@@ -355,7 +355,7 @@ const myCanvas2 = <HTMLCanvasElement>document.getElementById('main_canvas');
 例子：將一個聯合型別的變數指定為一個更加具體的型別
 > 取自 TypeScript 新手指南型別斷言章節範例
 
-當 TypeScript 不確定一個聯合型別的變數到底是哪個型別的時候，我們只能訪問此聯合型別的所有型別裡共有的屬性或方法
+當 TypeScript 不確定一個聯合型別的變數到底是哪個型別的時候，我們只能存取此聯合型別的所有型別裡共有的屬性或方法
 ```typescript
 function getLength(something: string | number): number {
   if (something.length) {

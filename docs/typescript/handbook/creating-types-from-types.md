@@ -11,7 +11,7 @@ TypeScript 的型別系統非常強大，因為它允許我們使用其他型別
 * [Generics](/typescript/handbook/generics) - Types which take parameters
 * [Keyof Type Operator](/typescript/handbook/keyof-types) - Using the `keyof` operator to create new types
 * [Typeof Type Operator](/typescript/handbook/typeof-types) - Using the `typeof` operator to create new types
-* [Indexed Access Types](/typescript/handbook//indexed-access-types) - Using `Type['a']` syntax to access a subset of a type
+* [Indexed Access Types](/typescript/handbook/indexed-access-types) - Using `Type['a']` syntax to access a subset of a type
 * [Conditional Types](/typescript/handbook/conditional-types) - Types which act like if statements in the type system
 * [Mapped Types](/typescript/handbook/mapped-types) - Creating types by mapping each property in an existing type
 * [Template Literal Types](/typescript/handbook/template-literal-types) - Mapped types which change properties via template literal strings

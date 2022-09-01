@@ -129,7 +129,7 @@ export default {
 }
 </script>
 ```
-> 如果想要在 setup 中訪問 props 的值需透過傳參的方式來獲得 props 的值
+> 如果想要在 setup 中存取 props 的值需透過傳參的方式來獲得 props 的值
 
 ### `<script setup>`
 
@@ -149,7 +149,7 @@ console.log(props.text)
   <button>{{ text }}</button>
 </template>
 ```
-> 在模板中可以直接寫 text 來訪問，而在 script 標籤裡要再加上 `props.XXX`
+> 在模板中可以直接寫 text 來存取，而在 script 標籤裡要再加上 `props.XXX`
 
 
 ## `defineEmits()`

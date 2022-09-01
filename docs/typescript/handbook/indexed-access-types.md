@@ -6,7 +6,7 @@
 
 ---
 
-我們可以使用索引訪問型別 (*indexed access type*) 來查找另外一個型別上的特定屬性：
+我們可以使用索引存取型別 (*indexed access type*) 來查找另外一個型別上的特定屬性：
 
 ```ts
 type Person = {

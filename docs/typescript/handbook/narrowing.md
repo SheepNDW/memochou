@@ -310,7 +310,7 @@ function padLeft(padding: number | string, input: string) {
 }
 ```
 
-如果 padLeft 函式執行時從第一個 if 中 return，TypeScript 能夠分析此程式碼並發現到如果 padding 是 `number` 的情況下，下面的 return padding + input 是無法訪問到的，因此它會在函式剩下的部分把 `number` 從 padding 的型別中去除 (從 `string | number` narrow 成 `string`) 。
+如果 padLeft 函式執行時從第一個 if 中 return，TypeScript 能夠分析此程式碼並發現到如果 padding 是 `number` 的情況下，下面的 return padding + input 是無法存取到的，因此它會在函式剩下的部分把 `number` 從 padding 的型別中去除 (從 `string | number` narrow 成 `string`) 。
 
 這種基於可達性的代碼分析稱為**控制流分析(CFA)**，TypeScript 在遇到型別保護(type guards)和賦值(assignments)時使用這種流分析來限縮型別。
 當分析一個變數時，控制流(control flow)可以一次又一次地分裂和重新合併，並且可以觀察到該變數在每個點具有不同的型別。
@@ -466,7 +466,7 @@ function getArea(shape: Shape) {
 ```
 
 但這不是一個很理想的做法，我們在此不得不使用非空斷言說服型別檢查器 (type-checker) `shape.radius` 已經被定義，但如果我們開始移動程式碼，這些斷言很容易出現錯誤。
-此外，在 strictNullChecks 之外，我們都可以意外地去訪問到這些欄位 (因為在讀取它們時假設可選屬性始終存在)，我們在這絕對可以做得更好。
+此外，在 strictNullChecks 之外，我們都可以意外地去存取到這些欄位 (因為在讀取它們時假設可選屬性始終存在)，我們在這絕對可以做得更好。
 
 編碼這段 `Shape` 的問題在於 type-checker 無法依據 `kind` 屬性知道 `radius` 或 `sideLength` 是否存在。我們需要將我們所知道的訊息傳達給 type-checker，考慮到了這一點，讓我們重新定義 `Shape`
 
@@ -486,7 +486,7 @@ type Shape = Circle | Square;
 
 在這裡，我們已經適當地將 `Shape` 分成了兩種型別，它們的 `kind` 屬性具有不同的值，但是 `radius` 和 `sideLength` 在它們各自的型別中被宣告為必填的屬性。
 
-現在讓我們試著去訪問 `Shape` 中的 `radius` 看看會發生什麼事：
+現在讓我們試著去存取 `Shape` 中的 `radius` 看看會發生什麼事：
 
 ```ts
 function getArea(shape: Shape) {

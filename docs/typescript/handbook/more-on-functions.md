@@ -764,7 +764,7 @@ function safeParse(s: string): unknown {
 // Need to be careful with 'obj'!
 const obj = safeParse(someRandomString);
 ```
-> obj 型別為 `unknown`，不要試圖去訪問它的一些東西
+> obj 型別為 `unknown`，不要試圖去存取它的一些東西
 
 ### `never`
 
