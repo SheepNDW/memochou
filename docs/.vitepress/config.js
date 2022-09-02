@@ -191,6 +191,7 @@ function sidebarTS() {
           ],
         },
         { text: 'Classes', link: '/typescript/handbook/classes' },
+        { text: 'Modules', link: '/typescript/handbook/modules' },
       ],
     },
   ];
