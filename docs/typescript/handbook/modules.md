@@ -120,3 +120,126 @@ console.log(π);
 // (alias) const π: 3.14
 // import π
 ```
+
+你可以接受所有的匯出物件，然後使用 `* as name` 把它們放入一個單獨的命名空間：
+
+```ts
+// @filename: app.ts
+import * as math from './maths';
+
+console.log(math.pi);
+const positivePhi = math.absolute(math.phi);
+      // const positivePhi: number
+```
+
+你可以透過 `import './file'` 匯入一個檔案然後不給定任何變數：
+
+```ts
+// @filename: app.ts
+import './maths';
+
+console.log(3.14);
+```
+
+在這個例子中，import 什麼也沒幹，然而，`maths.ts` 的所有程式碼都會執行，觸發一些影響其他物件的副作用 (side-effects)。
+
+### TypeScript Specific ES Module Syntax
+
+我們可以像 JavaScript 的值一樣使用 `export/import` 來去匯出和匯入一個型別：
+
+```ts
+// @filename: animal.ts
+export type Cat = {
+  breed: string;
+  yearOfBirth: number;
+};
+
+export interface Dog {
+  breeds: string[];
+  yearOfBirth: number;
+}
+
+// @filename: app.ts
+import { Cat, Dog } from './animal';
+type Animals = Cat | Dog;
+```
+
+TypeScript 使用兩個概念擴展了 `import` 語法，便於宣告型別的匯入：
+
+#### import type
+
+這是一個只能匯入型別的匯入語句：
+
+```ts
+// @filename: animal.ts
+export type Cat = {
+  breed: string;
+  yearOfBirth: number;
+};
+
+export type Dog = {
+  breeds: string[];
+  yearOfBirth: number;
+};
+
+export const createCatName = () => 'fluffy';
+
+// @filename: valid.ts
+import type { Cat, Dog } from './animal';
+export type Animals = Cat | Dog;
+
+// @filename: app.ts
+import type { createCatName } from './animal';
+const name = createCatName();
+// 因為 'createCatName' 是使用 'import type' 匯入的，所以無法作為值使用。ts(1361)
+```
+
+#### Inline type imports
+
+TypeScript 4.5 也允許單獨的匯入，你需要使用 `type` 前綴，表明被匯入的是一個型別：
+
+```ts
+// @filename: app.ts
+import { createCatName, type Cat, type Dog } from './animal';
+
+export type Animals = Cat | Dog;
+const name = createCatName();
+```
+
+## CommonJS Syntax
+
+CommonJS 是 npm 上大部分模塊的格式。即使你正在寫 ES 模組語法，了解一下 CommonJS 語法的工作原理也會幫助你更容易去調試。
+
+#### Exporting
+
+通過設置全域 module 的 exports 屬性，匯出識別字：
+
+```ts
+function absolute(num: number) {
+  if (num < 0) return num * -1;
+  return num;
+}
+ 
+module.exports = {
+  pi: 3.14,
+  squareTwo: 1.41,
+  phi: 1.61,
+  absolute,
+};
+```
+
+這些檔案可以透過 `require` 匯入：
+
+```ts
+const maths = require('maths');
+maths.pi;
+// any
+```
+
+使用解構的方式簡化操作：
+
+```ts
+const { squareTwo } = require('maths');
+squareTwo;
+// const squareTwo: any
+```
