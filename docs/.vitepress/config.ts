@@ -34,12 +34,12 @@ export default {
     },
     socialLinks: [{ icon: 'github', link: 'https://github.com/SheepNDW' }],
   },
-  markdown: {
-    theme: 'vitesse-dark',
-  },
   // markdown: {
-  //   theme: { light: 'vitesse-light', dark: 'vitesse-dark' },
+  //   theme: 'vitesse-dark',
   // },
+  markdown: {
+    theme: { light: 'vitesse-light', dark: 'vitesse-dark' },
+  },
 };
 
 function nav() {
