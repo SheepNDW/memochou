@@ -72,14 +72,15 @@ function sidebarVue() {
         { text: 'Vue 3.x 中全域配置 axios', link: '/vue/vue-axios' },
         { text: 'v-model 語法糖原理', link: '/vue/vue-vModel' },
         { text: '初探 Script Setup', link: '/vue/vue-script-setup-guide' },
+        { text: 'effectScope API', link: '/vue/vue-effectScope' },
       ],
     },
     {
       text: 'Pinia',
       collapsible: true,
       items: [
-        { text: '初識 Pinia', link: '/vue/pinia-guide' },
-        { text: 'Pinia 案例 - 購物車', link: '/vue/pinia-cart' },
+        { text: '初識 Pinia', link: '/vue/pinia/pinia-guide' },
+        { text: 'Pinia 案例 - 購物車', link: '/vue/pinia/pinia-cart' },
       ],
     },
     {
