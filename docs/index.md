@@ -8,7 +8,7 @@ hero:
   name: シープの雑談メモ帳
   text: 前端學習筆記 & 日常
   tagline: 記錄一些關於前端學習的筆記以及一些有的沒的雜談。
-  image: https://raw.githubusercontent.com/vitejs/vite/main/docs/images/vite.svg
+  image: https://raw.githubusercontent.com/vitejs/vite/main/docs/public/logo-with-shadow.png
   actions:
     - theme: brand
       text: Get Started
@@ -18,12 +18,15 @@ hero:
       link: https://github.com/SheepNDW/memochou
 
 features:
+  - icon: 💡
+    title: About Me
+    details: I'm Sheep Yang, a passionate frontend developer from Taiwan.
   - icon: 💻
     title: Languages
     details: JavaScript
   - icon: 📚
-    title: Frameworks
-    details: Vue.js、Windi CSS、Bootstrap 5
+    title: Frontend Skills
+    details: Vue、React、TypeScript、TailwindCSS、WindiCSS
   - icon: 🛠️
     title: Tools
     details: Vite、Webpack
