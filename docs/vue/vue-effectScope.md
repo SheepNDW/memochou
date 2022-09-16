@@ -5,7 +5,7 @@ outline: deep
 
 # effectScope()
 
-本文為閱讀完此 [RFC](https://github.com/vuejs/rfcs/blob/master/active-rfcs/0041-reactivity-effect-scope.md) 後並參考了 VueUse 中的一些實作後的筆記。
+本篇筆記為閱讀完此 [RFC](https://github.com/vuejs/rfcs/blob/master/active-rfcs/0041-reactivity-effect-scope.md) 後並參考了 VueUse 中的一些實作後的筆記。
 
 ###### tags: `vue`
 
@@ -305,3 +305,69 @@ onScopeDispose(dispose);
 
 我們還可以利用 `effectScope` 去模擬一個 `store` 來完成一套比較靈活的狀態管理。
 
+* 創建一個生成全域狀態的函式
+
+```js
+import { effectScope } from 'vue';
+
+/**
+ * 讓狀態存在於全域作用域讓多個 Vue 實例複用
+ * @param {() => T} stateFactory - 創建狀態的工廠函式
+ * @returns stateFactory 的回傳值
+ */
+export function createGlobalState(stateFactory) {
+  let initialized = false;
+  let state;
+  const scope = effectScope(true);
+
+  return () => {
+    if (!initialized) {
+      // 只在首次呼叫時執行，防止重複觸發 run
+      state = scope.run(stateFactory);
+      initialized = true;
+    }
+    return state;
+  };
+}
+```
+
+* 撰寫一個 `store`
+
+```js
+import { ref, computed } from 'vue';
+import { createGlobalState } from '../utils/createGlobalState';
+
+export default createGlobalState(() => {
+  // state
+  const count = ref(0);
+
+  // getters
+  const doubleCount = computed(() => count.value * 2);
+
+  // actions
+  const increment = () => count.value++;
+
+  return { count, doubleCount, increment };
+});
+```
+
+* 在不同元件裡使用它
+
+```js
+/* A.vue */
+import useStore from '@/composable/useStore';
+const { count, doubleCount, increment } = useStore();
+
+/* B.vue */
+import useStore from '@/composable/useStore';
+const { count, doubleCount, increment } = useStore();
+```
+
+此時 A B 兩個元件呼叫這個 store 所拿到的 `count`、`doubleCount` 將會是同一份，也就是說 `effectScope` 同時也提供了新的狀態管理方式，在一些情境下可以替代 `vuex`。
+
+上面的實作是參照了 VueUse 中的 [createGlobalState](https://vueuse.org/shared/createglobalstate/) 函式的原始碼，VueUse 裡大量使用了 `effectScope` 去管理響應式副作用，想了解更多使用法也可以自行去參考 VueUse 文檔中的範例及原始碼。
+
+> 參考資料：
+> * [effectScope](https://vuejs.org/api/reactivity-advanced.html#effectscope) - @Vue doc
+> * [createGlobalState](https://vueuse.org/shared/createglobalstate/) - @VueUse
+> * [How to understand the effectscope in Vue?](https://stackoverflow.com/questions/70493794/how-to-understand-the-effectscope-in-vue) - @stack overflow
