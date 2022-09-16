@@ -110,6 +110,11 @@ function sidebarCSS() {
       ],
     },
     {
+      text: 'Uno CSS',
+      collapsible: true,
+      items: [{ text: 'UnoCSS 使用', link: '/css/unocss/installation' }],
+    },
+    {
       text: 'CSS Tricks',
       collapsible: true,
       items: [
