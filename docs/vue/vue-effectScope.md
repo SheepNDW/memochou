@@ -367,6 +367,10 @@ const { count, doubleCount, increment } = useStore();
 
 上面的實作是參照了 VueUse 中的 [createGlobalState](https://vueuse.org/shared/createglobalstate/) 函式的原始碼，VueUse 裡大量使用了 `effectScope` 去管理響應式副作用，想了解更多使用法也可以自行去參考 VueUse 文檔中的範例及原始碼。
 
+## Online Demo
+
+案例實作 Demo code：[StackBlitz](https://stackblitz.com/edit/vitejs-vite-6fv3dg?file=src%2FApp.vue)
+
 > 參考資料：
 > * [effectScope](https://vuejs.org/api/reactivity-advanced.html#effectscope) - @Vue doc
 > * [createGlobalState](https://vueuse.org/shared/createglobalstate/) - @VueUse
