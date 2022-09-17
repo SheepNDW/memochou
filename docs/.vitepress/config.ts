@@ -9,12 +9,12 @@ export default {
       'link',
       {
         rel: 'icon',
-        href: 'https://raw.githubusercontent.com/vitejs/vite/main/docs/images/vite.svg',
+        href: '/favicon.png',
       },
     ],
   ],
   themeConfig: {
-    logo: 'https://raw.githubusercontent.com/vitejs/vite/main/docs/images/vite.svg',
+    logo: '/sheep_logo.png',
     nav: nav(),
     sidebar: {
       '/vue/': sidebarVue(),
