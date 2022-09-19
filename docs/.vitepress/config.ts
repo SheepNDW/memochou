@@ -23,6 +23,7 @@ export default {
       '/typescript/': sidebarTS(),
       '/css/': sidebarCSS(),
       '/game-development/': sidebarGameDev(),
+      '/test/': sidebarTest(),
     },
     footer: {
       copyright: `Copyright © ${new Date().getFullYear()} Sheep Yang`,
@@ -53,6 +54,7 @@ function nav() {
       items: [
         { text: 'Vite', link: '/vite/', activeMatch: '/vite/' },
         { text: 'Git', link: '/git/', activeMatch: '/git/' },
+        { text: 'Test', link: '/test/', activeMatch: '/test/' },
       ],
     },
     {
@@ -215,6 +217,15 @@ function sidebarGameDev() {
         },
         { text: 'Tic Tac Toe', link: '/game-development/tic-tac-toe' },
       ],
+    },
+  ];
+}
+
+function sidebarTest() {
+  return [
+    {
+      text: 'Vitest',
+      items: [{ text: '[Udemy] Testing Basics', link: '/test/vitest/basics' }],
     },
   ];
 }
