@@ -53,6 +53,7 @@ function nav() {
       items: [
         { text: 'Vite', link: '/vite/', activeMatch: '/vite/' },
         { text: 'Git', link: '/git/', activeMatch: '/git/' },
+        { text: 'Test', link: '/test/vitest/basic', activeMatch: '/test/' },
       ],
     },
     {
