@@ -132,4 +132,173 @@ it('should generate a token value', async () => {
 
 文檔上又稱為 Setup and Teardown，這些 hook 可以讓我們進到測試的生命週期，以避免重複設置和拆卸程式碼。它們作用於當前上下文，如果在頂層使用，則會作用於檔案；如果在 `describe` 內，則作用於該 suite 中。
 
+案例：有一個名為 User 的類別，現在要對其屬性方法進行測試。
 
+```js
+// hooks.js
+export class User {
+  constructor(email) {
+    this.email = email;
+  }
+
+  updateEmail(newEmail) {
+    this.email = newEmail;
+  }
+
+  clearEmail() {
+    this.email = '';
+  }
+}
+```
+
+在不使用 hook 的情況下，你或許會這樣去寫測試：
+
+```js
+// hooks.spec.js
+import { it, expect } from 'vitest';
+
+import { User } from './hooks';
+
+it('should update the email', () => {
+  const testEmail = 'test@test.com';
+  const newTestEmail = 'test2@test.com';
+
+  const user = new User(testEmail);
+  user.updateEmail(newTestEmail);
+
+  expect(user.email).toBe(newTestEmail);
+});
+
+it('should have an email property', () => {
+  const testEmail = 'test@test.com';
+
+  const user = new User(testEmail);
+
+  expect(user).toHaveProperty('email');
+});
+
+it('should store the provided email value', () => {
+  const testEmail = 'test@test.com';
+
+  const user = new User(testEmail);
+
+  expect(user.email).toBe(testEmail);
+});
+
+it('should clear the email', () => {
+  const testEmail = 'test@test.com';
+
+  const user = new User(testEmail);
+  user.clearEmail();
+
+  expect(user.email).toBe('');
+});
+
+it('should still have an email property after clearing the email', () => {
+  const testEmail = 'test@test.com';
+
+  const user = new User(testEmail);
+  user.clearEmail();
+
+  expect(user).toHaveProperty('email');
+});
+```
+
+可以看到在上面的測試程式碼中不斷地重複宣告 `testEmail` 還有重新 new 了一個 `user`。
+
+此時也許有人會想把這兩件事給提出去作為一個公共的變數使用：
+
+```js
+const testEmail = 'test@test.com';
+const user = new User(testEmail);
+
+it('should update the email', () => {
+  const newTestEmail = 'test2@test.com';
+
+  user.updateEmail(newTestEmail);
+
+  expect(user.email).toBe(newTestEmail);
+});
+
+it('should have an email property', () => {
+  expect(user).toHaveProperty('email');
+});
+
+it('should store the provided email value', () => {
+  expect(user.email).toBe(testEmail);
+});
+
+it('should clear the email', () => {
+  user.clearEmail();
+
+  expect(user.email).toBe('');
+});
+
+it('should still have an email property after clearing the email', () => {
+  user.clearEmail();
+
+  expect(user).toHaveProperty('email');
+});
+```
+
+看起來一切安好但是測試一跑下去直接就 Fail 了：
+
+![](https://i.imgur.com/Fy8gKca.png)
+
+這是因為我們在 `should update the email` 的測試中將 email 給更新了，導致後來的測試受到影響，此時 Vitest 提供的 Hook 就派上用場了：
+
+* beforeAll - 目前 context 開始前
+* beforeEach - 測試案例開始前
+* afterEach - 測試案例結束後
+* afterAll - 目前 context 結束後
+
+```js
+const testEmail = 'test@test.com';
+let user;
+
+beforeAll(() => {
+  user = new User(testEmail);
+  console.log('beforeAll()');
+});
+
+// 在每次測試案例開始前 reset 掉 user
+beforeEach(() => {
+  user = new User(testEmail);
+  console.log('beforeEach()');
+});
+afterEach(() => {
+  // user = new User(testEmail);
+  console.log('afterEach()');
+});
+afterAll(() => {
+  console.log('afterAll()');
+});
+
+it('should update the email', () => {
+  const newTestEmail = 'test2@test.com';
+
+  user.updateEmail(newTestEmail);
+
+  expect(user.email).toBe(newTestEmail);
+});
+
+it('should have an email property', () => {
+  expect(user).toHaveProperty('email');
+});
+
+it('should store the provided email value', () => {
+  expect(user.email).toBe(testEmail);
+});
+
+it('should clear the email', () => {
+  user.clearEmail();
+
+  expect(user.email).toBe('');
+});
+
+it('should still have an email property after clearing the email', () => {
+  user.clearEmail();
+
+  expect(user).toHaveProperty('email');
+});
+```
