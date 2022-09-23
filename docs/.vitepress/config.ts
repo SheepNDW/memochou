@@ -239,6 +239,7 @@ function sidebarTest() {
           text: '[Udemy] Advanced Testing Concepts',
           link: '/test/vitest/advanced',
         },
+        { text: '[Udemy] Mocking & Spies', link: '/test/vitest/mocking-spies' },
       ],
     },
   ];
