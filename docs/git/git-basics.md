@@ -2,19 +2,19 @@
 
 ###### tags: `git`
 
-## 1. 獲取 Git 倉庫的兩種方式
+## 1. 獲取 Git 儲存庫的兩種方式
 
-1. 將尚未進行版本控制的本地目錄轉換為 git 倉庫
-2. 從其他託管倉庫中 <font v-pre color="#A10710">clone</font> 一個已存在的 git 倉庫
+1. 將尚未進行版本控制的本地目錄轉換為 git 儲存庫
+2. 從其他託管儲存庫中 <font v-pre color="#A10710">clone</font> 一個已存在的 git 儲存庫
 
-## 2. 在現有的目錄中初始化倉庫
+## 2. 在現有的目錄中初始化儲存庫
 
 如果自己有一個尚未進行版控的專案目錄，想要用 Git 來控制它，須執行下列兩步驟：
 
 1. 在專案目錄中打開 CMD 或是 git bash
-2. 執行 <font v-pre color="#A10710">`git init`</font> 指令將當前目錄轉換為 git 倉庫
+2. 執行 <font v-pre color="#A10710">`git init`</font> 指令將當前目錄轉換為 git 儲存庫
 
-git init 指令會建立一個名為 .git 的隱藏檔案，<font v-pre color="#A10710">這個 .git 檔案就是當前專案的 Git 倉庫</font>，裡面包含了初始的必要檔案，這些檔案是 Git 倉庫的必要組成部分。
+git init 指令會建立一個名為 .git 的隱藏檔案，<font v-pre color="#A10710">這個 .git 檔案就是當前專案的 Git 儲存庫</font>，裡面包含了初始的必要檔案，這些檔案是 Git 儲存庫的必要組成部分。
 
 > ※ 查看隱藏檔案方法
 > ![](https://i.imgur.com/WQsmSaw.png)
@@ -71,7 +71,7 @@ git add index.html
 
 ## 7. 提交更新
 
-現在暫存區有一個 index.html 等待被提交到 Git 倉庫進行保存。 可以執行 <font v-pre color="#A10710">`git commit`</font> 指令進行提交，其中 <font v-pre color="#A10710">-m 選項</font>後面是本次的<font v-pre color="#A10710">提交訊息</font>，用來<font v-pre color="#A10710">對提交的內容做進一步的描述：</font>
+現在暫存區有一個 index.html 等待被提交到 Git 儲存庫進行保存。 可以執行 <font v-pre color="#A10710">`git commit`</font> 指令進行提交，其中 <font v-pre color="#A10710">-m 選項</font>後面是本次的<font v-pre color="#A10710">提交訊息</font>，用來<font v-pre color="#A10710">對提交的內容做進一步的描述：</font>
 
 ```sh
 git commit -m "新增了一個 index.html 檔案"
@@ -89,7 +89,7 @@ git commit -m "新增了一個 index.html 檔案"
 
 ## 8. 對已提交的檔案進行修改
 
-目前，index.html 檔案已被 Git 追蹤，並且工作區與 Git 倉庫中的 index.html 保持一致。 當我們修改了工作區中的 index.html 的內容之後，再次執行 `git status` 或是 `git status -s` 指令，會看到如下內容：
+目前，index.html 檔案已被 Git 追蹤，並且工作區與 Git 儲存庫中的 index.html 保持一致。 當我們修改了工作區中的 index.html 的內容之後，再次執行 `git status` 或是 `git status -s` 指令，會看到如下內容：
 
 ![](https://i.imgur.com/31O1jrO.png)
 
@@ -108,15 +108,15 @@ index.html 出現在 <font v-pre color="#A10710">Changes not staged for commit</
 
 ## 10. 提交已暫存的檔案
 
-再次執行 <font v-pre color="#A10710">`git commit -m "提交訊息"`</font> 指令，即可將暫存區中記錄的 index.html 的 commit，提交到 Git 倉庫進行保管：
+再次執行 <font v-pre color="#A10710">`git commit -m "提交訊息"`</font> 指令，即可將暫存區中記錄的 index.html 的 commit，提交到 Git 儲存庫進行保管：
 
 ![](https://i.imgur.com/DOXT96G.png)
 
 ## 11. 撤銷對檔案的修改
 > **撤銷操作的本質**：
-> 用 Git 倉庫中的檔案覆蓋掉工作區指定的檔案，一般實際開發中比較少使用到。
+> 用 Git 儲存庫中的檔案覆蓋掉工作區指定的檔案，一般實際開發中比較少使用到。
 
-撤銷對檔案的修改指的是：把對工作區中對應檔案的修改，<font v-pre color="#A10710">還原</font>成 Git 倉庫中所保管的版本。
+撤銷對檔案的修改指的是：把對工作區中對應檔案的修改，<font v-pre color="#A10710">還原</font>成 Git 儲存庫中所保管的版本。
 操作的結果：所有的改動會丟失，且無法恢復! <font v-pre color="#A10710">危險性較高，請慎重操作!</font>
 
 假設我改動了 index.html 裡面的內容，但是突然後悔了，此時使用 `git checkout -- index.html` 指令，即可撤銷對 index.html 的修改
@@ -149,7 +149,7 @@ git reset HEAD 要移除的檔案名稱
 
 ## 14. 跳過使用暫存區
 
-Git 標準工作流程為**工作區** → **暫存區** → **Git 倉庫**，但有時候這麼做略為繁瑣，此時可以跳過暫存區，直接將工作區中的修改提交到 Git 倉庫，這時候 Git 工作流程簡化為了**工作區** → **Git倉庫**。
+Git 標準工作流程為**工作區** → **暫存區** → **Git 儲存庫**，但有時候這麼做略為繁瑣，此時可以跳過暫存區，直接將工作區中的修改提交到 Git 儲存庫，這時候 Git 工作流程簡化為了**工作區** → **Git儲存庫**。
 
 Git 提供了一個跳過使用暫存區的方式，只要在提交的時候，給 <font v-pre color="#A10710">git commit</font> 加上 <font v-pre color="#A10710">-a</font> 選項，Git 就會自動把所有已經追蹤過的檔案暫存起來一併提交，從而跳過 git add 步驟：
 
@@ -162,15 +162,15 @@ git commit -a -m "提交訊息"
 
 ## 15. 移除檔案
 
-從 Git 倉庫中移除檔案的方式有兩種：
+從 Git 儲存庫中移除檔案的方式有兩種：
 
-1. 從 Git 倉庫和工作區中<font v-pre color="#A10710">同時移除</font>對應檔案
-2. 只從 Git 倉庫中移除指定檔案，但保留工作區中的對應檔案
+1. 從 Git 儲存庫和工作區中<font v-pre color="#A10710">同時移除</font>對應檔案
+2. 只從 Git 儲存庫中移除指定檔案，但保留工作區中的對應檔案
 
 ```sh
-# 從 Git 倉庫和工作區中同時移除 index.js 檔案
+# 從 Git 儲存庫和工作區中同時移除 index.js 檔案
 git rm -f index.js
-# 只從 Git 倉庫中移除 index.css, 但保留工作區中的 index.css 檔案
+# 只從 Git 儲存庫中移除 index.css, 但保留工作區中的 index.css 檔案
 git rm --cached index.css
 ```
 
@@ -258,11 +258,11 @@ git reset --hard <commitID>
 
 ## 21. 小結
 
-1. 初始化 Git 倉庫
+1. 初始化 Git 儲存庫
    * `git init`
 2. 查看檔案狀態
    * `git status` 或 `git status -s`
 3. 一次性將多個檔案加入至暫存區
    * `git add .`
-4. 將暫存區中的檔案提交至 Git 倉庫
+4. 將暫存區中的檔案提交至 Git 儲存庫
    * `git commit -m "提交訊息"`
