@@ -6,7 +6,7 @@
 
 ## Master (Main) 主分支
 
-在初始化本地 Git 倉庫時，Git 會預設幫我們創建一個名字叫做 <font v-pre color="#A10710">master (main)</font> 的分支。通常我們把這個分支稱為<font v-pre color="#A10710">主分支</font>。
+在初始化本地 Git 儲存庫時，Git 會預設幫我們創建一個名字叫做 <font v-pre color="#A10710">master (main)</font> 的分支。通常我們把這個分支稱為<font v-pre color="#A10710">主分支</font>。
 
 ![](https://i.imgur.com/HpPmXzY.png)
 
@@ -22,7 +22,7 @@
 
 ## 查看分支列表
 
-使用如下指令，可以查看當前 Git 倉庫中所有的分支列表：
+使用如下指令，可以查看當前 Git 儲存庫中所有的分支列表：
 
 ```sh
 git branch
