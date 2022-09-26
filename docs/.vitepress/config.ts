@@ -240,6 +240,7 @@ function sidebarTest() {
           link: '/test/vitest/advanced',
         },
         { text: '[Udemy] Mocking & Spies', link: '/test/vitest/mocking-spies' },
+        { text: '[Udemy] More on Mocking', link: '/test/vitest/more-mocking' },
       ],
     },
   ];
