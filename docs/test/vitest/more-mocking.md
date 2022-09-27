@@ -95,3 +95,34 @@ it('should convert the provided data to JSON before sending the request', async 
   expect(errorMessage).not.toBe('Not a string.');
 });
 ```
+
+如果要測試一個拋出 `HttpError` 錯誤的案例，可以使用 `mockImplementationOnce` 去模擬 `testFetch` 然後將裡面的 `ok` 設為 `false`：
+
+```js
+import { HttpError } from './errors';
+
+it('should throw an HttpError in case of non-ok responses', () => {
+  testFetch.mockImplementationOnce((url, options) => {
+    return new Promise((resolve, reject) => {
+      if (typeof options.body !== 'string') {
+        return reject('Not a string.');
+      }
+      const testResponse = {
+        ok: false,
+        json() {
+          return new Promise((resolve, reject) => {
+            resolve(testResponseData);
+          });
+        },
+      };
+      resolve(testResponse);
+    });
+  });
+
+  const testData = { key: 'test' };
+
+  return expect(sendDataRequest(testData)).rejects.toBeInstanceOf(HttpError);
+});
+```
+
+

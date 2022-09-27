@@ -241,6 +241,7 @@ function sidebarTest() {
         },
         { text: '[Udemy] Mocking & Spies', link: '/test/vitest/mocking-spies' },
         { text: '[Udemy] More on Mocking', link: '/test/vitest/more-mocking' },
+        { text: '[Udemy] Testing & The DOM', link: '/test/vitest/dom' },
       ],
     },
   ];
