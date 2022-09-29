@@ -2,12 +2,9 @@
 outline: deep
 ---
 
-
 # effectScope()
 
 本篇筆記為閱讀完此 [RFC](https://github.com/vuejs/rfcs/blob/master/active-rfcs/0041-reactivity-effect-scope.md) 後並參考了 VueUse 中的一些實作後的筆記。
-
-###### tags: `vue`
 
 `effectScope` 是 Vue 3.2 才出現的 API，[官方文檔](https://vuejs.org/api/reactivity-advanced.html#effectscope)對其的說明是創建一個 effect 作用域，可以捕獲其中所建立的響應式副作用 (例如 computed, watcher)，這樣捕獲到的副作用可以一起處理，更多此 API 的說明可以參考官方[RFC](https://github.com/vuejs/rfcs/blob/master/active-rfcs/0041-reactivity-effect-scope.md)
 
