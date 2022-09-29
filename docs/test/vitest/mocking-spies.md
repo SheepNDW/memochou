@@ -144,7 +144,9 @@ export default function writeData(data, filename) {
 ```js
 vi.mock('path', () => {
   return {
-    default: { // 要先用一個 default 包起來
+    // 如果是預設匯出的引入要用一個 default 當作 key
+    // 如果是具名匯出的引入則用該名稱當作 key
+    default: {
       join: (...args) => {
         return args[args.length - 1];
       },
