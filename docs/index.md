@@ -9,7 +9,7 @@ hero:
   text: 前端學習筆記 & 日常
   tagline: 記錄一些關於前端學習的筆記以及一些有的沒的雜談。
   # image: https://raw.githubusercontent.com/vitejs/vite/main/docs/public/logo-with-shadow.png
-  image: /sheep_logo_cover.png
+  image: /sheep_cover.jpg
   actions:
     - theme: brand
       text: Get Started

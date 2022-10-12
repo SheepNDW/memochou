@@ -9,12 +9,12 @@ export default {
       'link',
       {
         rel: 'icon',
-        href: '/favicon.png',
+        href: '/logo/code-sheep-light.svg',
       },
     ],
   ],
   themeConfig: {
-    logo: '/sheep_logo.png',
+    logo: '/logo/code-sheep-light.svg',
     nav: nav(),
     sidebar: {
       '/vue/': sidebarVue(),
