@@ -205,6 +205,11 @@ function sidebarTS() {
         { text: 'Modules', link: '/typescript/handbook/modules' },
       ],
     },
+    {
+      text: 'TypeScript Notes',
+      collapsible: true,
+      items: [{ text: '泛型 Generics', link: '/typescript/generics' }],
+    },
   ];
 }
 
