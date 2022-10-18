@@ -208,7 +208,10 @@ function sidebarTS() {
     {
       text: 'TypeScript Notes',
       collapsible: true,
-      items: [{ text: '泛型 Generics', link: '/typescript/generics' }],
+      items: [
+        { text: '泛型 Generics', link: '/typescript/generics' },
+        { text: '裝飾器 Decorators', link: '/typescript/decorators' },
+      ],
     },
   ];
 }
