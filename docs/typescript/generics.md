@@ -154,3 +154,69 @@ class DataStorage<T extends string | number | boolean> {
 }
 ```
 
+## Generic Utility Types
+
+### Partial
+
+有時候在寫程式時會遇到下面這種情況，我們會先給定一個空物件，然後才往裡面去添加屬性，但是在 TypeScript 裡會收到錯誤警告：
+
+```ts
+interface CourseGoal {
+  title: string;
+  description: string;
+  completeUntil: Date;
+}
+
+function createCourseGoal(
+  title: string,
+  description: string,
+  date: Date
+): CourseGoal {
+  let courseGoal = {};
+  courseGoal.title = title; // error
+  courseGoal.description = description; // error
+  courseGoal.completeUntil = date; // error
+  return courseGoal; // error
+}
+```
+
+如果給初始的 courseGoal 指定型別的話，則最初的空物件會報錯：
+
+```ts
+let courseGoal: CourseGoal = {};
+// 類型 '{}' 在類型 'CourseGoal' 中缺少下列屬性: title, description, completeUntil
+```
+
+此時可以使用內建的 `Partial` 型別，告訴 TypeScript 這個物件最終會是什麼型別：
+
+```ts
+function createCourseGoal(
+  title: string,
+  description: string,
+  date: Date
+): CourseGoal {
+  let courseGoal: Partial<CourseGoal> = {};
+  courseGoal.title = title;
+  courseGoal.description = description;
+  courseGoal.completeUntil = date;
+
+  // return 時斷言為 CourseGoal 告訴 TS 它已經不再是 Partial
+  return courseGoal as CourseGoal;
+}
+```
+
+`Partial` 型別提供了開發者需要逐步添加屬性的彈性。
+
+### Readonly
+
+TypeScript 提供了一個內建的泛型 `Readonly` 讓我們可以鎖定特定的型別使其為唯獨的：
+
+```ts
+const names: Readonly<string[]> = ['Sheep', 'Hitsuji'];
+
+// 此時如果想對 names 進行增刪等操作都會報錯
+names.push('Bob');
+names.pop();
+```
+
+可以參考文檔看更多 [Utility Types](https://www.typescriptlang.org/docs/handbook/utility-types.html)
