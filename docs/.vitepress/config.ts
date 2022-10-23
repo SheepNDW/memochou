@@ -22,7 +22,7 @@ export default {
       '/git/': sidebarGit(),
       '/typescript/': sidebarTS(),
       '/css/': sidebarCSS(),
-      '/game-development/': sidebarGameDev(),
+      '/javascript/': sidebarJS(),
       '/test/': sidebarTest(),
     },
     footer: {
@@ -48,6 +48,7 @@ function nav() {
     { text: '關於', link: '/about/', activeMatch: '/about/' },
     { text: 'Vue', link: '/vue/', activeMatch: '/vue/' },
     { text: 'TypeScript', link: '/typescript/', activeMatch: '/typescript/' },
+    { text: 'JavaScript', link: '/javascript/', activeMatch: '/javascript/' },
     { text: 'CSS', link: '/css/', activeMatch: '/css/' },
     {
       text: 'Tools',
@@ -56,11 +57,6 @@ function nav() {
         { text: 'Git', link: '/git/', activeMatch: '/git/' },
         { text: 'Test', link: '/test/', activeMatch: '/test/' },
       ],
-    },
-    {
-      text: 'Game Dev',
-      link: '/game-development/',
-      activeMatch: '/game-development/',
     },
   ];
 }
@@ -216,17 +212,25 @@ function sidebarTS() {
   ];
 }
 
-function sidebarGameDev() {
+function sidebarJS() {
   return [
+    {
+      text: 'JS 核心篇筆記',
+      collapsible: true,
+      items: [{ text: 'ES6 學習筆記', link: '/javascript/advanced/es6' }],
+    },
     {
       text: 'JS 小遊戲',
       collapsible: true,
       items: [
         {
           text: 'Rock paper scissors',
-          link: '/game-development/rock-paper-scissors',
+          link: '/javascript/game-development/rock-paper-scissors',
         },
-        { text: 'Tic Tac Toe', link: '/game-development/tic-tac-toe' },
+        {
+          text: 'Tic Tac Toe',
+          link: '/javascript/game-development/tic-tac-toe',
+        },
       ],
     },
   ];
