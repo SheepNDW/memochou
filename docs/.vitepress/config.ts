@@ -119,7 +119,7 @@ function sidebarCSS(): DefaultTheme.SidebarGroup[] {
       collapsible: true,
       items: [
         {
-          text: '<fieldset> 與 <legend> 標籤',
+          text: 'fieldset 與 legend 標籤',
           link: '/css/css-tricks/fieldset-and-legend',
         },
       ],
