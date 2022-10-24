@@ -1,4 +1,6 @@
-export default {
+import { defineConfig, type DefaultTheme } from 'vitepress';
+
+export default defineConfig({
   base: '/memochou/',
   lang: 'zh-Hant-TW',
   title: 'シープの雑談メモ帳',
@@ -41,9 +43,9 @@ export default {
   markdown: {
     theme: { light: 'vitesse-light', dark: 'vitesse-dark' },
   },
-};
+});
 
-function nav() {
+function nav(): DefaultTheme.NavItem[] {
   return [
     { text: '關於', link: '/about/', activeMatch: '/about/' },
     { text: 'Vue', link: '/vue/', activeMatch: '/vue/' },
@@ -61,7 +63,7 @@ function nav() {
   ];
 }
 
-function sidebarVue() {
+function sidebarVue(): DefaultTheme.SidebarGroup[] {
   return [
     {
       text: 'Vue 3',
@@ -97,7 +99,7 @@ function sidebarVue() {
   ];
 }
 
-function sidebarCSS() {
+function sidebarCSS(): DefaultTheme.SidebarGroup[] {
   return [
     {
       text: 'Tailwind CSS',
@@ -125,7 +127,7 @@ function sidebarCSS() {
   ];
 }
 
-function sidebarVite() {
+function sidebarVite(): DefaultTheme.SidebarGroup[] {
   return [
     {
       text: 'Vite 開發記錄',
@@ -138,7 +140,7 @@ function sidebarVite() {
   ];
 }
 
-function sidebarGit() {
+function sidebarGit(): DefaultTheme.SidebarGroup[] {
   return [
     {
       text: 'Git 學習筆記',
@@ -152,7 +154,7 @@ function sidebarGit() {
   ];
 }
 
-function sidebarTS() {
+function sidebarTS(): DefaultTheme.SidebarGroup[] {
   return [
     {
       text: 'TypeScript Handbook',
@@ -212,7 +214,7 @@ function sidebarTS() {
   ];
 }
 
-function sidebarJS() {
+function sidebarJS(): DefaultTheme.SidebarGroup[] {
   return [
     {
       text: 'JS 核心篇筆記',
@@ -236,7 +238,7 @@ function sidebarJS() {
   ];
 }
 
-function sidebarTest() {
+function sidebarTest(): DefaultTheme.SidebarGroup[] {
   return [
     {
       text: 'Vitest',
