@@ -1,3 +1,7 @@
+---
+outline: deep
+---
+
 # ECMAScript 6 學習筆記
 
 ## 變數解構賦值
@@ -36,4 +40,46 @@ let arr = [1, [2, 3, 4], 5, 6];
 let [a, [b, , d], c] = arr;
 
 console.log(b, d); // prints: 2 4
+```
+
+### 物件解構
+
+巢狀結構物件的解構方式：
+
+```js
+let res = {
+  code: 200,
+  data: {
+    list: ['aaa', 'bbb', 'ccc'],
+  },
+};
+
+let {
+  data: {
+    list: [x, y, z],
+  },
+} = res;
+
+console.log(x, y, z); // 'aaa' 'bbb' 'ccc'
+```
+
+函式參數解構：
+
+```js
+function getData() {
+  let res = {
+    code: 200,
+    data: {
+      list: ['aaa', 'bbb', 'ccc'],
+    },
+  };
+
+  test(res);
+}
+
+function test({ code, data: { list } }) {
+  console.log(code, list); // prints: 200 ['aaa', 'bbb', 'ccc']
+}
+
+getData();
 ```
