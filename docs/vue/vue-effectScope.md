@@ -10,32 +10,32 @@ outline: deep
 
 ## `effectScope()`
 
-* 型別
+- 型別
 
 ```ts
-function effectScope(detached?: boolean): EffectScope
+function effectScope(detached?: boolean): EffectScope;
 
 interface EffectScope {
-  run<T>(fn: () => T): T | undefined // undefined if scope is inactive
-  stop(): void
+  run<T>(fn: () => T): T | undefined; // undefined if scope is inactive
+  stop(): void;
 }
 ```
 
-* 範例
+- 範例
 
 ```js
-const scope = effectScope()
+const scope = effectScope();
 
 scope.run(() => {
-  const doubled = computed(() => counter.value * 2)
+  const doubled = computed(() => counter.value * 2);
 
-  watch(doubled, () => console.log(doubled.value))
+  watch(doubled, () => console.log(doubled.value));
 
-  watchEffect(() => console.log('Count: ', doubled.value))
-})
+  watchEffect(() => console.log('Count: ', doubled.value));
+});
 
 // to dispose all effects in the scope
-scope.stop()
+scope.stop();
 ```
 
 ## 為什麼會有 effectScope？
@@ -44,7 +44,7 @@ scope.stop()
 
 然而如果我們在元件之外或是做為一個獨立的 package 使用它們時，就需要手動去收集&清除這些副作用，如下：
 
-* 收集：
+- 收集：
 
 ```js
 const disposables = [];
@@ -67,7 +67,7 @@ const stopWatch2 = watch(doubled, () => {
 disposables.push(stopWatch2);
 ```
 
-* 清理：
+- 清理：
 
 ```js
 disposables.forEach((f) => f());
@@ -76,12 +76,12 @@ disposables = [];
 
 手動去執行不僅複雜的邏輯收集成本較高之外，如果忘記收集也可能造成記憶體洩漏 (memory leaks)，effectScope 就是為了幫開發者做這件事而誕生的。
 
-
 ## effectScope 的使用
 
 ### 基本用法
 
 建立一個作用域 (scope)：
+
 ```js
 const scope = effectScope();
 ```
@@ -213,13 +213,13 @@ export function useMouse() {
 
 我們可以使用 detached scope 和 `onScopeDispose` 來做到這件事。首先我們需要將 `onUnmounted` 換成 `onScopeDispose`：
 
-```diff
-- import { ref, onUnmounted } from 'vue';
-+ import { ref, onScopeDispose } from 'vue';
+```js
+import { ref, onUnmounted } from 'vue'; // [!code --]
+import { ref, onScopeDispose } from 'vue'; // [!code ++]
 
 export function useMouse() {
-- onUnmounted(() => {
-+ onScopeDispose(() => {
+onUnmounted(() => { // [!code --]
+onScopeDispose(() => { // [!code ++]
     window.removeEventListener('mousemove', handler);
   });
 }
@@ -302,7 +302,7 @@ onScopeDispose(dispose);
 
 我們還可以利用 `effectScope` 去模擬一個 `store` 來完成一套比較靈活的狀態管理。
 
-* 創建一個生成全域狀態的函式
+- 創建一個生成全域狀態的函式
 
 ```js
 import { effectScope } from 'vue';
@@ -328,7 +328,7 @@ export function createGlobalState(stateFactory) {
 }
 ```
 
-* 撰寫一個 `store`
+- 撰寫一個 `store`
 
 ```js
 import { ref, computed } from 'vue';
@@ -348,7 +348,7 @@ export default createGlobalState(() => {
 });
 ```
 
-* 在不同元件裡使用它
+- 在不同元件裡使用它
 
 ```js
 /* A.vue */
@@ -369,6 +369,7 @@ const { count, doubleCount, increment } = useStore();
 案例實作 Demo code：[StackBlitz](https://stackblitz.com/edit/vitejs-vite-6fv3dg?file=src%2FApp.vue)
 
 > 參考資料：
-> * [effectScope](https://vuejs.org/api/reactivity-advanced.html#effectscope) - @Vue doc
-> * [createGlobalState](https://vueuse.org/shared/createglobalstate/) - @VueUse
-> * [How to understand the effectscope in Vue?](https://stackoverflow.com/questions/70493794/how-to-understand-the-effectscope-in-vue) - @stack overflow
+>
+> - [effectScope](https://vuejs.org/api/reactivity-advanced.html#effectscope) - @Vue doc
+> - [createGlobalState](https://vueuse.org/shared/createglobalstate/) - @VueUse
+> - [How to understand the effectscope in Vue?](https://stackoverflow.com/questions/70493794/how-to-understand-the-effectscope-in-vue) - @stack overflow
