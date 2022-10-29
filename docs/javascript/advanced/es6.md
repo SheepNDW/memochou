@@ -202,3 +202,146 @@ Math.sign(0); // +0
 Math.sign(-0); // -0
 Math.sign('sheep'); // NaN
 ```
+
+## 陣列的擴充功能
+
+### 展開運算子 Spread Operator
+
+> 展開（Spread）運算子就是三個點（`...`）
+
+常被用來淺複製一個陣列如下：
+
+```js
+const arr = [1, 2, 3];
+const copyArr = [...arr];
+```
+
+或是用在合併陣列：
+
+```js
+const arr = [1, 2, 3];
+const arr2 = [4, 5, 6];
+
+console.log([...arr, ...arr2]); // prints: [ 1, 2, 3, 4, 5, 6 ]
+```
+
+與解構賦值一起使用可以做到下面的效果：
+
+```js
+const myArr = [1, 2, 3, 4, 5, 6, 7, 8];
+const [a, b, ...c] = myArr;
+
+console.log(a, b, c); // prints: 1 2 [ 3, 4, 5, 6, 7, 8 ]
+```
+
+### `Array.from()`
+
+> `Array.from` 方法可以用來將類似陣列的物件（array-like object）和可迭代（iterable）的物件轉換為真正的陣列。
+
+使用情境：
+
+- 將函式內部的 `arguments` 物件轉成真正的陣列：
+
+```js
+function test() {
+  console.log(arguments.filter); // undefined
+  console.log(Array.from(arguments).filter); // [Function: filter]
+}
+
+test(1, 2, 3, 4);
+```
+
+- 將 NodeList 轉為真正的陣列：
+
+```js
+const olis = document.querySelectorAll('li');
+
+Array.from(olis).map(() => {
+  // ...
+});
+```
+
+### `Array.of()`
+
+> `Array.of` 方法用在將一組值，轉換為陣列。
+
+這個方法主要是用來彌補 `Array()` 的不足之處，原本的建構函式 Array 當參數數量不同時會有不同的行為：
+
+```js
+Array(); // []
+Array(3); // [, , ,]
+Array(3, 11, 8); // [3, 11, 8]
+```
+
+`Array.of` 基本上可以用來替代 `Array()` 或是 `new Array()`，並且行為非常統一：
+
+```js
+Array.of(); // []
+Array.of(undefined); // [undefined]
+Array.of(1); // [1]
+Array.of(1, 2); // [1, 2]
+```
+
+### 陣列實體的 `find()`、`findIndex()`
+
+陣列的 `find` 方法，用於找出第一個符合條件的陣列成員。 它的參數是一個 `callback`，所有陣列成員依次執行該 `callback`，直到找出第一個回傳值為 `true` 的成員，然後回傳該成員。 如果沒有符合條件的成員，則回傳 `undefined`。
+
+```js
+const arr = [11, 12, 13, 14, 15];
+arr.find((item) => item > 13); // 14
+```
+
+陣列的 `findIndex` 方法的用法與 `find` 方法非常類似，回傳第一個符合條件的陣列成員的位置，如果所有成員都不符合條件，則回傳 `-1`。
+
+```js
+arr.findIndex((item) => item > 13); // 3
+```
+
+> 註：ES2022 中新增了從後面向前查找的 `findLast` 和 `findLastIndex` 兩個方法。
+
+### 陣列實體的 `fill()`
+
+> `fill` 方法使用給定值，填充一個陣列。
+
+可以快速填充一個初始化的空陣列：
+
+```js
+new Array(3).fill(7);
+// [7, 7, 7]
+```
+
+`fill` 方法還可以接受第二個和第三個參數，用於指定填充的起始位置和結束位置。
+
+```js
+['a', 'b', 'c'].fill(7, 1, 2);
+// ['a', 7, 'c']
+```
+
+### 陣列實體的`flat()`、`flatMap()`
+
+陣列的成員有時可能還是陣列，`flat` 方法可以將巢狀的陣列"攤平"，變成一個一維的陣列。並且這個方法回傳的是一個新的陣列，不會影響原本的陣列。
+
+```js
+const arr = [1, 2, 3, [4, 5, 6]];
+
+const arr1 = arr.flat();
+console.log(arr1); // prints: [ 1, 2, 3, 4, 5, 6 ]
+```
+
+`flatMap()` 方法對原陣列的每個成員執行一個函式（相當於執行 `Array.prototype.map()`），然後對回傳值組成的陣列執行 `flat()` 方法。 該方法回傳一個新陣列，不改變原陣列。
+
+```js
+const arr = [
+  {
+    name: '飲料',
+    list: ['可樂', '雪碧', '紅茶'],
+  },
+  {
+    name: '食物',
+    list: ['雞塊', '漢堡', '薯條'],
+  },
+];
+
+const res = arr.flatMap((item) => item.list);
+console.log(res); // prints: [ '可樂', '雪碧', '紅茶', '雞塊', '漢堡', '薯條' ]
+```
