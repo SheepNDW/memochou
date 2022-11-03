@@ -4,6 +4,10 @@ outline: deep
 
 # ECMAScript 6 學習筆記
 
+> 參考學習資源：[阮一峰 ECMAScript 6 (ES6) 標準入門教程 第三版](https://www.bookstack.cn/books/es6-3rd)、[從 ES6 開始的 JavaScript 學習生活](https://eddy-chang.gitbook.io/javascript-start-from-es6/)
+
+本筆記僅記錄複習 ES6+ 時一些不太熟悉或是比較重要的內容，並非所有的新特性及內容。
+
 ## 變數解構賦值
 
 ### 陣列解構
@@ -86,7 +90,7 @@ getData();
 
 ## 數值的擴充功能
 
-### 1. 二進位和八進位的寫法
+### 二進位和八進位的寫法
 
 ```js
 // 過去只有十進位和十六進位
@@ -105,7 +109,7 @@ console.log(num3); // prints: 4
 console.log(num4); // prints: 64
 ```
 
-### 2. `Number.isFinite`、`Number.isNaN`
+### `Number.isFinite`、`Number.isNaN`
 
 將全域的 `isFinite` 和 `isNaN` 方法加入到了 Number 物件的內建方法裡，進而讓開發者減少使用全域方法，在程式撰寫上更加模組化：
 
@@ -140,7 +144,7 @@ let num4 = isNaN('100'); // false
 
 它們和傳統的全域方法 `isFinite()` 和 `isNaN()` 的區別在於，傳統方法會先呼叫 `Number()` 進行非數值轉為數值，再進行判斷，而這兩個新方法只對數值有效，`Number.isFinite()` 對於非數值一律回傳 `false`,`Number.isNaN()` 只有對於 `NaN` 才回傳 `true`，非 `NaN` 一律回傳 `false`。
 
-### 3. `Number.isInteger`
+### `Number.isInteger`
 
 **Number.isInteger(value)**
 
@@ -153,7 +157,7 @@ let num3 = Number.isInteger('sheep'); // false
 let num4 = Number.isInteger('100'); // false
 ```
 
-### 4. 極小常數 `Number.EPSILON`
+### 極小常數 `Number.EPSILON`
 
 > 它表示 1 與大於 1 的最小浮點數之間的差。2^-52（2.220446049250313e-16）
 
@@ -168,7 +172,7 @@ console.log(0.1 + 0.2 === 0.3); // false
 
 `Number.EPSILON` 是 JavaScript 能夠表示的最小精度。因此如果兩個小數之間的誤差小於這個值，就可以認為這個誤差已經沒有意義了，視為相等。
 
-### 5. `Math.trunc()`
+### `Math.trunc()`
 
 > 將小數部分抹除，回傳一個整數。
 
@@ -191,7 +195,7 @@ Math.trunc(); // NaN
 Math.trunc(undefined); // NaN
 ```
 
-### 6. `Math.sign()`
+### `Math.sign()`
 
 > 用來判斷一個數到底是正數、負數、還是零。對於非數值，會先將其轉換為數值。
 
@@ -344,4 +348,111 @@ const arr = [
 
 const res = arr.flatMap((item) => item.list);
 console.log(res); // prints: [ '可樂', '雪碧', '紅茶', '雞塊', '漢堡', '薯條' ]
+```
+
+## 物件的擴充功能
+
+### 物件屬性名表達式
+
+```js
+const name = 'a';
+
+const obj = {
+  name: 'sheep',
+};
+
+// 此時打印 obj，屬性名稱仍為 name，因為 obj 裡的 name 被當作字串解析
+```
+
+通過給物件屬性名稱加上中括號 `[]`，就可以使用變數當作物件的屬性名稱：
+
+```js
+const name = 'a';
+
+const obj = {
+  [name]: 'sheep',
+};
+
+// 此時 obj 就會變成 { a: 'sheep' }
+```
+
+表達式寫法也適用於定義方法名：
+
+```js
+const obj = {
+  ['h' + 'ello']() {
+    return 'hi';
+  },
+};
+obj.hello(); // hi
+```
+
+### 物件的展開運算子
+
+> 用法和陣列的 `...` 差不多，但是物件的展開運算子是 ES9 (ES2018) 才加入。
+
+使用 `...` 快速合併物件：
+
+```js
+const obj1 = {
+  name: 'sheep',
+};
+
+const obj2 = {
+  age: 25,
+};
+
+const obj3 = {
+  name: 'hitsuji',
+};
+
+console.log({ ...obj1, ...obj2, ...obj3 });
+// prints: {name: 'hitsuji', age: 25}
+// 屬性若重名則以後來者為主
+```
+
+### `Object.assign()`
+
+在 ES9 之前若是要合併物件，需要使用 `Object.assign()` 方法來實作：
+
+```js
+const obj = {};
+const obj1 = {
+  name: 'sheep',
+};
+const obj2 = {
+  age: 25,
+};
+const obj3 = {
+  name: 'hitsuji',
+};
+
+console.log(Object.assign(obj, obj1, obj2, obj3));
+// prints: {name: 'hitsuji', age: 25}
+// obj = {name: 'hitsuji', age: 25}
+```
+
+`Object.assign` 會影響到第一個傳入的物件，因此如果不希望原資料被改變的話，可以先宣告一個空物件去接收。
+
+### `Object.is()`
+
+ES5 比較兩個值是否相等，只有兩個運算子：相等運算子（`==`）和嚴格相等運算子（`===`）。 它們都有缺點，前者會自動轉換資料型別，後者的 `NaN` 不等於自身，以及 `+0` 等於 `-0`。 JavaScript 缺乏一種運算，在所有環境中，只要兩個值是一樣的，它們就應該相等。
+
+`Object.is()` 被用來比較兩個值是否嚴格相等，與 `===` 的行為基本一致。
+
+```js
+Object.is('foo', 'foo'); // true
+Object.is({}, {}); // false
+```
+
+不同之處只有兩個：一是 `+0` 不等於 `-0`，二是 `NaN` 等於自身。
+
+```js
+// ===
+(parseInt('sheep') === NaN; // false
++0 === -0; // true
+
+// Object.is
+Object.is(parseInt('sheep'), NaN); // true
+Object.is(+0, -0); // false
 ```
