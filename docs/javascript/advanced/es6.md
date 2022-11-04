@@ -449,7 +449,7 @@ Object.is({}, {}); // false
 
 ```js
 // ===
-(parseInt('sheep') === NaN; // false
+parseInt('sheep') === NaN; // false
 +0 === -0; // true
 
 // Object.is
