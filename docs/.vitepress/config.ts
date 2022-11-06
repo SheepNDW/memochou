@@ -219,7 +219,10 @@ function sidebarJS(): DefaultTheme.SidebarGroup[] {
     {
       text: 'JS 核心篇筆記',
       collapsible: true,
-      items: [{ text: 'ES6 學習筆記', link: '/javascript/advanced/es6' }],
+      items: [
+        { text: 'ES6 學習筆記 (1)', link: '/javascript/advanced/es6' },
+        { text: 'ES6 學習筆記 (2)', link: '/javascript/advanced/es6-2' },
+      ],
     },
     {
       text: 'JS 小遊戲',
