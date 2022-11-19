@@ -94,3 +94,60 @@ try {
 }
 ```
 
+## 物件方法的擴充
+
+### Object.values() 和 Object.entries()
+
+ES2017 引入了跟 `Object.keys` 配套的 `Object.values` 和 `Object.entries`，作為遍歷一個物件的補充手段。
+
+```js
+let obj = {
+  name: 'sheep',
+  age: 25,
+};
+
+console.log(Object.values(obj));  // prints: ['sheep', 25]
+console.log(Object.entries(obj)); // prints: [['name', 'sheep'], ['age', 25]]
+
+let m = new Map(Object.entries(obj));
+console.log(m); // prints: {'name' => 'sheep', 'age' => 25}
+```
+
+### Object.getOwnPropertyDescriptors()
+
+ES5 的 `Object.getOwnPropertyDescriptor()` 方法會回傳某個物件屬性的描述物件（descriptor）。ES2017 引入了 `Object.getOwnPropertyDescriptors()` 方法，回傳指定物件所有自身屬性（非繼承屬性）的描述物件。
+
+**複製物件**
+
+該方法的引入目的，主要是為了解決 `Object.assign()` 無法正確複製 `get` 屬性和 `set` 屬性的問題。
+
+```js
+let obj = {
+  name: 'sheep',
+  age: 25,
+
+  get uppername() {
+    return this.name.substring(0, 1).toUpperCase() + this.name.substring(1);
+  },
+
+  set uppername(val) {
+
+    this.name = val;
+  },
+};
+
+let obj1 = {};
+Object.assign(obj1, obj);
+```
+
+![](https://i.imgur.com/jecc6kR.png)
+
+> `Object.assign(obj1, obj)` 無法複製 get set 方法
+
+這時 `Object.getOwnPropertyDescriptors()` 方法配合 `Object.defineProperties()` 方法，就可以實現正確複製。
+
+```js
+Object.defineProperties(obj1, Object.getOwnPropertyDescriptors(obj));
+```
+
+![](https://i.imgur.com/VBfjqk9.png)
