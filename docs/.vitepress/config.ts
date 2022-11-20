@@ -37,9 +37,6 @@ export default defineConfig({
     },
     socialLinks: [{ icon: 'github', link: 'https://github.com/SheepNDW' }],
   },
-  // markdown: {
-  //   theme: 'vitesse-dark',
-  // },
   markdown: {
     theme: { light: 'vitesse-light', dark: 'vitesse-dark' },
   },
@@ -224,6 +221,7 @@ function sidebarJS(): DefaultTheme.SidebarGroup[] {
         { text: 'ES6 學習筆記 (2)', link: '/javascript/advanced/es6-2' },
         { text: 'ES6 學習筆記 (3)', link: '/javascript/advanced/es6-3' },
         { text: 'ES8 學習筆記', link: '/javascript/advanced/es8' },
+        { text: 'ES9 學習筆記', link: '/javascript/advanced/es9' },
       ],
     },
     {
