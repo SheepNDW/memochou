@@ -151,3 +151,49 @@ Object.defineProperties(obj1, Object.getOwnPropertyDescriptors(obj));
 ```
 
 ![](https://i.imgur.com/VBfjqk9.png)
+
+## 字串填充
+
+> `padStart()`、`padEnd()` 方法可以使得字串達到固定長度，有兩個參數，字串目標長度和填充內容。
+
+```js
+let str = 'sheep';
+
+console.log(str.padStart(10, 'x')); // xxxxxsheep
+console.log(str.padEnd(10, 'x'));   // sheepxxxxx
+
+// 原字串長度大於等於目標長度則不會改變
+console.log(str.padStart(5, 'x'));  // sheep
+console.log(str.padEnd(5, 'x'));    // sheep
+```
+
+實作：日期補零
+
+```js
+// 期待的 list 內容：01 02 03 04 05 06 07 08 09 10 11 12
+let list = [];
+
+for (let i = 1; i < 13; i++) {
+  list.push((i + '').padStart(2, '0'));
+}
+```
+
+## 函式參數的末尾加上逗號
+
+```js
+function (
+  a,
+  b,
+  c,
+) {
+  console.log(a, b)
+}
+
+test(
+  1,
+  2,
+  3,
+)
+```
+
+> 「末尾逗號」在新增新的參數、屬性、元素時是有用的，你可以直接新加一行而不必給上一行再補充一個逗號，這樣使版本控制工具的修改紀錄也更加簡潔
