@@ -223,6 +223,7 @@ function sidebarJS(): DefaultTheme.SidebarGroup[] {
         { text: 'ES8 學習筆記', link: '/javascript/advanced/es8' },
         { text: 'ES9 學習筆記', link: '/javascript/advanced/es9' },
         { text: 'ES10 學習筆記', link: '/javascript/advanced/es10' },
+        { text: 'ES11 學習筆記', link: '/javascript/advanced/es11' },
       ],
     },
     {
