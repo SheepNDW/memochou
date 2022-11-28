@@ -23,6 +23,7 @@ export default defineConfig({
       '/vite/': sidebarVite(),
       '/git/': sidebarGit(),
       '/typescript/': sidebarTS(),
+      '/node/': sidebarNode(),
       '/css/': sidebarCSS(),
       '/javascript/': sidebarJS(),
       '/test/': sidebarTest(),
@@ -47,6 +48,7 @@ function nav(): DefaultTheme.NavItem[] {
     { text: '關於', link: '/about/', activeMatch: '/about/' },
     { text: 'Vue', link: '/vue/', activeMatch: '/vue/' },
     { text: 'TypeScript', link: '/typescript/', activeMatch: '/typescript/' },
+    { text: 'Node', link: '/node/basic/commonjs', activeMatch: '/node/' },
     { text: 'JavaScript', link: '/javascript/', activeMatch: '/javascript/' },
     { text: 'CSS', link: '/css/', activeMatch: '/css/' },
     {
@@ -240,6 +242,20 @@ function sidebarJS(): DefaultTheme.SidebarGroup[] {
           text: 'Tic Tac Toe',
           link: '/javascript/game-development/tic-tac-toe',
         },
+      ],
+    },
+  ];
+}
+
+function sidebarNode(): DefaultTheme.SidebarGroup[] {
+  return [
+    {
+      text: 'Node.js 基礎',
+      collapsible: true,
+      items: [
+        { text: 'CommonJS modules', link: '/node/basic/commonjs' },
+        { text: 'npm', link: '/node/basic/npm' },
+        { text: 'Built-in Modules', link: '/node/basic/built-in' },
       ],
     },
   ];
