@@ -195,3 +195,44 @@ console.log(urlToHttpOptions(myURL));
 }
 */
 ```
+
+## querystring 模組
+
+### parse
+
+```js
+const querystring = require('node:querystring');
+const str = 'name=sheep&age=25&job=f2e';
+const obj = querystring.parse(str);
+
+console.log(obj);
+// prints: [Object: null prototype] { name: 'sheep', age: '25', job: 'f2e' }
+```
+
+### stringify
+
+```js
+const myobj = {
+  a: 1,
+  b: 2,
+  c: 3,
+};
+
+const mystr = querystring.stringify(myobj);
+console.log(mystr);
+// prints: a=1&b=2&c=3
+```
+
+### escape/unescape
+
+```js
+const str1 = 'id=3&city=台北&url=https://www.google.com';
+const escaped = querystring.escape(str1);
+console.log(escaped);
+// prints: id%3D3%26city%3D%E5%8F%B0%E5%8C%97%26url%3Dhttps%3A%2F%2www.google.com
+
+const escape1 = 'id%3D3%26city%3D%E5%8F%B0%E5%8C%97%26url%3Dhttps%3A%2F%2www.google.com';
+const str2 = querystring.unescape(escape1);
+console.log(str2);
+// prints: id=3&city=台北&url=https://www.google.com
+```
