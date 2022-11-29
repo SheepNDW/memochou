@@ -236,3 +236,247 @@ const str2 = querystring.unescape(escape1);
 console.log(str2);
 // prints: id=3&city=台北&url=https://www.google.com
 ```
+
+## http 模組補充
+
+### JSONP
+
+```js
+const http = require('http');
+
+const app = http.createServer((req, res) => {
+  const myURL = new URL(req.url, 'http://localhost:3000');
+  // console.log(myURL.searchParams.get('callback'));
+  const cb = myURL.searchParams.get('callback');
+  switch (myURL.pathname) {
+    case '/api/user':
+      res.end(
+        `${cb}(${JSON.stringify({
+          name: 'sheep',
+          age: 18,
+        })})`
+      );
+      break;
+
+    default:
+      res.end('404');
+  }
+});
+
+app.listen(3000, () => {
+  console.log('localhost:3000');
+});
+```
+
+```html
+<body>
+  <!-- 呼叫 JSONP -->
+  <script>
+    var oscript = document.createElement('script');
+    oscript.src = 'http://localhost:3000/api/user?callback=test';
+
+    document.body.appendChild(oscript);
+
+    function test(obj) {
+      console.log(obj);
+    }
+  </script>
+</body>
+```
+
+### 跨域：CORS
+
+```js
+const http = require('http');
+
+const app = http.createServer((req, res) => {
+  const myURL = new URL(req.url, 'http://localhost:3000');
+
+  res.writeHead(200, {
+    'Content-Type': 'application/json;charset=utf-8',
+    'access-control-allow-origin': '*',
+  });
+
+  switch (myURL.pathname) {
+    case '/api/user':
+      res.end(
+        JSON.stringify({
+          name: 'sheep',
+          age: 18,
+        })
+      );
+      break;
+
+    default:
+      res.end('404');
+  }
+});
+
+app.listen(3000, () => {
+  console.log('localhost:3000');
+});
+```
+
+### get
+
+```js
+const http = require('http');
+const https = require('https');
+
+const app = http.createServer((req, res) => {
+  const myURL = new URL(req.url, 'http://localhost:3000');
+
+  res.writeHead(200, {
+    'Content-Type': 'application/json;charset=utf-8',
+    'access-control-allow-origin': '*',
+  });
+
+  switch (myURL.pathname) {
+    case '/api/films':
+      httpGet((data) => {
+        res.end(data);
+      });
+      break;
+
+    default:
+      res.end('404');
+  }
+});
+
+app.listen(3000, () => {
+  console.log('localhost:3000');
+});
+
+function httpGet(cb) {
+  let data = '';
+  https.get('somethingURL', (res) => {
+    res.on('data', (chunk) => {
+      data += chunk;
+    });
+
+    res.on('end', () => {
+      // console.log(data);
+      cb(data);
+    });
+  });
+}
+```
+
+### post
+
+```js
+const http = require('http');
+const https = require('https');
+
+const app = http.createServer((req, res) => {
+  const myURL = new URL(req.url, 'http://localhost:3000');
+
+  res.writeHead(200, {
+    'Content-Type': 'application/json;charset=utf-8',
+    'access-control-allow-origin': '*',
+  });
+
+  switch (myURL.pathname) {
+    case '/api/post':
+      httpPost((data) => {
+        res.end(data);
+      });
+      break;
+
+    default:
+      res.end('404');
+  }
+});
+
+app.listen(3000, () => {
+  console.log('localhost:3000');
+});
+
+function httpPost(cb) {
+  let data = '';
+
+  const options = {
+    hostname: 'm.xiaomiyoupin.com',
+    port: '443',
+    path: '/mtop/market/search/placeHolder',
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      // 'Content-Type': 'x-www-form-urlencoded'
+    },
+  };
+
+  const req = https.request(options, (res) => {
+    res.on('data', (chunk) => {
+      data += chunk;
+    });
+    res.on('end', () => cb(data));
+  });
+  // req.write("name=sheep&age=100")
+  req.write(JSON.stringify([{}, { baseParam: { ypClient: 1 } }]));
+  req.end();
+}
+```
+
+### 爬蟲
+
+```js
+const http = require('http');
+const https = require('https');
+const cheerio = require('cheerio');
+
+const app = http.createServer((req, res) => {
+  const myURL = new URL(req.url, 'http://localhost:3000');
+
+  res.writeHead(200, {
+    'Content-Type': 'application/json;charset=utf-8',
+    'access-control-allow-origin': '*',
+  });
+
+  switch (myURL.pathname) {
+    case '/api/films':
+      httpGet((data) => {
+        res.end(spider(data));
+      });
+      break;
+
+    default:
+      res.end('404');
+  }
+});
+
+app.listen(3000, () => {
+  console.log('localhost:3000');
+});
+
+function httpGet(cb) {
+  let data = '';
+  https.get('https://i.maoyan.com/', (res) => {
+    res.on('data', (chunk) => {
+      data += chunk;
+    });
+
+    res.on('end', () => {
+      cb(data);
+    });
+  });
+}
+
+function spider(data) {
+  // npm i cheerio
+  const $ = cheerio.load(data);
+  const $movielist = $('.column.content');
+  const movies = [];
+
+  $movielist.each((index, value) => {
+    movies.push({
+      title: $(value).find('.title').text(),
+      grade: $(value).find('.grade').text(),
+      actor: $(value).find('.actor').text(),
+    });
+  });
+
+  console.log(movies);
+  return JSON.stringify(movies);
+}
+```
