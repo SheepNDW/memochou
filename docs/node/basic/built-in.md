@@ -480,3 +480,23 @@ function spider(data) {
   return JSON.stringify(movies);
 }
 ```
+
+## events 模組
+
+```js
+const EventEmitter = require('events');
+
+const event = new EventEmitter();
+
+event.on('play', (data) => {
+  console.log('事件觸發了-play', data);
+});
+
+event.on('run', (data) => {
+  console.log('事件觸發了-run', data);
+});
+
+setTimeout(() => {
+  event.emit('play', '111111');
+}, 2000);
+```
