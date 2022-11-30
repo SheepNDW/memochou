@@ -654,3 +654,96 @@ const writeStream = fs.createWriteStream('./2.txt');
 
 readStream.pipe(writeStream);
 ```
+
+## zlib 模組
+
+![](https://i.imgur.com/n6QIxtM.png)
+
+```js
+const http = require('http');
+const fs = require('fs');
+const zlib = require('zlib');
+const gzip = zlib.createGzip();
+
+http
+  .createServer((req, res) => {
+    // res 可寫流
+    const readStream = fs.createReadStream('./index.js');
+    res.writeHead(200, {
+      'Content-Type': 'application/x-javascript;charset=utf-8',
+      'Content-Encoding': 'gzip',
+    });
+    readStream.pipe(gzip).pipe(res);
+  })
+  .listen(3000, () => {
+    console.log('server start!');
+  });
+```
+
+## crypto 模組
+
+crypto 模組的目的是為了提供通用的加密和雜湊（Hash）演算法。用純 JavaScript 程式碼實現這些功能不是不可能，但速度會非常慢。Nodejs 用 C/C++ 實現這些演算法後，透過 crypto 這個模組輸出為 JavaScript 介面，這樣用起來方便，執行速度也快。
+
+MD5 是一種常用的雜湊演算法，用於給任意資料一個“簽章”。這個簽章通常用一個十六進位的字串表示：
+
+```js
+const crypto = require('crypto');
+
+const hash = crypto.createHash('md5');
+
+// 可任意多次呼叫update():
+hash.update('Hello, world!');
+hash.update('Hello, nodejs!');
+
+console.log(hash.digest('hex')); 
+```
+
+`update()` 方法預設字串編碼為 `UTF-8`，也可以傳入 Buffer。
+
+如果要計算 SHA1，只需要把 `'md5'` 改成 `'sha1'`，就可以得到 SHA1 的結果 `1f32b9c9932c02227819a4151feed43e131aca40`。
+
+Hmac 演算法也是一種雜湊演算法，它可以利用 MD5 或 SHA1 等雜湊演算法。不同的是，Hmac 還需要一個密鑰：
+
+```js
+const crypto = require('crypto');
+
+const hmac = crypto.createHmac('sha256', 'secret-key');
+
+hmac.update('Hello, world!');
+hmac.update('Hello, nodejs!');
+
+console.log(hmac.digest('hex')); // 80f7e22570...
+```
+
+只要密鑰發生了變化，那麼同樣的輸入資料也會得到不同的簽章，因此，可以把 Hmac 理解為用隨機數“增強”的雜湊演算法。
+
+AES是一種常用的對稱加密演算法，加解密都用同一個密鑰。crypto 模組提供了 AES，但是需要自己封裝好函式，便於使用：
+
+```js
+const crypto = require('crypto');
+
+function encrypt(key, iv, data) {
+  let dep = crypto.createCipheriv('aes-128-cbc', key, iv);
+
+  return dep.update(data, 'binary', 'hex') + dep.final('hex');
+}
+
+function decrypt(key, iv, crypted) {
+  crypted = Buffer.from(crypted, 'hex').toString('binary');
+
+  let dep = crypto.createDecipheriv('aes-128-cbc', key, iv);
+  return dep.update(crypted, 'binary', 'utf8') + dep.final('utf8');
+}
+
+//16*8 = 128
+let key = 'abcdef1234567890';
+let iv = 'tbcdey1234567890';
+
+let data = 'sheep';
+
+let crypted = encrypt(key, iv, data);
+console.log('加密結果-', crypted);
+
+let decrypted = decrypt(key, iv, crypted);
+console.log('解密結果-', decrypted);
+```
