@@ -500,3 +500,95 @@ setTimeout(() => {
   event.emit('play', '111111');
 }, 2000);
 ```
+
+## fs 模組
+
+```js
+const fs = require('fs');
+
+// 新增資料夾
+fs.mkdir('./avatar', (err) => {
+  // console.log(err);
+  if (err?.code === 'EEXIST') {
+    console.log('資料夾已存在');
+  }
+});
+
+// 重新命名資料夾
+fs.rename('./avatar', './avatar2', (err) => {
+  if (err?.code === 'ENOENT') {
+    console.log('該資料夾並不存在');
+  }
+});
+
+// 刪除資料夾
+fs.rmdir('./avatar', (err) => {
+  if (err?.code === 'ENOENT') {
+    console.log('資料夾不存在');
+  }
+});
+
+// 寫內容到檔案裡
+fs.writeFile('./avatar/a.txt', 'hello', (err) => {
+  console.log(err);
+});
+
+// 新增內容到檔案裡
+fs.appendFile('./avatar/a.txt', '\nworld', (err) => {
+  console.log(err);
+});
+
+// 讀取檔案內容
+fs.readFile('./avatar/a.txt', (err, data) => {
+  if (!err) {
+    console.log(data.toString('utf-8'));
+  }
+});
+
+fs.readFile('./avatar/a.txt', 'utf-8', (err, data) => {
+  if (!err) {
+    console.log(data);
+  }
+});
+
+// 刪除檔案
+fs.unlink('./avatar/a.txt', (err) => {
+  console.log(err);
+});
+
+// 讀取資料夾內容
+fs.readdir('./avatar', (err, data) => {
+  if (!err) {
+    console.log(data);
+  }
+});
+
+// 讀取檔案狀態
+fs.stat('./avatar/text.txt', (err, data) => {
+  console.log(data.isFile());
+  console.log(data.isDirectory());
+});
+
+// 同步讀取檔案
+try {
+  const content = fs.readFileSync('./avatar/text.txt', 'utf-8')
+  console.log(content)
+  console.log(0)
+} catch (e) {
+  console.log(e.message)
+}
+
+// 非同步讀取檔案：方法一
+fs.readFile('./avatar/text.txt', 'utf-8', (err, content) => {
+  console.log(content)
+  console.log(0)
+})
+console.log(1)
+
+// 非同步讀取檔案：方法二
+const fs = require("fs").promises
+fs.readFile('./avatar/text.txt', 'utf-8').then(result => {
+  console.log(result)
+})
+```
+
