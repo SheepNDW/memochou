@@ -592,3 +592,65 @@ fs.readFile('./avatar/text.txt', 'utf-8').then(result => {
 })
 ```
 
+## stream 模組
+
+`stream` 是 Node.js 提供的又一個僅在 server 端可用的模組，目的是支援“流”這種資料結構。
+
+什麼是流？流是一種抽象的資料結構。想像水流，當在水管中流動時，就可以從某個地方（例如自來水廠）源源不斷地到達另一個地方（比如你家的洗手池）。我們也可以把資料看成是資料流，比如你敲鍵盤的時候，就可以把每個字符依次連起來，看成字符流。這個流是從鍵盤輸入到應用程式，實際上它還對應著一個名字：標準輸入流（stdin）。
+
+![](https://i.imgur.com/1rtYMOX.png)
+
+如果應用程式把字符一個一個輸出到顯示器上，這也可以看成是一個流，這個流也有名字：標準輸出流（stdout）。流的特點是資料是有序的，而且必須依次讀取，或者依次寫入，不能像Array那樣隨機定位。
+
+有些流用來讀取資料，比如從檔案讀取資料時，可以打開一個檔案流，然後從檔案流中不斷地讀取資料。有些流用來寫入資料，比如向檔案寫入資料時，只需要把資料不斷地往檔案流中寫進去就可以了。
+
+在 Node.js 中，流也是一個物件，我們只需要回應流的事件就可以了：`data` 事件表示流的資料已經可以讀取了，`end` 事件表示這個流已經到末尾了，沒有資料可以讀取了，`error` 事件表示出錯了。
+
+```js
+const fs = require('fs');
+
+const rs = fs.createReadStream('./1.txt', 'utf-8');
+
+rs.on('data', (chunk) => {
+  console.log('chunk-', chunk);
+});
+
+rs.on('end', () => {
+  console.log('end');
+});
+
+rs.on('error', (err) => {
+  console.log(err);
+});
+```
+
+要注意，`data` 事件可能會有多次，每次傳遞的 `chunk` 是流的一部分資料。
+
+要以流的形式寫入檔案，只需要不斷呼叫 `write()` 方法，最後以 `end()` 結束：
+
+```js
+const fs = require('fs');
+
+const ws = fs.createWriteStream('./2.txt', 'utf-8');
+
+ws.write('1111111');
+ws.write('2222222');
+ws.write('3333333');
+
+ws.end();
+```
+
+`pipe` 就像可以把兩個水管串成一個更長的水管一樣，兩個流也可以串起來。一個 `Readable` 流和一個 `Writable` 流串起來後，所有的資料自動從 `Readable` 流進入 `Writable` 流，這種操作叫 `pipe`。
+
+在 Node.js 中，`Readable` 流有一個 `pipe()` 方法，就是用來幹這件事的。
+
+讓我們用 `pipe()` 把一個檔案流和另一個檔案流串起來，這樣源檔案的所有資料就自動寫入到目標檔案裡了，所以，這實際上是一個複製檔案的程式：
+
+```js
+const fs = require('fs');
+
+const readStream = fs.createReadStream('./1.txt');
+const writeStream = fs.createWriteStream('./2.txt');
+
+readStream.pipe(writeStream);
+```
