@@ -256,6 +256,7 @@ function sidebarNode(): DefaultTheme.SidebarGroup[] {
         { text: 'CommonJS modules', link: '/node/basic/commonjs' },
         { text: 'npm', link: '/node/basic/npm' },
         { text: 'Built-in Modules', link: '/node/basic/built-in' },
+        { text: 'Route', link: '/node/basic/route' },
       ],
     },
   ];
