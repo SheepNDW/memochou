@@ -259,6 +259,11 @@ function sidebarNode(): DefaultTheme.SidebarGroup[] {
         { text: 'Route', link: '/node/basic/route' },
       ],
     },
+    {
+      text: 'Express',
+      collapsible: true,
+      items: [{ text: 'Express 基本使用', link: '/node/express/basic-usage' }],
+    },
   ];
 }
 
