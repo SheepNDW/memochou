@@ -1,3 +1,7 @@
+---
+outline: deep
+---
+
 # Express
 
 > https://expressjs.com/zh-tw/
@@ -44,6 +48,78 @@ app.listen(3000, () => console.log('server start'));
 ```
 
 > Express 相當於是在 http 模組之上加了一層中介
+
+## 基本使用
+
+### 建立一個基本的 Web 伺服器
+
+```js
+// 1. 引入 express
+const express = require('express');
+// 2. 建立 web server
+const app = express();
+
+// 3. 呼叫 app.listen(連接埠(port), 啟動成功後的callback), 啟動 server
+app.listen(3000, () => {
+  console.log('express server running at http://localhost:3000');
+});
+```
+
+### 監聽 GET 請求
+
+透過 `app.get()` 方法，可以監聽來自客戶端的 GET 請求
+
+```js
+// 參數1：客戶端請求的 URL 地址
+// 參數2：請求對應的處理函式
+//        - req: 請求物件（包含了與請求相關的屬性與方法）
+//        - res: 響應物件（包含了與響應相關的屬性與方法）
+app.get('請求url', (req, res) => { /* 處理函式 */ })
+```
+
+> POST 請求的格式也一樣只是將 app.get 換成 app.post
+
+### 把內容回應給客戶端
+
+透過 `res.send()` 方法，可以把處理好的內容，發送給客戶端：
+
+```js
+app.get('/user', (req, res) => {
+  // 向客戶端發送 JSON 物件
+  res.send({ name: 'sheep', age: 100 });
+});
+
+app.post('/user', (req, res) => {
+  // 向客戶端發送文本
+  res.send('success');
+});
+```
+
+### 取得 URL 中攜帶的 query 參數
+
+透過 `req.query` 物件，可以存取到客戶端透過 query string 的方式，傳到伺服器的參數：
+
+```js
+app.get('/', (req, res) => {
+  // req.query 預設是個空物件
+  // 客戶端使用 ?name=sheep&age=100 的方式傳的參數，
+  // 可以透過 req.query 存取到，例如： 
+  // req.query.name req.query.age
+  console.log(req.query);
+});
+```
+
+### 取得 URL 中的動態參數
+
+透過 `req.params` 物件，可以存取到 URL 中，透過 `:` 對比到的動態參數：
+
+```js
+app.get('/user/:id', (req, res) => {
+  // req.params 預設為空物件
+  // 裡面存著透過 `:` 動態比對到的參數值
+  console.log(req.params);
+});
+```
 
 ## 基本路由
 
