@@ -27,6 +27,7 @@ export default defineConfig({
       '/css/': sidebarCSS(),
       '/javascript/': sidebarJS(),
       '/test/': sidebarTest(),
+      '/react/': sidebarReact(),
     },
     footer: {
       copyright: `Copyright © ${new Date().getFullYear()} Sheep Yang`,
@@ -47,6 +48,7 @@ function nav(): DefaultTheme.NavItem[] {
   return [
     { text: '關於', link: '/about/', activeMatch: '/about/' },
     { text: 'Vue', link: '/vue/', activeMatch: '/vue/' },
+    { text: 'React', link: '/react/redux-toolkit', activeMatch: '/react/' },
     { text: 'TypeScript', link: '/typescript/', activeMatch: '/typescript/' },
     { text: 'Node', link: '/node/basic/commonjs', activeMatch: '/node/' },
     { text: 'JavaScript', link: '/javascript/', activeMatch: '/javascript/' },
@@ -289,6 +291,16 @@ function sidebarTest(): DefaultTheme.SidebarGroup[] {
         { text: '[Udemy] More on Mocking', link: '/test/vitest/more-mocking' },
         { text: '[Udemy] Testing & The DOM', link: '/test/vitest/dom' },
       ],
+    },
+  ];
+}
+
+function sidebarReact(): DefaultTheme.SidebarGroup[] {
+  return [
+    {
+      text: 'Redux',
+      collapsible: true,
+      items: [{ text: 'Redux Toolkit（RTK）', link: '/react/redux-toolkit' }],
     },
   ];
 }
