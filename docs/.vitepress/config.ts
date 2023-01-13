@@ -67,13 +67,14 @@ function nav(): DefaultTheme.NavItem[] {
 function sidebarVue(): DefaultTheme.SidebarGroup[] {
   return [
     {
-      text: 'Vue 3',
+      text: 'Vue 3 Notes',
       collapsible: true,
       items: [
         { text: 'Vue 3.x 中全域配置 axios', link: '/vue/vue-axios' },
         { text: 'v-model 語法糖原理', link: '/vue/vue-vModel' },
         { text: '初探 Script Setup', link: '/vue/vue-script-setup-guide' },
         { text: 'effectScope API', link: '/vue/vue-effectScope' },
+        { text: 'Advanced Ref APIs', link: '/vue/advanced-ref' },
       ],
     },
     {
