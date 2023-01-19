@@ -12,13 +12,17 @@ outline: deep
 
 - 安裝
 
-```sh
-# npm
-npm install react-redux @reduxjs/toolkit
+::: code-group
 
-# pnpm
+```bash [npm]
+npm install react-redux @reduxjs/toolkit
+```
+
+```bash [pnpm]
 pnpm add react-redux @reduxjs/toolkit
 ```
+
+:::
 
 - 建立 Redux Store
 
