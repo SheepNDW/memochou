@@ -211,6 +211,7 @@ function sidebarTS(): DefaultTheme.SidebarGroup[] {
       items: [
         { text: '泛型 Generics', link: '/typescript/generics' },
         { text: '裝飾器 Decorators', link: '/typescript/decorators' },
+        { text: 'Partial & Pick', link: '/typescript/partial-pick' },
       ],
     },
   ];
