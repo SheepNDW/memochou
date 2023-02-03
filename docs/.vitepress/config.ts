@@ -213,6 +213,7 @@ function sidebarTS(): DefaultTheme.SidebarGroup[] {
         { text: '裝飾器 Decorators', link: '/typescript/decorators' },
         { text: 'Partial & Pick', link: '/typescript/partial-pick' },
         { text: 'Readonly & Record', link: '/typescript/readonly-record' },
+        { text: 'infer 關鍵字', link: '/typescript/infer' },
       ],
     },
   ];
