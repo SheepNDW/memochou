@@ -6,10 +6,10 @@
 
 安裝依賴：
 ```sh
-yarn install
+pnpm install
 ```
 
 本地預覽：
 ```sh
-yarn dev
+pnpm dev
 ```
