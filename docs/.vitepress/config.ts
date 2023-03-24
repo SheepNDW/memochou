@@ -64,11 +64,11 @@ function nav(): DefaultTheme.NavItem[] {
   ];
 }
 
-function sidebarVue(): DefaultTheme.SidebarGroup[] {
+function sidebarVue(): DefaultTheme.SidebarItem[] {
   return [
     {
       text: 'Vue 3 Notes',
-      collapsible: true,
+      collapsed: false,
       items: [
         { text: 'Vue 3.x 中全域配置 axios', link: '/vue/vue-axios' },
         { text: 'v-model 語法糖原理', link: '/vue/vue-vModel' },
@@ -79,7 +79,7 @@ function sidebarVue(): DefaultTheme.SidebarGroup[] {
     },
     {
       text: 'Pinia',
-      collapsible: true,
+      collapsed: false,
       items: [
         { text: '初識 Pinia', link: '/vue/pinia/pinia-guide' },
         { text: 'Pinia 案例 - 購物車', link: '/vue/pinia/pinia-cart' },
@@ -87,7 +87,7 @@ function sidebarVue(): DefaultTheme.SidebarGroup[] {
     },
     {
       text: 'Vue.js challenges',
-      collapsible: true,
+      collapsed: false,
       items: [
         { text: 'Built-ins', link: '/vue/challenges/built-ins' },
         { text: 'CSS Features', link: '/vue/challenges/css-features' },
@@ -101,11 +101,11 @@ function sidebarVue(): DefaultTheme.SidebarGroup[] {
   ];
 }
 
-function sidebarCSS(): DefaultTheme.SidebarGroup[] {
+function sidebarCSS(): DefaultTheme.SidebarItem[] {
   return [
     {
       text: 'Tailwind CSS',
-      collapsible: true,
+      collapsed: false,
       items: [
         { text: '安裝 Tailwind', link: '/css/tailwind/installation' },
         { text: '客製化 Tailwind', link: '/css/tailwind/customization' },
@@ -113,12 +113,12 @@ function sidebarCSS(): DefaultTheme.SidebarGroup[] {
     },
     {
       text: 'Uno CSS',
-      collapsible: true,
+      collapsed: false,
       items: [{ text: 'UnoCSS 使用', link: '/css/unocss/installation' }],
     },
     {
       text: 'CSS Tricks',
-      collapsible: true,
+      collapsed: false,
       items: [
         {
           text: 'fieldset 與 legend 標籤',
@@ -129,11 +129,10 @@ function sidebarCSS(): DefaultTheme.SidebarGroup[] {
   ];
 }
 
-function sidebarVite(): DefaultTheme.SidebarGroup[] {
+function sidebarVite(): DefaultTheme.SidebarItem[] {
   return [
     {
       text: 'Vite 開發記錄',
-      collapsible: true,
       items: [
         { text: '在 vite 使用 MPA 開發', link: '/vite/vite-plugin-mpa' },
         { text: 'unplugin 系列', link: '/vite/vite-unplugin' },
@@ -142,7 +141,7 @@ function sidebarVite(): DefaultTheme.SidebarGroup[] {
   ];
 }
 
-function sidebarGit(): DefaultTheme.SidebarGroup[] {
+function sidebarGit(): DefaultTheme.SidebarItem[] {
   return [
     {
       text: 'Git 學習筆記',
@@ -156,11 +155,11 @@ function sidebarGit(): DefaultTheme.SidebarGroup[] {
   ];
 }
 
-function sidebarTS(): DefaultTheme.SidebarGroup[] {
+function sidebarTS(): DefaultTheme.SidebarItem[] {
   return [
     {
       text: 'TypeScript Handbook',
-      collapsible: true,
+      collapsed: false,
       items: [
         { text: 'The Basic', link: '/typescript/handbook/the-basic' },
         { text: 'Everyday Types', link: '/typescript/handbook/everyday-types' },
@@ -207,7 +206,7 @@ function sidebarTS(): DefaultTheme.SidebarGroup[] {
     },
     {
       text: 'TypeScript Notes',
-      collapsible: true,
+      collapsed: false,
       items: [
         { text: '泛型 Generics', link: '/typescript/generics' },
         { text: '裝飾器 Decorators', link: '/typescript/decorators' },
@@ -219,11 +218,11 @@ function sidebarTS(): DefaultTheme.SidebarGroup[] {
   ];
 }
 
-function sidebarJS(): DefaultTheme.SidebarGroup[] {
+function sidebarJS(): DefaultTheme.SidebarItem[] {
   return [
     {
       text: 'JS 核心篇筆記',
-      collapsible: true,
+      collapsed: false,
       items: [
         { text: 'ES6 學習筆記 (1)', link: '/javascript/advanced/es6' },
         { text: 'ES6 學習筆記 (2)', link: '/javascript/advanced/es6-2' },
@@ -238,7 +237,7 @@ function sidebarJS(): DefaultTheme.SidebarGroup[] {
     },
     {
       text: 'JS 小遊戲',
-      collapsible: true,
+      collapsed: false,
       items: [
         {
           text: 'Rock paper scissors',
@@ -253,11 +252,11 @@ function sidebarJS(): DefaultTheme.SidebarGroup[] {
   ];
 }
 
-function sidebarNode(): DefaultTheme.SidebarGroup[] {
+function sidebarNode(): DefaultTheme.SidebarItem[] {
   return [
     {
       text: 'Node.js 基礎',
-      collapsible: true,
+      collapsed: false,
       items: [
         { text: 'CommonJS modules', link: '/node/basic/commonjs' },
         { text: 'npm', link: '/node/basic/npm' },
@@ -267,7 +266,7 @@ function sidebarNode(): DefaultTheme.SidebarGroup[] {
     },
     {
       text: 'Express',
-      collapsible: true,
+      collapsed: false,
       items: [
         { text: 'Express 基本使用', link: '/node/express/basic-usage' },
         { text: 'Express Middleware', link: '/node/express/middleware' },
@@ -276,7 +275,7 @@ function sidebarNode(): DefaultTheme.SidebarGroup[] {
   ];
 }
 
-function sidebarTest(): DefaultTheme.SidebarGroup[] {
+function sidebarTest(): DefaultTheme.SidebarItem[] {
   return [
     {
       text: 'Vitest',
@@ -299,11 +298,11 @@ function sidebarTest(): DefaultTheme.SidebarGroup[] {
   ];
 }
 
-function sidebarReact(): DefaultTheme.SidebarGroup[] {
+function sidebarReact(): DefaultTheme.SidebarItem[] {
   return [
     {
       text: 'Redux',
-      collapsible: true,
+      collapsed: false,
       items: [{ text: 'Redux Toolkit（RTK）', link: '/react/redux-toolkit' }],
     },
   ];
