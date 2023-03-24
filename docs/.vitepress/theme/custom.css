@@ -2,10 +2,12 @@
   --vp-code-block-bg: rgba(125, 125, 125, 0.04);
   --vp-code-line-highlight-color: rgba(0, 0, 0, 0.1);
   /* code groups */
-  --vp-code-tab-bg: rgba(125, 125, 125, 0.04);
   --vp-code-tab-text-color: rgba(56 56 56 / 30%);
   --vp-code-tab-active-text-color: var(--vp-c-text-light-2);
   --vp-code-tab-hover-text-color: var(--vp-c-text-dark-3);
+  --vp-code-copy-code-bg-light: rgba(180, 180, 180, 0.7);
+  --vp-code-block-bg-light: rgba(125, 125, 125, 0.2);
+  --vp-code-block-divider-color: rgba(0, 0, 0, 0.2);
   /* --vp-code-tab-active-bar-color: red; */
   /* fix TIP on light: the default one is too light */
   --vp-custom-block-tip-text: rgb(12, 124, 108);
@@ -21,10 +23,10 @@
   --vp-code-block-bg: rgba(0, 0, 0, 0.2);
   --vp-code-line-highlight-color: rgba(0, 0, 0, 0.5);
   /* code groups */
-  --vp-code-tab-bg: rgba(0, 0, 0, 0.2);
   --vp-code-tab-text-color: rgba(235, 235, 235, 0.3);
   --vp-code-tab-active-text-color: var(--vp-c-text-dark-2);
   --vp-code-tab-hover-text-color: var(--vp-c-text-dark-3);
+  --vp-code-block-divider-color: rgba(0, 0, 0, 1);
   /* --vp-c-text-code: #c0cec0; */
   /* fix TIP: check the same above (these are the defaults) */
   --vp-custom-block-tip-text: rgb(18, 181, 157);
@@ -33,7 +35,7 @@
   /* fix contrast on gray cards: check the same above (this is the default) */
   --vp-c-text-dark-2: rgba(235, 235, 235, 0.6);
   /* fix lang name: check the same above (this is the default) */
-  --vp-c-text-dark-3: rgba(235, 235, 235, 0.38);
+  /* --vp-c-text-dark-3: rgba(235, 235, 235, 0.38); */
 }
 
 /**
@@ -71,16 +73,9 @@
 } */
 
 .vp-code-group .tabs label {
-  position: relative;
-  display: inline-block;
-  border-bottom: 1px solid transparent;
-  padding: 0 12px;
-  line-height: 48px;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--vp-code-tab-text-color);
-  background-color: transparent;
-  white-space: nowrap;
-  cursor: pointer;
-  transition: color 0.25s;
+  background: transparent;
+}
+
+.vp-code-group .tabs label::after {
+  height: 1.5px;
 }
