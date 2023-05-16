@@ -39,7 +39,7 @@
 
 ### Vite 中的環境變數
 
-這裡告訴大家一件事，文檔請看仔細，不看清楚至少看遷移指南，不然你會跟我一樣卡很久在這...
+這裡告訴大家一件事，文件請看仔細，不看清楚至少看遷移指南，不然你會跟我一樣卡很久在這...
 在 Cli => Vite 的[遷移指南](https://vueschool.io/articles/vuejs-tutorials/how-to-migrate-from-vue-cli-to-vite/)中 Step #6: Update Environment Variables 有提到這件事，白話一點就是原本的 `process` 變數被換成了 `import.meta.env`，原本的 `VUE_APP_` 也換成了 `VITE_`，使用起來就會像這樣：
 ```
 // vue cli

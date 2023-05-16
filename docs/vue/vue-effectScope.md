@@ -6,7 +6,7 @@ outline: deep
 
 本篇筆記為閱讀完此 [RFC](https://github.com/vuejs/rfcs/blob/master/active-rfcs/0041-reactivity-effect-scope.md) 後並參考了 VueUse 中的一些實作後的筆記。
 
-`effectScope` 是 Vue 3.2 才出現的 API，[官方文檔](https://vuejs.org/api/reactivity-advanced.html#effectscope)對其的說明是創建一個 effect 作用域，可以捕獲其中所建立的響應式副作用 (例如 computed, watcher)，這樣捕獲到的副作用可以一起處理，更多此 API 的說明可以參考官方[RFC](https://github.com/vuejs/rfcs/blob/master/active-rfcs/0041-reactivity-effect-scope.md)
+`effectScope` 是 Vue 3.2 才出現的 API，[官方文件](https://vuejs.org/api/reactivity-advanced.html#effectscope)對其的說明是創建一個 effect 作用域，可以捕獲其中所建立的響應式副作用 (例如 computed, watcher)，這樣捕獲到的副作用可以一起處理，更多此 API 的說明可以參考官方[RFC](https://github.com/vuejs/rfcs/blob/master/active-rfcs/0041-reactivity-effect-scope.md)
 
 ## `effectScope()`
 
@@ -362,7 +362,7 @@ const { count, doubleCount, increment } = useStore();
 
 此時 A B 兩個元件呼叫這個 store 所拿到的 `count`、`doubleCount` 將會是同一份，也就是說 `effectScope` 同時也提供了新的狀態管理方式，在一些情境下可以替代 `vuex`。
 
-上面的實作是參照了 VueUse 中的 [createGlobalState](https://vueuse.org/shared/createglobalstate/) 函式的原始碼，VueUse 裡大量使用了 `effectScope` 去管理響應式副作用，想了解更多使用法也可以自行去參考 VueUse 文檔中的範例及原始碼。
+上面的實作是參照了 VueUse 中的 [createGlobalState](https://vueuse.org/shared/createglobalstate/) 函式的原始碼，VueUse 裡大量使用了 `effectScope` 去管理響應式副作用，想了解更多使用法也可以自行去參考 VueUse 文件中的範例及原始碼。
 
 ## Online Demo
 

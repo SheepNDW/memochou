@@ -314,7 +314,7 @@ const b = firstElement2([1, 2, 3]);
 
 乍看之下它們長得非常相似，但是 `firstElement1` 的寫法比 `firstElement2` 來得更好，因為它推論出回傳值的型別是 `Type`，但 `firstElement2` 推論回傳值的型別是 `any`，因為 TypeScript 不得不用限制的型別來推論這個 `arr[0]` 表達式，而不是等到函式呼叫時再去推論這個元素的型別。
 
-以下節錄自[冴羽](https://github.com/mqyqingfeng)大大在他的 TypeScript 教學文檔裡關於 push down 的解釋：
+以下節錄自[冴羽](https://github.com/mqyqingfeng)大大在他的 TypeScript 教學文件裡關於 push down 的解釋：
 > 關於本節原文中提到的 `push down` 含義，在《重構》裡，就有一個函式下移（Push Down Method）的優化方法，指如果超類 (superclass) 中的某個函式只與一個或者少數幾個子類 (subclass) 有關，那麼最好將其從超類中挪走，放到真正關心它的子類中去。即只在超類保留共用的行為。
 >
 >這種將超類中的函式本體複製到具體需要的子類的方法就可以稱之為"push down"，與本節中的去除 `extends any[]`，將其具體的推斷交給 `Type` 自身就類似於`push down`。

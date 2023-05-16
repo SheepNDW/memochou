@@ -8,7 +8,7 @@
 
 &emsp;&emsp;關於鼎鼎大名的 [Vite](https://cn.vitejs.dev/)，我早就對它抱持著很大的興趣，不過在之前直播班的時候為了求穩以及出 bug 時能夠快速找到問題，當時還是選擇了使用 Vue Cli 去做開發，在第一次提交作業後，等待批改的同時我也開始學習本次菁英班的主題 [Pinia](https://pinia.vuejs.org/)，既然都已經在學新的工具了，我就想說那我順便來了解了解 Vite 好了，於是便開始了一連串的~~踩坑之旅~~，在進入 Pinia 前，先來記錄一下我怎麼使用 Vite 把我的專案給建起來的。
 
-1. `npm init vue@latest` 這邊我是參考 [vue 官方文檔](https://staging-cn.vuejs.org/guide/scaling-up/tooling.html#vite)起專案的
+1. `npm init vue@latest` 這邊我是參考 [vue 官方文件](https://staging-cn.vuejs.org/guide/scaling-up/tooling.html#vite)起專案的
 
 ![](https://i.imgur.com/xmDb95x.png)
 

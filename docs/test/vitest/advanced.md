@@ -130,7 +130,7 @@ it('should generate a token value', async () => {
 
 ## Testing Hooks
 
-文檔上又稱為 Setup and Teardown，這些 hook 可以讓我們進到測試的生命週期，以避免重複設置和拆卸程式碼。它們作用於當前上下文，如果在頂層使用，則會作用於檔案；如果在 `describe` 內，則作用於該 suite 中。
+文件上又稱為 Setup and Teardown，這些 hook 可以讓我們進到測試的生命週期，以避免重複設置和拆卸程式碼。它們作用於當前上下文，如果在頂層使用，則會作用於檔案；如果在 `describe` 內，則作用於該 suite 中。
 
 案例：有一個名為 User 的類別，現在要對其屬性方法進行測試。
 

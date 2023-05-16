@@ -35,7 +35,7 @@ export default defineConfig({
 
 ### 3. 目錄結構
 
-預設路徑會讀取 `src/pages/*/index.html`，可以參考文檔自行修改
+預設路徑會讀取 `src/pages/*/index.html`，可以參考文件自行修改
 
 ```
 ├─ src

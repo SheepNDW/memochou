@@ -8,7 +8,7 @@
 
 ### 解答
 
-* 解法一：自訂 Input 元件 ([官方文檔寫法](https://vuejs.org/guide/components/events.html#usage-with-v-model))
+* 解法一：自訂 Input 元件 ([官方文件寫法](https://vuejs.org/guide/components/events.html#usage-with-v-model))
 
 ```vue
 <!-- App.vue -->

@@ -3,7 +3,7 @@
 ###### tags: `vue`
 
 [參考影音](https://youtu.be/9whgkjxoCME) <br>
-[官方文檔](https://staging-cn.vuejs.org/api/sfc-script-setup.html)
+[官方文件](https://staging-cn.vuejs.org/api/sfc-script-setup.html)
 
 
 ## 專案建立

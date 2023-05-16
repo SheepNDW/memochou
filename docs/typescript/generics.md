@@ -219,4 +219,4 @@ names.push('Bob');
 names.pop();
 ```
 
-可以參考文檔看更多 [Utility Types](https://www.typescriptlang.org/docs/handbook/utility-types.html)
+可以參考文件看更多 [Utility Types](https://www.typescriptlang.org/docs/handbook/utility-types.html)

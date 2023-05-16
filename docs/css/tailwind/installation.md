@@ -1,7 +1,7 @@
 # 安裝 Tailwind CSS
 
 ## Vite + Vue 3
-> [官方文檔連結](https://tailwindcss.com/docs/guides/vite)
+> [官方文件連結](https://tailwindcss.com/docs/guides/vite)
 
 1. 在 Vite 專案中安裝 Tailwind，並執行 `npx tailwindcss init -p` 初始化 `tailwind.config.js` 和 `postcss.config.js`
 
@@ -52,7 +52,7 @@ createApp(App).mount('#app')
 ```
 
 ## CDN
-> [官方文檔連結](https://tailwindcss.com/docs/installation/play-cdn)
+> [官方文件連結](https://tailwindcss.com/docs/installation/play-cdn)
 
 1. 直接在 HTML 檔案的 `<head>` 插入一個 script 標籤把 CDN 引入即可使用：
 
