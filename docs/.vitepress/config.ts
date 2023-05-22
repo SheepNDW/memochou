@@ -32,7 +32,9 @@ export default defineConfig({
     footer: {
       copyright: `Copyright © ${new Date().getFullYear()} Sheep Yang`,
     },
-    outlineTitle: 'ON THIS PAGE',
+    outline: {
+      label: 'ON THIS PAGE',
+    },
     docFooter: {
       prev: '前一篇',
       next: '下一篇',
@@ -221,7 +223,12 @@ function sidebarTS(): DefaultTheme.SidebarItem[] {
 function sidebarJS(): DefaultTheme.SidebarItem[] {
   return [
     {
-      text: 'JS 核心篇筆記',
+      text: 'JavaScripts Notes',
+      collapsed: false,
+      items: [{ text: 'Functional Programming (FP)', link: '/javascript/functional-programming' }],
+    },
+    {
+      text: 'EcmaScript Notes',
       collapsed: false,
       items: [
         { text: 'ES6 學習筆記 (1)', link: '/javascript/advanced/es6' },
