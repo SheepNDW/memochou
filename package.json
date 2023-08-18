@@ -3,14 +3,15 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "type": "module",
   "scripts": {
     "dev": "vitepress dev docs",
     "build": "vitepress build docs",
     "serve": "vitepress serve docs"
   },
   "devDependencies": {
-    "vitepress": "^1.0.0-alpha.75",
-    "vue": "^3.3.2"
+    "vitepress": "1.0.0-rc.4",
+    "vue": "^3.3.4"
   },
   "pnpm": {
     "peerDependencyRules": {
