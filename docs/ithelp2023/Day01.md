@@ -61,7 +61,7 @@ pnpm test:ui
 下面是這 30 天預計要寫的內容，會持續更新，可能會有些許變動。
 
 - Day 01 - 前言與系列文簡介
-<!-- - [Day 02 - 什麼是資料結構？演算法又是什麼？](./Day02.md)
+- [Day 02 - 什麼是資料結構？演算法又是什麼？](./Day02.md)
 - [Day 03 - 時間與空間複雜度](./Day03.md)
 - [Day 04 -【排序演算法】Bubble Sort](./Day04.md)
 - [Day 05 -【排序演算法】Selection Sort & Insertion Sort](./Day05.md)
@@ -88,4 +88,4 @@ pnpm test:ui
 - [Day 26 -【回溯法】Backtracking (1)](./Day26.md)
 - [Day 27 -【回溯法】Backtracking (2)](./Day27.md)
 - [Day 28 -【動態規劃】Dynamic Programming (1)](./Day28.md)
-- [Day 29 -【動態規劃】Dynamic Programming (2)](./Day29.md) -->
+- [Day 29 -【動態規劃】Dynamic Programming (2)](./Day29.md)
