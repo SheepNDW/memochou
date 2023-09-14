@@ -2,222 +2,393 @@
 outline: deep
 ---
 
-# 排序簡介與氣泡排序法（Bubble Sort）
+# 堆疊 Stack
 
-## 排序簡介
+我們可以把 Stack 看成是一個弱化的陣列，它只有兩個改變長度的方法：push 和 pop。用生活中的例子來描述 Stack，可以想像有一個用來裝書本的箱子，每次只能在最上面放入或取出一本書，這就是 Stack 的 push 和 pop。而且最先放入的書本會在最底下，必須要先取出最上面的書本才能取出下面的書本，這就是 Stack 的“後進先出”（Last In First Out，LIFO）特性。
 
-排序在生活中是一件很常見的事情，例如：將一副牌從大到小排序、將一堆書依照作者的姓氏排序、將一堆學生依照成績排序等等，而在程式設計中，排序也是一個很常見的問題，例如：將一個陣列依照數字大小排序。以一名前端工程師來說，碰到排序的問題，第一時間想到的就是 `Array.prototype.sort()` 這個內建的方法，不過不知道大家有沒有想過這個內建的 `sort` 是怎麼樣去實作的呢？
+![](https://images.pexels.com/photos/4498123/pexels-photo-4498123.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2)
+> 圖片來源：[pexels.com](https://images.pexels.com/photos/4498123/pexels-photo-4498123.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2)
 
-:::info 面試官：「你能在不使用內建的 `sort` 方法的情況下，對一個陣列進行排序嗎？」
+## Stack 的特點與概念
 
-:::
+Stack 有如下的特點：
 
-這是一個很常見的面試題目，其實就是想要知道你對 sorting 有沒有一定的了解，我想在這次的系列文一開始先和大家介紹這部分，因為這裡幾乎不用學到新的資料結構，只要熟悉我們平常工作中最常打交道的陣列就可以了。
+- Stack 中的元素必須遵循 LIFO 的原則。
+- 只能從最頂端進行加入和移除的操作。
 
-排序演算法最常見的有下列十大排序法：
+Stack 的相關概念如下：
 
-1. 氣泡排序法（Bubble Sort）
-2. 選擇排序法（Selection Sort）
-3. 插入排序法（Insertion Sort）
-4. 希爾排序法（Shell Sort）
-5. 合併排序法（Merge Sort）
-6. 快速排序法（Quick Sort）
-7. 計數排序法（Counting Sort）
-8. 桶排序法（Bucket Sort）
-9. 基數排序法（Radix Sort）
-10. 堆積排序法（Heap Sort）
+- 頂端和底端：允許插入和刪除的一端稱為頂端（Top），另一端稱為底端（Bottom）。
+- push：將元素加入 Stack 的操作。
+- pop：將元素從 Stack 中取出的操作。
 
-可以簡單歸類於下圖的關係：
+push 和 pop 的操作示意圖如下：
 
-![](https://github.com/SheepNDW/data-structures-and-algorithms/blob/main/src/algorithms/sorting/images/sorting-category.png?raw=true)
+<div align="center">
+  <img src="https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/data-structures/stack/images/stack.png" alt="Stack" width="500px">
+  <p>Stack 的 push 和 pop 操作示意圖</p>
+</div>
 
-## 氣泡排序法（Bubble Sort）
+## Stack 的相關方法
 
-氣泡排序（Bubble Sort）是一種簡單、直觀的排序演算法，其取名源於自然界中的水中的氣泡在上升的過程中會不斷變大的現象。
+接著來看 Stack 的相關方法：
 
-氣泡排序的行為類似一個雙重迴圈，外迴圈控制迭代回合數，內迴圈則控制每回合的比較次數，每回合都會將最大的元素「浮」到陣列的最後面。我們可以看下面這張 wiki 上的動畫圖：
+- push：推入元素
+- pop：彈出元素
+- isEmpty：判斷 Stack 是否為空
+- size：回傳 Stack 的長度
+- top 或 peek：回傳 Stack 最頂端的元素
 
-![Algorithm Visualization](https://upload.wikimedia.org/wikipedia/commons/c/c8/Bubble-sort-example-300px.gif)
+C++中取得 Stack 最頂端元素的方法叫 top，而 Java 中則是 peek。
 
-具體步驟為：
+Stack 的實作方式很簡單，就是把陣列再包裝一層，讓陣列只能從最後面插入和刪除元素，這樣就可以達到 Stack 的效果。
 
-1. 比較第 1 個數與第 2 個數，若第 1 個數大於第 2 個數則交換位置。
-2. 比較第 2 個數與第 3 個數，這時第 2 個數應該是第 1 個數和第 2 個數的最大值，它們會重複步驟 1 的行為，將比較大的數放到最後，依此類推直到倒數第 1 個數與倒數第 2 個數比較完畢，最後，末位的數就是陣列中最大的數。這是第一次迭代。
-3. 開始下一次迭代，陣列有 `n` 個元素，就遍歷 `n - 1` 次。
-
-接下來可以打開系列文用的專案然後進到 `004-day4-code/BubbleSort.js`，用程式碼實作一下 bubble sort，我們需要使用雙重迴圈，每次從 `0` 開始，然後到 `n` 結束：
+在開始之前，我們先來將單元測試給打開，這樣我們可以透過測試即時看到我們的程式碼是否正確。首先，我們打開[系列文專案](https://github.com/SheepNDW/ithelp2023-dsa-with-js)的 `day04-stack/Stack.spec.js` 檔案，然後將測試程式碼上的 `describe.skip` 的 `skip` 去掉：
 
 ```js
-function bubbleSort1(array) {
-  const n = array.length;
-  for (let i = 0; i < n; i++) {
-    for (let j = 0; j < n - i; j++) { // i 增大，內層迴圈比較次數 n - i 減少
-      if (array[j] > array[j + 1]) { // 注意這裡索引變數都是 j
-        swap(array, j, j + 1);
-      }
-    }
-  }
-}
-```
-
-用來交換陣列中兩個元素的位置的 `swap` 函式，在之後的程式碼中只要是 `swap` 都是指它：
-
-```js
-function swap(array, i, j) {
-  const temp = array[i];
-  array[i] = array[j];
-  array[j] = temp;
-}
-```
-
-然後我們可以來測試一下我們剛才寫的實作，進入到同一層 `004-day4-code/BubbleSort.spec.js` 然後把 `skip` 給解開，執行 `pnpm test:ui` 指令就可以在瀏覽器中看到測試結果了：
-
-```js
-describe.skip('Bubble Sort Algorithm', () => { // [!code --]
-describe('Bubble Sort Algorithm', () => { // [!code ++]
+describe.skip('Stack', () => { // [!code --]
+describe('Stack', () => { // [!code ++]
   // ...
 })
 ```
 
-此時我們可以看到目前的測試中 `bubbleSort1` 已經通過了測試，如下圖：
+然後執行我們的測試指令 `pnpm test:ui`，就可以在瀏覽器中看到測試結果了：
 
-![](https://media.discordapp.net/attachments/1083289750099738624/1143425305382506638/image.png?width=1646&height=1082)
+![](https://media.discordapp.net/attachments/1080668361618362530/1151457656419127419/image.png?width=2206&height=1026)
 
-接下來我們來看看目前的實作還有沒有能夠改進的地方
+一開始都會是失敗的，因為我們還沒開始實作 Stack，接下來就讓我們開始實作 Stack 吧！
 
-### 最佳化方案 1
-
-如果原陣列就是有序的，例如 `[1, 2, 3, 4]`，那麼我們在內層迴圈可以引入一個存取標誌，如果在一次外層迴圈中，滿足比較條件則進行交換，然後更改標誌。如果在一次外層迴圈中，沒有進行過交換，那麼就代表陣列已經有序，可以提前結束迴圈。
+實作程式碼如下：
 
 ```js
-function bubbleSort2(array) {
-  const n = array.length;
-  for (let i = 0; i < n; i++) {
-    let hasSorted = true;
-    for (let j = 0; j < n - i; j++) {
-      if (array[j] > array[j + 1]) {
-        // 注意這裡索引變數都是 j
-        swap(array, j, j + 1);
-        hasSorted = false;
-      }
-    }
-    if (hasSorted) {
-      break;
-    }
+class Stack {
+  // 使用 # 讓它是私有屬性，讓外部無法直接存取，
+  // 這樣就可以限定只能透過 push 和 pop 來對其進行操作
+  #items = [];
+
+  push(data) {
+    this.#items.push(data);
+  }
+
+  pop() {
+    return this.#items.pop();
+  }
+
+  size() {
+    return this.#items.length;
+  }
+
+  isEmpty() {
+    return this.#items.length === 0;
+  }
+
+  peek() {
+    return this.#items[this.#items.length - 1];
+  }
+
+  top() {
+    return this.peek();
+  }
+
+  toString() {
+    return this.#items.toString();
+  }
+
+  clear() {
+    this.#items.length = 0;
   }
 }
 ```
 
-### 最佳化方案 2
+將上面的程式碼實作到 `day04-stack/Stack.js` 裡的 Stack 類別後，我們可以檢查一下我們的測試是否通過了：
 
-還有沒有近一步改進的地方呢？ 我們留意操作步驟的最後一句，其中提到，每次排序結束，最後一個元素都是最大的，即大數下沉的策略。當交換時，可以利用臨時變數 `swapPos` 紀錄交換位置。在內層迴圈結束後，將最後一個交換元素的位置賦值給 `k`，這樣可節省下一輪內層迴圈從 `k` 到 `n - i` 的比較：
+![](https://media.discordapp.net/attachments/1080668361618362530/1151454792275742750/image.png?width=1854&height=1084)
 
-```js
-function bubbleSort3(array) {
-  const n = array.length;
-  let k = n - 1;
-  let swapPos = 0;
-  for (let i = 0; i < n; i++) {
-    let hasSorted = true;
-    for (let j = 0; j < k; j++) {
-      if (array[j] > array[j + 1]) {
-        swap(array, j, j + 1);
-        hasSorted = false;
-        swapPos = j; // 記錄交換的位置，直接到內層迴圈最後一個被交換的元素
-      }
-    }
-    if (hasSorted) {
-      break;
-    }
-    k = swapPos; // 重寫內層迴圈的邊界
-  }
-}
-```
+確認測試通過後，讓我們用剛才實作的這個 Stack 來套用到下面的應用場景中。
 
-### 雞尾酒排序法（Cocktail Sort）
+## Stack 的應用
 
-如果我們要將剛才的繼續進行最佳化，前人發明了一種雙向的氣泡排序法，稱為雞尾酒排序法，又叫搖晃排序法（Shaker Sort）。它是氣泡排序的一種變形，與氣泡排序不同之處在於排序時是以雙向在序列中進行排序。具體可以透過範例來了解：
+#### 1. 逆序輸出
+
+Stack 最大的特點就是後進先出，所以逆序輸出是一個經常使用到的場景。先將所有元素依序 push 進到 stack 中，再依序 pop 出來就可以達到逆序的效果。
+
+#### 2. 語法檢查，例如括號是否成對
+
+這個應用場景是在編譯器中，編譯器會檢查程式碼中的括號是否成對，如果沒有成對就會報錯。例如：`{[()]}`這個括號就是成對的，而`{[(]}`這個括號就是沒有成對的，編譯器會報錯。它其實也是 LeetCode 上的一道題目，[20. Valid Parentheses](https://leetcode.com/problems/valid-parentheses/)。
+
+具體的處理方式就是：只要遇到括號的前半部分就 push 進 Stack 中，遇到括號的後半部分就 pop 出 Stack 中的元素，如果 pop 出來的元素和括號的前半部分不是一對，就代表括號沒有成對，就會報錯。最後要判斷 Stack 是否為空，因為可能有括號只有 push 進去沒有 pop 出來。
+
+具體的實作如下：
 
 ```js
-function cocktailSort(array) {
-  let left = 0; // 陣列起始索引
-  let right = array.length - 1; // 陣列索引最大值
-  let index = left; // 臨時變數
-
-  // 判斷陣列中是否有多個元素
-  while (right > left) {
-    let isSorted = false;
-    // 每一次進到 while 迴圈，都會找出對應範圍內的最大值和最小值並分別放到對應的位置
-    // 大的排到後面
-    for (let i = left; i < right; i++) {
-      if (array[i] > array[i + 1]) {
-        swap(array, i, i + 1);
-        index = i; // 紀錄目前索引
-        isSorted = true;
-      }
-    }
-    right = index; // 重寫右邊界（最後一個交換的位置）
-    // 小的排到前面
-    for (let i = right; i > left; i--) { // 從最後一個交換的位置從右往左掃
-      if (array[i] < array[i - 1]) {
-        swap(array, i, i - 1);
-        index = i;
-        isSorted = true;
-      }
-    }
-    left = index; // 重寫左邊界（最後一個交換的位置）
-    if (!isSorted) {
-      break;
+function match(s) {
+  const stack = new Stack();
+  for (let i = 0; i < s.length; i++) {
+    const c = s.charAt(i);
+    switch (c) {
+      case ')':
+        if (stack.pop() === '(') {
+          break;
+        } else {
+          return false;
+        }
+      case ']':
+        if (stack.pop() === '[') {
+          break;
+        } else {
+          return false;
+        }
+      case '}':
+        if (stack.pop() === '{') {
+          break;
+        } else {
+          return false;
+        }
+      case '(':
+      case '[':
+      case '{':
+        stack.push(c);
+        break;
     }
   }
+  return stack.isEmpty();
 }
+
+// 實際 console 看看結果或是直接 run 單元測試
+console.log(match('{[()]}')); // true
+console.log(match('{[(])}')); // false
 ```
 
-這個排序方式在完全亂序的情況下，效率比氣泡排序高，同時兩端排序的思路也是其他排序沿襲的重要思路。
+#### 3. 進位轉換
 
-此時我們可以看到我們已經通過所有的測試了：
+十進位 N 和其他 d 進位的轉換，解決的方式有很多種，其中一個簡單的算法基於下列原理：
 
-![](https://media.discordapp.net/attachments/1083289750099738624/1143428476855140362/image.png?width=1638&height=1084)
+$N = (N \div d) * d + N \mod d$ （其中：mod 是取餘數）
 
-最後來看四種 bubble sort 的效率比較（可以實際去執行測試看控制台輸出結果），用來測試執行效率的測試程式碼可以在 `sortTestUtils.js` 中找到，具體實作如下：
+例如 (2007)10 = (3727)8，其運算過程如下：
+
+<div align="center">
+  <img src="https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/data-structures/stack/images/decimaltooctal.png" alt="Stack Convert" width="300px">
+  <p>十進位轉成八進位運算過程</p>
+</div>
+
+可以看到上述過程是從低位到高位產生八進位的各個數位，然後從高位到低位輸出，結果數位的使用有後出現先使用的特性，所以可以使用 Stack 來解決這個問題。
 
 ```js
-function testRuntime(sortedFn) {
-  const array = [];
-  // 向陣列寫入 10000 個資料，其中前 1000 個資料倒序，後 9000 個資料順序
-  for (let i = 0; i < 10000; i++) {
-    if (i < 1000) {
-      array[i] = 1000 - i;
+// 十進位轉成二進位
+function decimalToBinary(decimalNumber) {
+  const stack = new Stack();
+  let number = decimalNumber;
+  let binaryString = '';
+
+  while (number > 0) {
+    stack.push(number % 2);
+    number = Math.floor(number / 2);
+  }
+
+  while (!stack.isEmpty()) {
+    binaryString += stack.pop();
+  }
+
+  return binaryString || '0';
+}
+
+decimalToBinary(5); // 101
+decimalToBinary(10); // 1010
+
+// 通用進位轉換
+function convertDecimalToBase(dec, base) {
+  const stack = new Stack();
+  let number = dec;
+  let ret = '';
+  const digits = '0123456789ABCDEF';
+
+  while (number > 0) {
+    stack.push(number % base);
+    number = Math.floor(number / base);
+  }
+
+  while (!stack.isEmpty()) {
+    ret += digits[stack.pop()];
+  }
+
+  return ret || '0';
+}
+
+convertDecimalToBase(10, 2) // 1010
+convertDecimalToBase(10, 8) // 12
+convertDecimalToBase(10, 16) // A
+```
+
+#### 4. 表達式求值
+
+表達式求值是 stack 應用的一個典型例子。這裡介紹一種簡單直觀、廣為使用的算法，通常稱為「算符優先法」。
+
+要把一個表達式翻譯成正確求值的一個機器指令序列，或者直接對表達式求值，首先要能夠正確解釋表達式。例如要對下述表達式求值：
+
+$4 + ((6-10) + 2 \times 2) \times 2$
+
+首先要理解四則運算的規則
+
+- 先乘除後加減
+- 從左算到右
+- 括號優先算
+
+因此這個算術表達式的計算順序應為：
+
+$4 + ((6-10) + 2 \times 2) \times 2 = 4 + (-4 + 4) \times 2 = 4 + 0 \times 2 = 4$
+
+任何一個表達式都是由操作數（operand）和運算子（operator）和分隔符（delimiter）組成。分隔符就是小括號，運算子包括加減乘除，以及更複雜的求餘、三角函數等。這裡我們只討論簡單的算術表達式，所以運算子只有加減乘除。
+
+我們把運算子和分隔符都統稱為算符，根據上面三條規則，在運算每一步時，任意兩個相繼出現的算符 θ1 和 θ2 之間的優先關係最多是下面三種關係：
+
+1. θ1 < θ2，即 θ1 的優先級比 θ2 低
+2. θ1 = θ2，即 θ1 的優先級和 θ2 相同
+3. θ1 > θ2，即 θ1 的優先級比 θ2 高
+
+這種優先關係如下表所示：
+
+| θ1\θ2 | +   | -   | *   | /   | (   | )   |
+| ----- | --- | --- | --- | --- | --- | --- |
+| +     | >   | >   | <   | <   | <   | >   |
+| -     | >   | >   | <   | <   | <   | >   |
+| *     | >   | >   | >   | >   | <   | >   |
+| /     | >   | >   | >   | >   | <   | >   |
+| (     | <   | <   | <   | <   | <   | =   |
+| )     | >   | >   | >   | >   |     | >   |
+
+由規則 3 可知，+、-、* 和 / 為 θ1 時優先度均低於“(”，但高於右括號“)”。基於此，首先我們要來討論如何使用算符優先演算法來實作表達式求值。
+
+為了實作這個演算法，我們需要使用兩個 stack，一個用來儲存操作數或運算結果，另一個用來儲存算符。
+
+這個演算法的基本思想如下：
+
+1. 建立兩個 stack：操作數（OPND）stack 和運算符（OPTR）stack。
+2. 依次讀入表達式中的每個元素，若是操作數則存入 OPND stack，若是運算符則與 OPTR stack 的頂端運算符比較優先級再作相應處理。
+3. 若該運算符優先級高於 OPTR stack 的頂端運算符，則該運算符直接進入 OPTR stack；反之，則從 OPTR stack 中彈出一個運算符，並從 OPND stack 中彈出兩個數進行運算，運算結果存入 OPND stack。
+4. 重複步驟 2，直到將該運算符加入 OPTR stack。
+5. 表達式讀取結束，若兩個 stack 都不為空，則依次彈出 OPTR stack 中的運算符和 OPND stack 中的兩個操作數進行運算，再將結果存入 OPND stack，直到 OPTR stack 為空，OPND stack 中只剩一個數，即為最後的運算結果。
+6. 中間若出現差錯，例如最後 OPND stack 中不只一個數，則表示表達式出錯。
+
+下面是完整實作程式碼：
+
+```js
+function evaluate(expression) {
+  const OPND_stack = new Stack();
+  const OPTR_stack = new Stack();
+  // 遍歷這個表達式
+  for (let i = 0; i < expression.length; i++) {
+    let c = expression.charAt(i);
+    // 如果是數字，也就是操作數
+    if (isDigit(c) || c == '.') {
+      let stringBuilder = '';
+      // 操作數的拼接，包含小數點
+      while (i < expression.length && (isDigit((c = expression.charAt(i))) || c == '.')) {
+        stringBuilder += c;
+        i++;
+      }
+      // 操作數 push 到 OPND_stack
+      OPND_stack.push(Number(stringBuilder));
+      // 跳過本次迴圈，i 的值已經增加過，所以要減回來
+      i--;
+      continue;
     } else {
-      array[i] = i;
+      // 如果是運算符
+      outer: while (!OPTR_stack.isEmpty()) {
+        switch (precede(OPTR_stack.top(), c)) {
+          case '<':
+            // 如果 OPTR_stack 的 top 運算符小於 c，那麼 c 直接入 OPTR_stack
+            OPTR_stack.push(c);
+            break outer;
+          case '=':
+            // 如果 OPTR_stack 的 top 運算符等於 c，那麼只有一種情況，左右括號相遇，直接 pop 出 "("
+            OPTR_stack.pop();
+            break outer;
+          case '>':
+            // 如果 OPTR_stack 的 top 運算符大於 c
+            const operator = OPTR_stack.pop();
+            // 如果有多餘的運算符卻沒有操作數可以計算，那麼這個表達式是錯誤的
+            try {
+              const opnd2 = OPND_stack.pop();
+              const opnd1 = OPND_stack.pop();
+              const result = operate(opnd1, operator, opnd2);
+              OPND_stack.push(result);
+            } catch {
+              console.log('表達式錯誤!');
+              return;
+            }
+            break;
+        }
+      }
+      // 如果 OPTR_stack 是空的，那麼直接 push c
+      if (OPTR_stack.isEmpty()) {
+        OPTR_stack.push(c);
+      }
     }
   }
-  console.log('========');
-  let start = new Date() - 0;
-  sortedFn(array);
-  console.log('部分有序的情況', sortedFn.name, new Date() - start);
-  shuffle(array);
-  start = new Date() - 0;
-  sortedFn(array);
-  console.log('完全亂序的情況', sortedFn.name, new Date() - start);
+  while (!OPTR_stack.isEmpty()) {
+    const operator = OPTR_stack.pop();
+    // 如果有多餘的運算符卻沒有操作數可以計算，那麼這個表達式是錯誤的
+    try {
+      const opnd2 = OPND_stack.pop();
+      const opnd1 = OPND_stack.pop();
+      const result = operate(opnd1, operator, opnd2);
+      OPND_stack.push(result);
+    } catch {
+      console.log('表達式錯誤!');
+      return;
+    }
+  }
+  if (OPND_stack.size() === 1) {
+    return OPND_stack.pop();
+  } else {
+    console.log('表達式錯誤!');
+    return;
+  }
 }
+
+const isDigit = (c) => /[0-9]/.test(c);
+// 比較兩個運算符的優先級大小
+const precede = (θ1, θ2) => {
+  if (θ1 == '+' || θ1 == '-') {
+    if (θ2 == '+' || θ2 == '-' || θ2 == ')') {
+      return '>';
+    } else {
+      return '<';
+    }
+  } else if (θ1 == '*' || θ1 == '/') {
+    if (θ2 == '(') {
+      return '<';
+    } else {
+      return '>';
+    }
+  } else if (θ1 == '(') {
+    if (θ2 == ')') {
+      return '=';
+    } else {
+      return '<';
+    }
+  } else if (θ1 == ')') {
+    return '>';
+  }
+  return '>';
+};
+// 執行運算
+const operate = (opnd1, optr, opnd2) => {
+  switch (optr) {
+    case '+':
+      return opnd1 + opnd2;
+    case '-':
+      return opnd1 - opnd2;
+    case '*':
+      return opnd1 * opnd2;
+    case '/':
+      return opnd1 / opnd2;
+  }
+  return 0;
+};
 ```
-
-我們把測試執行效率的測試給打開，可以在 `vitest ui` 的 Console 中看到測試結果：
-
-![](https://media.discordapp.net/attachments/1083289750099738624/1143429057573306378/image.png?width=1826&height=1084)
-
-## 複雜度（Complexity）
-
-氣泡排序的複雜度是 $O(n^2)$，但在最好的情況下能達到 $O(n)$，因為它至少要跑一次迴圈掃過每個元素的位置判斷是否需要交換。
-
-| Name            | Average  |  Best  |  Worst   | Space  |  Method  | Stable |
-| --------------- | :------: | :----: | :------: | :----: | :------: | :----: |
-| **Bubble sort** | $O(n^2)$ | $O(n)$ | $O(n^2)$ | $O(1)$ | In-place |  Yes   |
-
-> **Stable**：如果排序後兩個相等的元素相對位置不變，則該排序演算法是穩定的。
 
 ## 參考資料
 
 - [《JavaScript 算法：基本原理與代碼實現》](https://www.tenlong.com.tw/products/9787115596154?list_name=r-zh_cn)
-

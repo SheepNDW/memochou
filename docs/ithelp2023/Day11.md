@@ -1,55 +1,260 @@
-# 排序總結
+---
+outline: deep
+---
 
-過去一週裡我們提到了 9 種排序演算法，也提了一些各自的變化版本，現在讓我們簡單回顧一下這些排序法吧。
+# Tree 的深度優先走訪
 
-- Bubble Sort：
+樹的走訪或者說遍歷（traversal）是一個很基礎的問題，有很多實際應用，可以用來找到匹配的字串、檔案路徑等問題。樹的走訪有兩種方式：深度優先（Depth First Search）和廣度優先（Breadth First Search）。
 
-雙重迴圈，每層都從 0 到 n，每次都比較相鄰的兩個元素，如果前面的元素比後面的元素大，就交換位置，整個陣列會從後面開始逐漸排序。
+深度優先走訪又根據處理某個子樹的根節點順序不同，可以分為：前序（Preorder）、中序（Inorder）、後序（Postorder）。
 
-- Selection Sort：
+- **前序走訪（Preorder）**：先處理最上面的根節點，然後第二步是左子樹，最後是右子樹。
+- **中序走訪（Inorder）**：將最上面的根節點留到第二步，第一步為左子樹，第三步為右子樹。
+- **後序走訪（Postorder）**：根節點留到最後一步處理，第一步是左子樹，第二步是右子樹。
 
-將陣列區分為已排序與未排序兩個部分，前面是已排序的，後面是未排序的。每次從未排序的部分中找出最小的元素，然後放到已排序的部分的最後面，直到全部排序完成。
+![](https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/data-structures/tree/images/tree-traversal.png)
 
-- Insertion Sort：
+## 深度優先走訪的遞迴實作
 
-也分成已排序與未排序兩個部分。前面為已排序的，每次會從取出未排序的第一個元素放到已排序區間中的適當位置，因此會有一個往後挪坑的過程。在陣列元素比較少的時候，效率會比較好。
+從上面的流程描述來看，深度優先走訪很適合用遞迴來實現。我們透過下面的程式碼來實作前序、中序、後序這三種走訪方式，然後借助 `type` 去選擇走訪方式：
 
-- Shell Sort：
+```js
+inOrder(callback) {
+  this._forEach(this.root, callback, 'middle');
+}
 
-選擇一個 gap sequence，透過它每次會將陣列分成幾個子陣列（子陣列中元素不連續，它們間隔為目前的 gap），然後每個子陣列各自排序，最後再將 gap sequence 逐漸縮小，直到 gap 為 1。
+preOrder(callback) {
+  this._forEach(this.root, callback, 'pre');
+}
 
-- Merge Sort：
+postOrder(callback) {
+  this._forEach(this.root, callback, 'post');
+}
 
-分為兩個步驟，分割與合併。將陣列分割到最小單位，然後利用一個時間複雜度為 O(n) 的 merge 函式來合併兩個已排序的陣列，一路合併到最後。
+_forEach(node, callback, type) {
+  if (node) {
+    if (type === 'middle') {
+      this._forEach(node.left, callback, type);
+      callback(node);
+      this._forEach(node.right, callback, type);
+    } else if (type === 'pre') {
+      callback(node);
+      this._forEach(node.left, callback, type);
+      this._forEach(node.right, callback, type);
+    } else if (type === 'post') {
+      this._forEach(node.left, callback, type);
+      this._forEach(node.right, callback, type);
+      callback(node);
+    }
+  }
+}
+```
 
-- Quick Sort：
+我們在總結一下這三種走訪的輸出結果有什麼特點：
 
-透過一個 partition 函式，將陣列分成兩個部分，左邊的部分都比 pivot 小，右邊的部分都比 pivot 大，然後再對左右兩個部分遞迴進行 quick sort。
+- **前序**：陣列的第一個元素是根節點。
+- **中序**：根據根節點劃分了左右子樹的元素。
+- **後序**：陣列的最後一個元素是根節點。
 
-- Counting Sort：
+現在來透過一道題目來驗收一下學習成果：
 
-類似投票的概念，準備足夠的 bucket 來存放元素，每個元素放進與 bucket 編號相同的 bucket 中，bucket 計數加一，最後再根據編號順序將 bucket 中的元素取出。
+已知二元樹的中序和前序走訪結果，如何求後序走訪結果？例如一棵樹的前序走訪是“GDAFEMHZ”，而中序走訪是“ADEFGHMZ”，應該如何求其後序走訪結果？
 
-- Bucket Sort：
+具體步驟如下：
 
-容易跟 counting sort 搞混，counting sort 的 bucket 是足夠多的，可以不實際放東西進去，只要計數就好。bucket sort 的 bucket 比較少，每個元素在放進去之前，都需要透過計算來找到自己應該放的位置。在 bucket 內部再進行 insertion sort，最後所有 bucket 合併起來就是排序好的陣列。
+1. root 最簡單，前序走訪的第一個節點 G 就是 root。
+2. 看中序走訪，ADEF 在 G 的左邊，HMZ 在右邊。
+3. 觀察左子樹 ADEF，左子樹中的根節點必然會是大樹 root 的 leftChild。在前序走訪中，大樹 root 的 leftChild 位於 root 之後，所以左子樹的根節點為 D。
+4. 同樣的道理，root 的右子樹節點中的 HMZ 中的根節點也可以透過前序走訪找到。在前序走訪中，一定會把 root 和 root 的所有左子樹節點都遍歷完之後才會遍歷右子樹，並且遍歷右子樹的第一個節點就是右子樹的根節點。
+如何知道哪裡是前序走訪中左子樹和右子樹的分界點？透過中序走訪去數節點的個數。
+中序走訪中，root 左側是 ADEF，所以有 4 個節點位於 root 左側。那麼在前序走訪中，第一個是 G，2~5 個由 ADEF 組成，所以第 6 個節點就是右子樹的根節點，也就是 M。
+5. 觀察上述步驟發現，所有過程都是遞迴的。先找到目前樹的根節點，然後劃分左子樹、右子樹，然後進入左子樹重複上面過程，再進入右子樹重複上面過程。最後就可以還原出整棵樹的結構。
 
-- Radix Sort：
+其實如果只是要求寫出後序走訪，甚至不要求專門佔用空間保存還原後的樹。只需要稍微改動第 5 步，就能實現要求。僅需把遞迴過程改成：
 
-透過 LSD（Least Significant Digit）或是 MSD（Most Significant Digit）來進行排序，LSD 是從個位數開始，MSD 是從最高位數開始。每次都會將陣列分成 10 個 bucket，然後根據當前位數的數字來放進對應的 bucket 中，最後再將 bucket 中的元素合併起來。
+1. 確定根，確定左子樹，確定右子樹。
+2. 在左子樹中遞迴。
+3. 在右子樹中遞迴。
+4. 處理目前的根節點。
 
-接著來複習一下各自的複雜度分析：
+用程式表達的話如下：
 
-| Name               |         Average         |     Best      |      Worst       |    Space    |  Method   | Stable |
-| ------------------ | :---------------------: | :-----------: | :--------------: | :---------: | :-------: | :----: |
-| **Bubble sort**    |        $O(n^2)$         |    $O(n)$     |     $O(n^2)$     |   $O(1)$    | In-place  |  Yes   |
-| **Selection sort** |        $O(n^2)$         |   $O(n^2)$    |     $O(n^2)$     |   $O(1)$    | In-place  |   No   |
-| **Insertion sort** |        $O(n^2)$         |    $O(n)$     |     $O(n^2)$     |   $O(1)$    | In-place  |  Yes   |
-| **Shell sort**     | depends on gap sequence | $O(n\log n)$  | $O(n(\log n)^2)$ |   $O(1)$    | In-place  |   No   |
-| **Merge sort**     |      $O(n \log n)$      | $O(n \log n)$ |  $O(n \log n)$   |   $O(n)$    | Out-place |  Yes   |
-| **Quick sort**     |      $O(n \log n)$      | $O(n \log n)$ |     $O(n^2)$     | $O(\log n)$ | In-place  |   No   |
-| **Counting sort**  |       $O(n + k)$        |  $O(n + k)$   |    $O(n + k)$    | $O(n + k)$  | Out-place |  Yes   |
-| **Bucket sort**    |       $O(n + k)$        |  $O(n + k)$   |     $O(n^2)$     | $O(n + k)$  | Out-place |  Yes   |
-| **Radix sort**     |        $O(n*k)$         |   $O(n*k)$    |     $O(n*k)$     |  $O(n+k)$   | Out-place |  Yes   |
+```js
+function getPostorder(preorder, inorder, postorder = []) {
+  const root = preorder[0];
+  const inLeftTree = [];
+  const inRightTree = [];
+  let list = inLeftTree;
 
-從明天開始，我們就要開始介紹那些 JavaScript 沒有內建的資料結構了，我們會自己動手實作一些常見的資料結構，並且會介紹它們的特性以及使用場景，另外有人可能注意到了，我一開始說了十大排序演算法，但這裡只出現九個，這邊請先讓我欠著，等後面的天數介紹到 heap 時再把 heap sort 這個坑給填上。
+  // 分離出 inorder 的左右子樹
+  for (let i = 0; i < inorder.length; i++) {
+    if (inorder[i] === root) {
+      list = inRightTree;
+    } else {
+      list.push(inorder[i]); // 根節點不會放在兩個子樹中
+    }
+  }
+
+  const boundary = inLeftTree.length;
+  const preLeftTree = [];
+  const preRightTree = [];
+
+  // 分離出 preorder 的左右子樹
+  for (let i = 1; i < preorder.length; i++) {
+    const el = preorder[i];
+    if (preLeftTree.length < boundary) {
+      preLeftTree.push(el);
+    } else {
+      preRightTree.push(el);
+    }
+  }
+
+  // postorder 左子樹遞迴
+  if (preLeftTree.length > 0) {
+    getPostorder(preLeftTree, inLeftTree, postorder);
+  }
+
+  // postorder 右子樹遞迴
+  if (preRightTree.length > 0) {
+    getPostorder(preRightTree, inRightTree, postorder);
+  }
+
+  // postorder 處理根節點
+  if (root) {
+    postorder.push(root);
+  }
+
+  return postorder;
+}
+```
+
+## 深度優先走訪的非遞迴實作
+
+使用 stack 取代遞迴，首先要用一個 while 迴圈將所有的節點都放入 stack 中，然後再一個一個取出來處理。先不放根節點，統一在迴圈內部去放。
+
+```js
+xxxOrder(callback) {
+  const stack = [];
+  let node = this.root;
+  while (node || stack.length) { // 將所有子節點推入 stack
+    if (node) {
+      stack.push(node);
+    } else {
+      node = stack.pop();
+    }
+  }
+}
+```
+
+迴圈中有兩個分支，分別做 `push` 和 `pop`，`push` 的條件是 `node` 存在，以這個為界切開迴圈。前序和中序都是先 push left 再 push right，實作程式碼如下：
+
+```js
+preOrder(callback) { // 口訣：中左右
+  const stack = [];
+  let node = this.root;
+  while (node || stack.length) {
+    if (node) {
+      callback(node); // 中先於左
+      stack.push(node);
+      node = node.left; // push left
+    } else {
+      node = stack.pop();
+      node = node.right; // push right
+    }
+  }
+}
+
+inOrder(callback) { // 口訣：左中右
+  const stack = [];
+  let node = this.root;
+  while (node || stack.length) {
+    if (node) {
+      stack.push(node);
+      node = node.left; // push left
+    } else {
+      node = stack.pop();
+      callback(node); // 中先於右
+      node = node.right; // push right
+    }
+  }
+}
+
+postOrder(callback) { // 口訣：左右中
+  const stack = [];
+  const out = [];
+  let node = this.root;
+  while (node || stack.length) {
+    if (node) { // 類似於 preOrder，可以當作 根 -> 右 -> 左，然後再反轉
+      stack.push(node);
+      out.push(node);
+      node = node.right;
+    } else {
+      node = stack.pop();
+      node = node.left;
+    }
+  }
+  while (out.length) {
+    callback(out.pop());
+  }
+}
+```
+
+## 練習：一棵二元搜尋樹，找出樹中第 k 大的節點。
+
+二元搜尋樹後面會介紹到，總之就是一棵樹，每個節點的值都大於左子樹的所有節點的值，我們要從這棵樹中找出第 k 大的節點。我們這裡先關注如何透過中序走訪來解決這個問題。
+
+方法一：最樸素的方法是透過中序走訪將二元樹轉換成陣列，然後取出索引值為 `k-1` 的元素即可。
+
+```js
+function kthNode(root, k) {
+  if (!root || k < 0) {
+    return null;
+  }
+
+  const array = [];
+  inOrder(root, array);
+  if (k > array.length) {
+    return null;
+  }
+  return array[k - 1];
+}
+
+function inOrder(root, array) {
+  if (root === null) {
+    return;
+  }
+  inOrder(root.left, array);
+  array.push(root);
+  inOrder(root.right, array);
+}
+```
+
+方法二：不用收集所有節點，設置一個計數器，在中序走訪的過程中，累加訪問過的節點數，當計數器的值等於 k 時，回傳該節點。
+
+```js
+function kthNode2(root, k) {
+  let index = 0;
+  const _kthNode = (root, k) => {
+    if (root) {
+      let node = _kthNode(root.left, k);
+      if (node !== null) {
+        return node;
+      }
+      index++;
+      if (index === k) {
+        return root;
+      }
+      node = _kthNode(root.right, k);
+      if (node !== null) {
+        return node;
+      }
+    }
+    return null;
+  };
+  return _kthNode(root, k);
+}
+```
+
+## 小結
+
+我們今天已經看完了深度優先走訪的實作，基本上深度優先走訪的實作都是透過遞迴或者 stack 來實現的，而且遞迴的實現方式比較簡單，所以通常只需要掌握遞迴的實現方式就可以了。明天我們要繼續來看到廣度優先走訪，並且還要來實作如何在終端中 print 出一棵樹。

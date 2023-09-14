@@ -1,243 +1,293 @@
-# 優先佇列 Priority Queue
+# 基數排序法 Radix Sort
 
-首先我們來回憶一下佇列，普通的佇列是一種先進先出（FIFO）的資料結構，元素只能從佇列尾部加入，從佇列頭部取出。而優先佇列（Priority Queue）是一種特殊的佇列，它的元素是有優先級的，有最高優先級的元素會被最先取出，就像 VIP，就算他最晚來，也會被優先服務。
+基數排序法（Radix Sort）是一種非比較性質的整數排序演算法。其基本原理是，將整數的每個位數上的值進行分組，在分組的過程中對於不足位的數值補零。
 
-既然 VIP 需要最先得到服務，我們需要將優先級最高的元素在加入佇列時就調整到最前面，如果使用 linked list 或是普通陣列來實作，時間複雜度會是 $O(n)$；如果換成 max heap 或 min heap，每次加入和取出的時間複雜度都是 $O(\log n)$。我們在上面已經學過如何構建 heap 和調整 heap，而想要實作一個 priority queue，還需要實作 heap 的移除與新增元素的方法。
+Radix Sort 按照對位數分組的順序的不同，可以分為 LSD（Least Significant Digit）和 MSD（Most Significant Digit）兩種。
+LSD Radix Sort 是按照從低位數到高位數的順序進行分組，而 MSD Radix Sort 則是按照從高位數到低位數的順序進行分組。兩種方式不僅僅是對位數分組的順序不同，其實作原理也不同。
 
-先來看一下 priority queue 的 API：
+## LSD Radix Sort
 
-```js
-class PriorityQueue {
-  heap = [];
+在 LSD Radix Sort 中，序列中每個整數的每一位數都可以看成一個桶子，而該位數上的數字就可以認為是這個桶子的鍵值。例如下面的陣列：
 
-  push() {} // 新增元素，調整 heap
-
-  pop() {} // 彈出最大元素，調整 heap
-
-  peek() { // 回傳最大元素
-    return this.heap[0];
-  }
-
-  size() {
-    return this.heap.length;
-  }
-
-  isEmpty() {
-    return this.heap.length === 0;
-  }
-
-  toString() {
-    return this.heap.toString();
-  }
-}
+```txt
+[ 170, 45, 75, 90, 802, 2, 24, 66 ]
 ```
 
-困難的地方在新增與刪除元素兩個方法。我們先來看看新增元素，一般是將元素放到最後，然後讓它上浮到適當的位置。元素上浮是“孩子要去找父親”，父節點是基於 `parent = (child - 1) >> 1` 計算出來的。我們現在要實作一個 max heap 的 priority queue，因此如果子節點比父節點大，就交換它們的位置，然後繼續上浮，直到無法交換為止。
+首先，我們要確認最大值，因為最大值的位數最多。
+然後，建立 10 個桶子，亦即 10 個陣列。
+接著遍歷所有元素，取其個位數，個位數是什麼就放進對應編號的陣列，例如 1 放進 1 號桶，將上面的陣列進行遍歷後的結果為：
 
-push 方法實作如下：
-
-```js
-push(el) {
-  const array = this.heap;
-  array.push(el);
-  let child = array.length - 1;
-  let parent = (child - 1) >> 1;
-
-  while (array[child] > array[parent]) {
-    swap(array, child, parent); // 讓大的元素往上浮
-    child = parent;
-    parent = (child - 1) >> 1;
-  }
-}
+```txt
+0 號 bucket: [ 170, 90 ]
+1 號 bucket: []
+2 號 bucket: [ 802, 2 ]
+3 號 bucket: []
+4 號 bucket: [ 24 ]
+5 號 bucket: [ 45, 75 ]
+6 號 bucket: [ 66 ]
+7 號 bucket: []
+8 號 bucket: []
+9 號 bucket: []
 ```
 
-再來看刪除元素，我們只刪除優先級最高的，也就是第一個元素，當然也可以刪除指定的元素，只要找到目標元素後，就將它與最後一個元素交換。這時要保證新的第一個元素的優先級是最高的，又不能影響到最後一個，所以我們要從第一個元素開始下沉，當我們的元素碰到目標元素後就停止，最後把元素刪除。
+然後依次將元素從桶子中取出，覆蓋原始陣列或是放到一個新陣列，我們把經過第一次排序的陣列叫 `sorted`：
 
-pop 方法實作如下：
+```txt
+sorted = [ 170, 90, 802, 2, 24, 45, 75, 66 ]
+```
+
+再一次遍歷 `sorted` 陣列的元素，這次取十位數的值。這時要注意，2 不存在十位數，所以預設為 0：
+
+```txt
+0 號 bucket: [ 2, 802 ]
+1 號 bucket: []
+2 號 bucket: [ 24 ]
+3 號 bucket: []
+4 號 bucket: [ 45 ]
+5 號 bucket: []
+6 號 bucket: [ 66 ]
+7 號 bucket: [ 170, 75 ]
+8 號 bucket: []
+9 號 bucket: [ 90 ]
+```
+
+再全部取出：
+
+```txt
+sorted = [ 2, 802, 24, 45, 66, 170, 75, 90 ]
+```
+
+開始百位數的入桶操作，沒有百位就預設為 0：
+
+```txt
+0 號 bucket: [ 2, 24, 45, 66, 75, 90 ]
+1 號 bucket: [ 170 ]
+2 - 7 號 bucket: []
+8 號 bucket: [ 802 ]
+9 號 bucket: []
+```
+
+全部取出：
+
+```txt
+sorted = [ 2, 24, 45, 66, 75, 90, 170, 802 ]
+```
+
+沒有千位數，排序完成，回傳 `sorted`。具體執行過程如下圖所示：
+
+![LSD Radix Sort](https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/algorithms/sorting/radix-sort/images/lsd-radix-sort.gif)
+
+程式碼實作：
 
 ```js
-pop(el) {
-  const array = this.heap;
+function radixSort(array) {
+  const max = Math.max(...array);
+  const times = getLoopTimes(max);
+  const len = array.length;
+  const buckets = [...Array(10)].map(() => []);
+
+  for (let radix = 0; radix < times; radix++) {
+    // 個位數、十位數、百位數...
+    lsdRadixSort(array, buckets, len, radix);
+  }
+
+  return array;
+}
+/** 根據某個位數上的值得到桶子的編號 */
+function getBucketNumber(num, i) {
+  return Math.floor((num / Math.pow(10, i - 1)) % 10);
+}
+/** 獲取數字的位數 */
+function getLoopTimes(num) {
+  let digits = 0;
+  while (num) {
+    digits++;
+    num = Math.floor(num / 10);
+  }
+  return digits;
+}
+function lsdRadixSort(array, buckets, len, radix) {
+  // 將數字放入桶子中
+  for (let i = 0; i < len; i++) {
+    const el = array[i];
+    const bucketNum = getBucketNumber(el, radix);
+    buckets[bucketNum].push(el);
+  }
   let index = 0;
-  for (let i = 0; i < array.length; i++) {
-    if (array[i] === el) {
-      index = i;
-      break;
+  // 將桶子中的數字取出來，重寫原陣列
+  for (let i = 0; i < 10; i++) {
+    const bucket = buckets[i];
+    for (let j = 0; j < bucket.length; j++) {
+      array[index++] = bucket[j];
     }
-  }
-
-  const target = array[index];
-  swap(array, index, array.length - 1);
-
-  // 從父節點開始下沉 (陣列的右邊方向)
-  let parent = 0;
-  let child = parent * 2 + 1;
-  while (true) {
-    if (array[child] < array[child + 1] && array[child + 1] !== target) {
-      child++;
-    }
-
-    if (array[parent] < array[child] && array[child] !== target) {
-      swap(array, parent, child);
-      parent = child;
-      child = parent * 2 + 1; // 不斷向右
-    } else {
-      break;
-    }
-  }
-
-  return array.pop();
-}
-```
-
-我們可以試著執行一下下面的程式碼，可以發現 heap 值並不是完全按照順序排列的，它只保證第一個值是最大的：
-
-```js
-const pq = new PriorityQueue();
-
-pq.push(1);
-pq.push(3);
-pq.push(20);
-pq.push(5);
-
-console.log(pq.toString()); // 20,5,3,1
-
-pq.push(30);
-
-console.log(pq.toString()); // 30,20,3,1,5
-
-pq.push(25);
-
-console.log(pq.toString()); // 30,20,25,1,5,3
-
-pq.pop();
-
-console.log(pq.toString()); // 25,20,3,1,5
-
-pq.pop(3);
-
-console.log(pq.toString()); // 25,20,5,1
-```
-
-透過 priority queue 我們可以很容易地解決前面的 TopK 問題，只要把陣列中的元素全部加入 priority queue，然後再從 priority queue 中 pop 出前 K 個元素即可。
-
-最後再讓我們來實作一下以 min heap 為基礎的 priority queue，其實也非常簡單，只要在 pop 與 push 涉及元素比較的地方將大於和小於符號對調即可。具體程式碼如下：
-
-```js
-class MinPriorityQueue extends PriorityQueue {
-  constructor() {
-    super();
-  }
-
-  push(el) {
-    const array = this.heap;
-    array.push(el);
-    let child = array.length - 1;
-    let parent = (child - 1) >> 1;
-
-    while (array[child] < array[parent]) {
-      swap(array, child, parent); // 讓小的元素往上浮
-      child = parent;
-      parent = (child - 1) >> 1;
-    }
-  }
-
-  pop(el) {
-    const array = this.heap;
-    let index = 0;
-    for (let i = 0; i < array.length; i++) {
-      if (array[i] === el) {
-        index = i;
-        break;
-      }
-    }
-
-    const target = array[index];
-    swap(array, index, array.length - 1);
-
-    let parent = 0;
-    let child = parent * 2 + 1;
-    while (true) {
-      if (array[child] > array[child + 1] && array[child + 1] !== target) {
-        child++;
-      }
-
-      if (array[parent] > array[child] && array[child] !== target) {
-        swap(array, parent, child);
-        parent = child;
-        child = parent * 2 + 1;
-      } else {
-        break;
-      }
-    }
-
-    return array.pop();
+    bucket.length = 0;
   }
 }
 ```
 
-## Ugly Number
+## MSD Radix Sort
 
-Ugly number 是一個質因數只包含 2, 3, 5 的正整數，並且我們將 1 當作第一個 ugly number。給你一個整數 `n`，請你求出第 `n` 個 ugly number。也就是要從符合條件的 ugly number 數列中如：1, 2, 3, 4, 5, 6, 8, 9, 10, 12...，找出第 `n` 個數字。
-
-Example 1:
+接下來我們來看看 MSD Radix Sort。最開始也是遍歷所有元素，取最大值，得到最大的位數，建立 10 個桶子。這次從百位數取起，不足三位的數字補 0：
 
 ```txt
-Input: n = 10
-Output: 12
-Explanation: 1, 2, 3, 4, 5, 6, 8, 9, 10, 12 is the sequence of the first 10 ugly numbers.
+0 號 bucket: [ 45, 75, 90, 2, 24, 66 ]
+1 號 bucket: [ 107 ]
+2 - 7 號 bucket: []
+8 號 bucket: [ 802 ]
+9 號 bucket: []
 ```
 
-Example 2:
+接下來就與 LSD 不一樣了。我們要對每個長度大於 1 的桶子進行內部排序，內部排序也是用 Radix Sort。因此我們需要建立另外 10 個桶子，對 0 號桶子進行入桶操作，這時比原來少一位，也就是十位數：
 
 ```txt
-Input: n = 1
-Output: 1
+0 號 bucket: [ 2 ]
+1 號 bucket: []
+2 號 bucket: [ 24 ]
+3 號 bucket: []
+4 號 bucket: [ 45 ]
+5 號 bucket: []
+6 號 bucket: [ 66 ]
+7 號 bucket: [ 75 ]
+8 號 bucket: []
+9 號 bucket: [ 90 ]
 ```
 
-稍微分析一下後，我們觀察到除了第一個數字 1 以外，其他的數字都是乘以 2、3、5 得出的，在每次相乘得到的數中，移除被乘數後，找到最小的數，繼續乘以 2、3、5。也就是：
+然後繼續遞迴上一步，這裡因為每個桶子長度都沒有超過 1，所以可以開始取出收集的工作：
 
 ```txt
-[2, 3, 5] => 彈出 2，然後乘以 2、3、5 得到 4, 6, 10 加入佇列
-[3, 5, 4, 6, 10] => 彈出 3，乘以 2、3、5 加入佇列
-[4, 5, 6, 10, 6, 9, 15] => priority queue 會將最小的浮上去，然後彈出 4 繼續同樣操作
+0 號 bucket: [ 2, 24, 45, 66, 75, 90 ]
+1 號 bucket: [ 107 ]
+2 - 7 號 bucket: []
+8 號 bucket: [ 802 ]
+9 號 bucket: []
 ```
 
-我們可以看到會有重複的數字出現，我們可以利用 hash table 來去除重複的數字，並且使用 MinPriorityQueue 來確保每次取出的數字都是最小的。程式碼如下：
+把這個步驟應用到後面的其他桶子就可以完成排序了。
+
+實作程式碼如下：
 
 ```js
-function nthUglyNumber(n) {
-  const hash = new Set();
-  const queue = new MinPriorityQueue();
-  queue.push(1);
-  hash.add(1);
+function radixSort2(array) {
+  const max = Math.max(...array);
+  const times = getLoopTimes(max);
+  const len = array.length;
+  msdRadixSort(array, len, times);
+  return array;
+}
 
-  const factors = [2, 3, 5];
-  let result = 1;
-  for (let i = 0; i < n; i++) {
-    result = queue.pop();
-    for (const factor of factors) {
-      const next = result * factor;
-      if (!hash.has(next)) {
-        hash.add(next);
-        queue.push(next);
-      }
+function msdRadixSort(array, len, radix) {
+  const buckets = [[], [], [], [], [], [], [], [], [], []];
+  // 入桶
+  for (let i = 0; i < len; i++) {
+    const el = array[i];
+    const index = getBucketNumber(el, radix);
+    buckets[index].push(el);
+  }
+  // 遞迴每個子桶
+  for (let i = 0; i < 10; i++) {
+    const bucket = buckets[i];
+    if (bucket.length > 1 && radix > 1) {
+      msdRadixSort(bucket, bucket.length, radix - 1);
     }
   }
-
-  return result;
+  let k = 0;
+  // 重寫原陣列
+  for (let i = 0; i < 10; i++) {
+    const bucket = buckets[i];
+    bucket.forEach((el) => (array[k++] = el));
+    bucket.length = 0;
+  }
 }
 ```
 
-## 總結
+## 字串使用 Radix Sort 實作字典排序
 
-binary heap 是 priority queue 的實現方式之一，它有兩個特性：
+Radix Sort 只要稍作變換就可以應用於字串的字典排序（lexicographic order）中。例如對都是小寫字母的字串陣列進行排序。
 
-1. 它是一棵完整二元樹，因此完整二元樹的特性也適用於它。
-2. 每個節點都比其子節點大（或小）。
+小寫字母一共 26 個，考慮到長度不一樣的情況，我們需要對短的字串進行填充，這時可以補上空字串。然後根據字母與數字的對應關係，建立 27 個桶子，空字串對應 0，a 對應 1，b 對應 2，以此類推。而字典排序的規則是從左到右，所以會需要用到 MSD Radix Sort。
 
-JavaScript 沒有內建 priority queue，因此需要自己封裝一個。
+程式碼實作如下：
 
-heap sort 是一種利用 heap 來實現的排序演算法，它的時間複雜度是 $O(n \log n)$，空間複雜度是 $O(1)$。
+```js
+const character = {};
+'abcdefghijklmnopqrstuvwxyz'.split('').forEach((char, index) => {
+  character[char] = index + 1;
+});
+function toNum(c, length) {
+  const obj = {};
+  obj.c = c;
+  obj.arr = [];
+  for (let i = 0; i < length; i++) {
+    obj.arr[i] = character[c[i]] || 0;
+  }
+  return obj;
+}
+function getBucketNumber(obj, i) {
+  return obj.arr[i];
+}
 
-TopK 問題很適合使用 heap 來解決，建立 heap 的時間複雜度 $O(n)$，加入元素和取出元素的時間複雜度都是 $O(\log K)$。
+function lexSort(array) {
+  const len = array.length;
+  let loopTimes = 0;
+
+  // 求出最長的字串，並得到它的長度，那也是最高位數
+  for (let i = 0; i < len; i++) {
+    const el = array[i];
+    const charLength = el.length;
+    if (charLength > loopTimes) {
+      loopTimes = charLength;
+    }
+  }
+
+  // 將字串轉成數字陣列
+  const nums = array.map((el) => toNum(el, loopTimes));
+  // 開始多關鍵字排序
+  msdRadixSort(nums, len, 0, loopTimes);
+  // 變回字串
+  for (let i = 0; i < len; i++) {
+    array[i] = nums[i].c;
+  }
+  return array;
+}
+
+function msdRadixSort(array, len, radix, radixs) {
+  const buckets = [];
+  for (let i = 0; i <= 26; i++) {
+    buckets[i] = [];
+  }
+  // 入桶
+  for (let i = 0; i < len; i++) {
+    const el = array[i];
+    const index = getBucketNumber(el, radix);
+    buckets[index].push(el);
+  }
+  // 遞迴子桶
+  for (let i = 0; i <= 26; i++) {
+    const bucket = buckets[i];
+    if (bucket.length > 1 && radix < radixs) {
+      msdRadixSort(bucket, bucket.length, radix + 1, radixs);
+    }
+  }
+  let k = 0;
+  // 重寫原陣列
+  for (let i = 0; i <= 26; i++) {
+    const bucket = buckets[i];
+    for (let j = 0; j < bucket.length; j++) {
+      array[k++] = bucket[j];
+    }
+    bucket.length = 0;
+  }
+}
+```
+
+## 複雜度（Complexity）
+
+| Name           | Average  |   Best   |  Worst   |  Space   |  Method   | Stable |
+| -------------- | :------: | :------: | :------: | :------: | :-------: | :----: |
+| **Radix sort** | $O(n*k)$ | $O(n*k)$ | $O(n*k)$ | $O(n+k)$ | Out-place |  Yes   |
+> k 為桶子數量
+
+## 參考資料
+
+- [《JavaScript 算法：基本原理與代碼實現》](https://www.tenlong.com.tw/products/9787115596154?list_name=r-zh_cn)
+- [visualgo.net](https://visualgo.net/en/sorting)

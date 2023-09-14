@@ -2,222 +2,301 @@
 outline: deep
 ---
 
-# 佇列 Queue
+# 二元搜尋樹 Binary Search Tree
 
-佇列（Queue）是一種先進先出（First In First Out）的資料結構，就像排隊買票一樣，先到的人先買票，後到的人後買票。
-
-和 stack 一樣，queue 也是一種操作受限制的線性結構，但是它只允許在前端（front）進行刪除操作，而在後端（rear）進行插入操作。
-
-具體可以參考下圖：
+透過實作走訪發現到，二元樹最大的優勢是對稱，從而實作各種易讀性非常強的遞迴走訪。但是二元樹的缺點也很明顯，就是沒有規則，所以在搜尋時需要遍歷所有節點，效率不高。二元搜尋樹（Binary Search Tree，BST）是一種特殊的二元樹，它的左子樹的所有節點都小於根節點，右子樹的所有節點都大於根節點。這樣一來，我們就可以在搜尋時，根據節點的值和根節點的值的大小關係，只需要遍歷一部分節點就可以了。
 
 <div align="center">
-  <img src="https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/data-structures/queue/images/queue.png" alt="queue" width="600px">
+  <img src="https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/data-structures/tree/images/bst.png" width="500">
+  <p>二元搜尋樹</p>
 </div>
 
-## Queue 的常用方法
+在搜尋方面，就跟它的名字一樣，這是它的長處，搜尋效率可以達到 $O(\log n)$，比 $O(n)$ 還要快。BST 相當於對序列建立了一個索引，可以簡單理解爲在資料結構的層面上建構了一個二分搜尋演算法。
 
-- size：回傳佇列的長度
-- isEmpty：判斷佇列是否為空
-- enqueue/add：在佇列的後端插入元素
-- dequeue/remove：刪除佇列的前端元素
-- peek：存取第一個元素
+在增刪方面，也依賴一些規則，以保證它的結構不被破壞。在插入時，保證左子樹的節點都比父節點小，右子樹的節點都比父節點大。刪除也一樣，需要做一些調整。
+
+從上圖可以知道，二元搜尋樹的最大最小值是有規律的，總是在最左邊和最右邊的葉節點上。
+
+接下來我們實作一個二元搜尋樹，實作程式碼如下：
+
+```js
+class TreeNode {
+  constructor(data) {
+    this.parent = null;
+    this.data = data;
+    this.left = null;
+    this.right = null;
+  }
+}
+
+// 沿用之前 class Tree 的方法，僅重寫 insert、find、remove
+class BST {
+  constructor() {
+    this.root = null;
+    this._size = 0;
+  }
+
+  insert(data) {}
+
+  find(data) {}
+
+  transplant() {}
+
+  remove(data) {}
+
+  inOrder(callback) {}
+
+  preOrder(callback) {}
+
+  postOrder(callback) {}
+
+  size() {}
+
+  minNode() {}
+
+  maxNode() {}
+
+  min() {}
+
+  max() {}
+
+  getNodeSize() {}
+
+  height() {}
+
+  getNodeHeight() {}
+
+  toString() {}
+
+  printNodeByLevel() {}
+
+  show() {}
+}
+```
+
+## Predecessor 和 Successor
+
+根據二元搜尋樹的定義，中序走訪得到的陣列是一個遞增的序列。某個節點的 Predecessor，應為小於該節點的所有節點中的最大節點。例如下圖中，節點 5 的 Predecessor 為 4，節點 12 的 Predecessor 為 10。
+
+
+<div align="center">
+  <img src="https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/data-structures/tree/images/predecessor-successor.png" width="500px">
+</div>
+
+Predecessor 可能在原節點的下面（左子樹），也可能在上面（父節點）。要尋找 Predecessor 的方法如下：
+
+```js
+function predecessor(node) {
+  let ret;
+  if (node.left) { // 如果有左子樹
+    ret = node.left;
+    while (ret.right) { // 在左子樹中找到最右邊的節點
+      ret = ret.right;
+    }
+    return ret;
+  } else {
+    let p = node.parent;
+    while (p && p.left === node) {
+      node = p; // 找到一個父節點，是其父節點的父節點的左子節點
+      p = p.parent;
+    }
+    return p;
+  }
+}
+```
+
+某個節點的 Successor，應為大於該節點的所有節點中的最小節點。例如圖中，節點 5 的 Successor 為 6。尋找 Successor 的方法如下：
+
+```js
+function successor(node) {
+  if (node.right) { // 如果有右子樹
+    let ret = node.right;
+    while (ret.left) { // 在右子樹中找到最左邊的節點
+      ret = ret.left;
+    }
+    return ret;
+  } else {
+    let p = node.parent;
+    while (p && p.right === node) {
+      node = p; // 找到一個父節點，是其父節點的父節點的右節點
+      p = p.parent;
+    }
+    return p;
+  }
+}
+```
+
+## 二元搜尋樹的插入與查詢操作
+
+1. `insert`
+
+由於有了數值上的約定，我們不需要像二元樹那樣搞一個 `_insertLeft` 屬性來規定插入某棵子樹。只需從根節點開始，比較每個節點的值和要插入的值的大小，決定往哪一邊尋找可以放置新節點的位置。插入過程如下圖：
+
+<div align="center">
+  <img src="https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/data-structures/tree/images/bst-insert.png" width="600px">
+</div>
 
 實作程式碼如下：
 
 ```js
-class Queue {
-  #data = [];
-
-  enqueue(el) {
-    this.#data.push(el);
+insert(data) {
+  const node = new TreeNode(data);
+  if (this.root === null) {
+    this.root = node;
+    this._size++;
+    return true;
   }
 
-  dequeue() {
-    return this.#data.shift();
-  }
-
-  size() {
-    return this.#data.length;
-  }
-
-  isEmpty() {
-    return this.size() === 0;
-  }
-
-  peek() {
-    return this.#data[0];
+  let current = this.root;
+  let parent = null;
+  while (current) {
+    parent = current;
+    if (data === current.data) return false;
+    node.parent = parent;
+    if (data < current.data) {
+      current = current.left;
+      if (current === null) {
+        parent.left = node;
+        this._size++;
+        return true;
+      }
+    } else {
+      current = current.right;
+      if (current === null) {
+        parent.right = node;
+        this._size++;
+        return true;
+      }
+    }
   }
 }
 ```
 
-不過用陣列實作 queue 有個缺點，就是用 `shift` 刪除元素時，陣列的會將後面的元素往前移動，這樣會有一些效能上的問題，我們也可以使用物件來實作：
+1. `find`
+
+查詢操作與二元樹的相似，我們透過兩值相減，根據結果決定往左子樹或右子樹尋找。實作程式碼如下：
 
 ```js
-class Queue {
-  #items = {};
-  #headCount = 0; // 記錄佇列的前端位置
-  #count = 0; // 記錄新元素的位置
-
-  enqueue(data) {
-    this.#items[this.#count] = data;
-    this.#count++;
-  }
-
-  dequeue() {
-    if (this.isEmpty()) return;
-    const head = this.#items[this.#headCount]; // 記錄將要刪除的元素
-    delete this.#items[this.#headCount]; // 刪除前端的元素
-    this.#headCount++; // 前端位置往後移動
-    return head; // 回傳被刪除的元素
-  }
-
-  peek() {
-    return this.#items[this.#headCount];
-  }
-
-  isEmpty() {
-    return this.size() === 0;
-  }
-
-  size() {
-    return this.#count - this.#headCount;
-  }
-
-  clear() {
-    this.#items = {};
-    this.#headCount = 0;
-    this.#count = 0;
-  }
-
-  toString() {
-    let str = '';
-
-    for (let i = this.#headCount; i < this.#count; i++) {
-      str += this.#items[i] + (i < this.#count - 1 ? ',' : '');
+find(data) {
+  let node = this.root;
+  while (node) {
+    if (data === node.data) {
+      return node;
+    } else if (data < node.data) {
+      node = node.left;
+    } else {
+      node = node.right;
     }
-
-    return str;
   }
+  return null;
 }
 ```
 
-## 用 Queue 來實作出 Stack
+## 二元搜尋樹的移除操作
 
-原題取自[225. Implement Stack using Queues](https://leetcode.com/problems/implement-stack-using-queues/)，題目要求實現一個後進先出（LIFO）的Stack 結構，但條件是僅使用兩個 Queue 來完成。
-
-實作的 MyStack 類別需要具有以下幾個方法：
-
-- push(x): 將元素 x 放入堆疊的頂部。
-- pop(): 移除堆疊頂部的元素並回傳該元素。
-- top(): 回傳堆疊頂部的元素。
-- empty(): 若堆疊為空，則回傳 true，否則回傳 false。
-
-要注意的是，必須僅使用 Queue 的標準操作，例如將元素加入尾端、從前端取出或查看元素、查詢佇列大小（size）和判斷佇列是否為空（isEmpty）。
-
-一般在解題時，我們會直接利用陣列來模擬 Queue 的操作：
+在二元樹的移除操作中，我們遇到兩個子節點的情況時，是在它下方隨便找一個葉節點來頂替它。但二元搜尋樹要保證資料的有序性，所以我們通常找其 Successor 來做頂替。實作程式碼如下：
 
 ```js
-class MyStack {
-  queue1 = [];
-  queue2 = [];
-
-  push(x) {
-    // 將新元素放入 queue2
-    this.queue2.push(x);
-
-    // 將 queue1 的元素全部取出放入 queue2
-    while (this.queue1.length > 0) {
-      this.queue2.push(this.queue1.shift());
-    }
-    // 交換 queue1 和 queue2
-    [this.queue1, this.queue2] = [this.queue2, this.queue1];
+remove(data) {
+  const node = this.find(data);
+  if (node) {
+    this.removeNode(node);
+    this._size--;
   }
+}
 
-  pop() {
-    return this.queue1.shift() ?? null;
+removeNode(node) {
+  // 如果有兩個子節點
+  if (node.left !== null && node.right !== null) {
+    let succ = null;
+    for (succ = node.right; succ.left !== null; succ = succ.left); // 找到後繼
+    node.data = succ.data; // 用後繼的值替換當前節點的值
+    this.removeNode(succ); // 遞迴刪除，只可能遞迴一次
+  } else {
+    // 葉節點或只有一個子節點
+    let child = node.left || node.right || null;
+    this.transplant(node, child);
   }
+}
 
-  top() {
-    return this.queue1[0] ?? null;
+transplant(node, child) {
+  if (node.parent == null) {
+    this.root = child;
+  } else if (node === node.parent.left) {
+    node.parent.left = child;
+  } else {
+    node.parent.right = child;
   }
-
-  empty() {
-    return this.queue1.length === 0;
+  if (child) {
+    child.parent = node.parent;
   }
 }
 ```
 
-不過我們剛才已經實作過 Queue 了，所以我們可以直接利用 Queue 來實作：
+## 在瀏覽器中顯示出二元搜尋樹的結構
+
+我們可以再寫一個 `show` 方法，將二元搜尋樹的結構顯示出來。實作程式碼如下：
 
 ```js
-class MyStack {
-  queue1 = new Queue();
-  queue2 = new Queue();
+show(node = this.root, parentNode) {
+  if (!parentNode) {
+    parentNode = document.createElement('div');
+    parentNode.style.cssText = 'width:100%;text-align:center;';
+    document.body.appendChild(parentNode);
 
-  push(x) {
-    this.queue2.enqueue(x);
-
-    while (!this.queue1.isEmpty()) {
-      this.queue2.enqueue(this.queue1.dequeue());
-    }
-
-    [this.queue1, this.queue2] = [this.queue2, this.queue1];
+    const top = parentNode.appendChild(document.createElement('div'));
+    top.style.cssText = 'background:' + bg();
+    top.innerHTML = node.data;
   }
 
-  pop() {
-    return this.queue1.dequeue() ?? null;
+  const a = parentNode.appendChild(document.createElement('div'));
+  a.style.cssText = 'overflow:hidden';
+
+  if (node.left) {
+    const b = a.appendChild(document.createElement('div'));
+    b.style.cssText = 'float:left;width:49%;background:' + bg();
+    b.innerHTML = node.left.data;
+    this.show(node.left, b);
   }
 
-  top() {
-    return this.queue1.front() ?? null;
+  if (node.right) {
+    const c = a.appendChild(document.createElement('div'));
+    c.style.cssText = 'float:right;width:49%;background:' + bg();
+    c.innerHTML = node.right.data;
+    this.show(node.right, c);
   }
+}
 
-  empty() {
-    return this.queue1.isEmpty();
-  }
+function bg() {
+  return '#' + ((Math.random() * 0xffffff) << 0).toString(16);
 }
 ```
 
-最後題目留了一個問題，就是如果只使用一個 Queue 來實作，該怎麼做呢？這個就留給大家去練習了。
+我們在 `main.js` 中使用 `show` 方法就可以看到在畫面中已經顯示出了二元搜尋樹的結構，如下圖：
 
-## Queue 的應用
+![](https://media.discordapp.net/attachments/1080668361618362530/1149531624128647252/image.png?width=2206&height=286)
 
-### Hot Potato Game
+## 總結
 
-燙手山芋遊戲（擊鼓傳花），遊戲規則如下：
+我們瞭解了“樹”這種資料結構，其中二元樹是應用較多的一種。一個節點上最多有兩個子節點，滿足這個條件的樹我們稱為二元樹。二元樹的兩個子節點分別稱為左子樹和右子樹。
 
-- 玩家們坐成一圈，主持人開始放音樂，然後手上有山芋的人開始把它傳給旁邊的人，直到音樂停止。
-- 音樂停止時手上拿著山芋的人就會被淘汰，並且山芋會從他手上拿走，交給下一個人
-- 重複上面的步驟，直到只剩下一個人就是贏家
+二元樹有以下屬性：
 
-這個遊戲情境可以想像成是一個 queue，每個人都是 queue 裡的一個元素，當音樂響起時，就把山芋傳給下一個人，相當於 `dequeue`，然後把這個暫時安全的這個人再 `enqueue` 回去，直到音樂停止，這個時候就直接 `dequeue` 這個人，並且淘汰他。
+- 第 n 層的節點數最多為 $2^{n-1}$ 個。
+- 有 n 層的二元樹節點總數最多為 $2^n-1$ 個。
+- 包含 n 個節點的二元樹最小高度為 $\log_2(n+1)$。
 
-這時候就可以利用 queue 來找出如果主持人固定每一次都播 `num` 秒音樂且假設山芋都會傳給下一個人，該場遊戲的贏家是誰。實作程式碼如下：
+二元樹的走訪方式有如下兩種：
 
-```js
-function hotPotato(participants, num) {
-  const queue = new Queue();
-  participants.forEach((item) => queue.enqueue(item));
-
-  while (queue.size() > 1) {
-    for (let i = 0; i < num; i++) {
-      queue.enqueue(queue.dequeue());
-    }
-    console.log(`${queue.dequeue()} 被淘汰了`);
-  }
-
-  return queue.dequeue();
-}
-```
-
-### 回顧 JS 裡的 event loop
-
-現在讓我們回顧一下以前在學 event loop 的時候，有一個叫做 task queue 的東西，這個 task queue 就是一個 queue，它會把所有的 callback function 都放進去，然後等到 call stack 裡的程式都執行完後，再把 task queue 裡的 callback function 按照放入的順序一個一個拿出來執行。這個就是一個 queue 的應用。
-
-<div align="center">
-  <img src="https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/data-structures/queue/images/event-loop.png" alt="event-loop" width="600px">
-</div>
+- 深度優先走訪：前序、中序、後序。
+  - 前序：根 -> 左 -> 右
+  - 中序：左 -> 根 -> 右
+  - 後序：左 -> 右 -> 根
+- 廣度優先走訪：層序走訪。
+  - 首先以一個未被訪問過的節點作為起始頂點，訪問其所有相鄰的節點。
+  - 然後對每個相鄰的節點，再依次訪問它們相鄰的未被訪問過的節點。
+  - 直到所有的節點都被訪問過為止。
 
 ## 參考資料
 
-- [《Learning JavaScript Data Structures and Algorithms, 3/e》](https://www.tenlong.com.tw/products/9781788623872?list_name=trs-f)
+- [《JavaScript 算法：基本原理與代碼實現》](https://www.tenlong.com.tw/products/9787115596154?list_name=r-zh_cn)

@@ -1,302 +1,304 @@
----
-outline: deep
----
+# 鏈結串列 Linked List (2)
 
-# 快速排序法（Quick Sort）
+我們昨天已經看過了單向及雙向的鏈結串列，今天我們再來看看另外兩種鏈結串列。
 
-快速排序法（Quick Sort）是對氣泡排序法的一種改進，是一個基於分治法（Divide and conquer）的排序演算法。它不像 Merge Sort 那樣一上來就將陣列切成“碎片”，而是逐漸對要處理的陣列進行切割，每次切成兩部分，讓其左邊都小於某個數，右邊都大於某個數，然後再對左右兩邊進行同樣的操作（快速排序），直到每個子陣列長度為 1，原陣列就會變成有序的了。
+## 有序的鏈結串列 Sorted Linked List
 
-從下面這段程式碼來具體理解一下，它的基本架構如下：
+有序鏈結串列跟前面兩種鏈結串列相比，就是在插入節點時，保證資料是有序的。陣列在向中間插入、移除資料時，其中一側的資料都要往後或向前移動，但鏈結串列就不需要煩惱這個。
 
-```js
-function quickSort (array) {
-  function QuickSort(array, left, right) {
-    if (left < right) {
-      let index = partition(array, left, right);
-      QuickSort(array, left, index - 1);
-      QuickSort(array, index + 1, right);
-    }
-  }
+有序鏈結串列的許多功能與單向鏈結串列和雙向鏈結串列相同，沒有必要再寫一次，直接用繼承的方式就可以了，然後在原類別的基礎上新增 3 個方法：`find`、`insert`、`value`。其中 `find` 方法需要一點技巧，因為插入時，我們只能插入到比目標值大的節點前面，不能使用等於，而在移除時，我們又想準確刪除 data 等於 value 的節點，因此設置了第 2 個參數 `useByInsert` 進行區分。但為了防止使用者誤傳一個參數，我們可以傳入一個唯一的 flag 進行比較。
 
-  QuickSort(array, 0, array.length - 1);
-  return array;
-}
-
-function partition(array, left, right) { // D&C function
-  // TODO
-}
-```
-
-`quickSort` 是一個進入點，它會呼叫遞迴函式 `QuickSort`。`QuickSort` 內部有一個 `partition` 輔助函式，它會選中某個元素作為基準值（pivot，分界值），實作對子陣列的左右切割，保證左邊的元素都比 pivot 小，右邊的元素都比 pivot 大，最後回傳 pivot 的索引值，方便再對左右兩陣列呼叫 `QuickSort`。
-
-## Quick Sort 的常用方法
-
-對於 quick sort 的 `partition` 函式的實作，通常有以下 3 種。
-
-#### 1. 左右指標法
-
-使用左右指標法實作 `partition` 方法的步驟如下：
-
-1. 選取某個元素作為 pivot，一般取目前陣列的第一個或最後一個元素，這裡採用最後一個元素。
-2. 從 left 一直向後尋找，直到找到一個大於 pivot 的值，而 right 則從後往前尋找，直到找到一個小於 pivot 的值，然後交換兩元素的位置。
-3. 重複步驟 2，直到 left 與 right 相遇，此時將 pivot 放置在 left 的位置即可。
-
-當 `left >= right` 時，一趟 quick sort 就完成了，這時將 pivot 和 `array[left]` 的值進行一次交換：
+實作程式碼如下：
 
 ```js
-function partition(array, left, right) {
-  const pivot = array[right];
-  let pivotIndex = right;
+const useByInsert = Symbol('useByInsert');
 
-  while (left < right) {
-    while (left < right && array[left] <= pivot) {
-      // 1. 防止越界需要 left < right
-      // 2. array[left] <= pivot 因為可能存在相同元素
-      left++; // 找到比 pivot 大的數
-    }
-    while (left < right && array[right] >= pivot) {
-      right--; // 找到比 pivot 小的數
-    }
-    swap(array, left, right);
-  }
-  // 最後一個比 pivot 大的 left 元素要與 pivot 交換
-  swap(array, left, pivotIndex);
-  return left; // 回傳的是中間的位置
-}
-```
-
-上面程式碼的執行過程可以參考這張圖：
-
-<div align="center">
-  <img src="https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/algorithms/sorting/quick-sort/images/quick-sort1.png" alt="quick-sort" width="550px">
-</div>
-
-#### 2. 挖坑法
-
-使用挖坑法實作 `partition` 方法的步驟如下：
-
-1. 選取某個元素作為 pivot，這裡選擇第 1 個元素，將“它”挖出來（這只是概念上的挖，它兩側的數不會趁機佔領這個位置）。於是這個位置就是最初的“坑”。
-2. 從 left 一直向後尋找，直到找到一個大於 pivot 的值，然後將該元素填入坑中，坑位變成了 `array[left]`。
-3. 從 right 一直向前尋找，直到找到一個小於 pivot 的值，然後將該元素填入坑中，坑位變成了 `array[right]`。
-4. 重複步驟 2、3，直到 left 與 right 相遇，然後將 pivot 填入最後一個坑位。
-
-挖坑法的程式碼實作如下：
-
-```js
-function partition(array, left, right) {
-  const pivot = array[right]; // 坑位為 array[right]
-  while (left < right) {
-    while (left < right && array[left] <= pivot) {
-      left++;
-    }
-    array[right] = array[left]; // 坑位變成 array[left]
-    while (left < right && array[right] >= pivot) {
-      right--;
-    }
-    array[left] = array[right]; // 坑位變成 array[right]
-  }
-  array[right] = pivot;
-  return left;
-}
-```
-
-坑位在程式碼上的變化如下：
-
-`array[left] -> array[right] -> array[left] -> array[right] -> ...`
-
-這是填坑的示意圖：
-
-<div align="center">
-  <img src="https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/algorithms/sorting/quick-sort/images/quick-sort2.png" alt="quick-sort" width="550px">
-</div>
-
-挖坑法比左右指標法好理解，並且不依賴額外的 `swap` 函式，具體執行過程可以參考下面這張圖：
-
-<div align="center">
-  <img src="https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/algorithms/sorting/quick-sort/images/quick-sort3.jpg" alt="quick-sort" width="650px">
-</div>
-
-#### 3. 前後指標法
-
-使用前後指標法實作 `partition` 方法的步驟如下：
-
-定義兩個指標，一前一後，前面的指標尋找比 pivot 小的元素，後面的指標尋找比 pivot 大的元素。前面的指標找到符合條件的元素後，將前後指標所指向的元素交換位置，當前面的指標遍歷完整個陣列時，將 pivot 與後指標的後一位交換位置，然後回傳後指標的位置。
-
-```js
-function partition(array, left, right) {
-  const pivot = array[right];
-  let curr = left; // 找比 pivot 大的數
-  let prev = curr - 1; // 找比 pivot 小的數
-
-  while (curr <= right) {
-    if (array[curr] <= pivot && ++prev !== curr) {
-      swap(array, prev, curr);
-    }
-    curr++;
-  }
-  return prev;
-}
-```
-
-前後指標法的執行過程可以參考下面這張圖：
-
-<div align="center">
-  <img src="https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/algorithms/sorting/quick-sort/images/quick-sort4.png" alt="quick-sort" width="650px">
-</div>
-
-這個方法最大的優勢是支援對鏈結串列（Linked List）進行排序，而左右指標法和挖坑法只能針對陣列進行排序。
-
-## Optimization
-
-Quick Sort 的最佳化主要涉及到三個方面：
-
-1. pivot 的選擇。最好和最壞情況的區別就是選取 pivot 不正確導致的。之前的程式碼裡，我們會選擇第一個或是最後一個元素作為 pivot，但太大或太小的元素都會影響效率。於是我們有了三數取中位數法，即隨機取 3 個元素進行排序，然後取中間的元素作為 pivot，一般我們會取第一個、中間的、最後一個元素。如果排序的陣列非常大，還可以進行九數取中位，取三次樣本，每次取三個元素，然後再取這三個元素的中位數，最後再取這三個中位數的中位數作為 pivot。
-2. 改進不必要的交換。我們將 pivot 備份到 `A[0]` 中，像在前文中使用 `swap` 方法時一樣，我們只需要做交換的工作，最終 `A[i]` 與 `A[j]` 融合，再將 `A[0]` 位置的數值賦值回 `A[i]`。因為沒有了多次交換的操作，所以效率會有所提升。
-3. 改進小陣列時的排序方案。對於很小的和部分有序的陣列，Quick Sort 的效率不如 Insertion Sort。因此，我們可以對陣列進行切割，當陣列的大小小於一定的值時，使用 Insertion Sort 進行排序。
-
-待排序序列長度 N = 10，在 5 和 20 之間任一截止範圍都有可能產生類似效果。下面是小陣列使用 Insertion Sort 的程式碼：
-
-```js
-if (high - low + 1 < 10) {
-  insertionSort(array, low, high);
-  return;
-} else {
-  quickSort(array, low, high);
-}
-```
-
-完整程式碼如下：
-
-```js
-function getMid(array, left, right) {
-  const mid = left + Math.floor((right - left) / 2);
-  if (array[left] <= array[right]) {
-    if (array[mid] < array[left]) {
-      return left;
-    } else if (array[mid] > array[right]) {
-      return right;
-    } else {
-      return mid;
-    }
-  } else {
-    if (array[mid] < array[right]) {
-      return right;
-    } else if (array[mid] > array[left]) {
-      return left;
-    } else {
-      return mid;
-    }
-  }
-}
-
-// 左右指標法
-function partition(array, left, right) {
-  const mid = getMid(array, left, right);
-  swap(array, mid, right); // 把 pivot 移到最右邊
-  const pivot = array[right];
-  let pivotIndex = right;
-  while (left < right) {
-    while (left < right && array[left] <= pivot) {
-      left++;
-    }
-    while (left < right && array[right] >= pivot) {
-      right--;
-    }
-    swap(array, left, right);
-  }
-  swap(array, left, pivotIndex);
-  return left;
-}
-
-// 挖坑法（前後指標法同理）
-function partition(array, left, right) {
-  const mid = getMid(array, left, right);
-  swap(array, mid, right); // 把 pivot 移到最右邊
-  const pivot = array[right];
-  while (left < right) {
-    while (left < right && array[left] <= pivot) {
-      left++;
-    }
-    array[right] = array[left];
-    while (left < right && array[right] >= pivot) {
-      right--;
-    }
-    array[left] = array[right];
-  }
-  array[right] = pivot;
-  return left;
-}
-```
-
-## 非遞迴實作方式
-
-遞迴主要是在劃分子區間，如果要用非遞迴的方式實作 quick sort，可以使用一個 stack 來存放區間即可。
-
-要將遞迴程式改造成非遞迴程式，首先想到的就是使用 stack，因為遞迴的本質就是一個 push 元素到 stack 的過程。下面是一個使用 stack 的非遞迴實作方式：
-
-```js
-function quickSortStack(array, start, end) {
-  const stack = [];
-  stack.push(end);
-  stack.push(start);
-  while (stack.length) {
-    const left = stack.pop();
-    const right = stack.pop();
-    const index = partition(array, left, right);
-    if (left < index - 1) {
-      stack.push(index - 1);
-      stack.push(left);
-    }
-    if (right > index + 1) {
-      stack.push(right);
-      stack.push(index + 1);
-    }
-  }
-}
-```
-
-## 應用 - TopK 問題
-
-給你一個由整數組成的陣列，請找出其中最小的 K 個數。例如，給你的陣列是 `[11, 9, 6, 17, 0, 1, 2, 18, 3, 4, 8, 5]` 和 `K = 4`，那麼最小的 4 個數是 `[0, 1, 2, 3]`。
-
-思路：我們知道 partition 函式會回傳一個 pivot，pivot 左邊的元素都比 pivot 小，右邊的元素都比 pivot 大。我們可以一直去呼叫 partition 函式，直到 pivot 的位置剛好是 K - 1，那麼 pivot 左邊的元素就是最小的 K 個數。
-
-我們打開 `getTopK.js` 來實作看看：
-
-```js
-function getTopK(array, k) {
-  if (array.length >= k) {
-    let low = 0;
-    let high = array.length - 1;
-    let pivot = partition(array, low, high);
-    // 不斷調整分治的範圍，直到 pivot 的 index 等於 k - 1
-    while (pivot !== k - 1) {
-      // 大了，往左(前)邊調整
-      if (pivot > k - 1) {
-        high = pivot - 1;
-        pivot = partition(array, low, high);
+class SortedList extends DoublyList {
+  find(value, second) {
+    let current = this.head;
+    let i = 0;
+    while (current) {
+      if (second === useByInsert ? current.data > value : current.data === value) {
+        return current;
       }
-      // 小了，往右(後)邊調整
-      if (pivot < k - 1) {
-        low = pivot + 1;
-        pivot = partition(array, low, high);
-      }
+      current = current.next;
+      i++;
     }
+  }
 
-    let result = [];
-    for (let i = 0; i < k; i++) {
-      result[i] = array[i];
+  insert(value) {
+    let next = this.find(value, useByInsert);
+    let node = new DoublyNode(value);
+    if (!next) {
+      let last = this.tail;
+      // 如果沒有節點比它大，它就是 tail
+      this.tail = node;
+      if (last) {
+        // append
+        last.next = node;
+        node.prev = last;
+      } else {
+        // 什麼也沒有，它就是 head
+        this.head = node;
+      }
+    } else {
+      let prev = next.prev;
+      if (!prev) {
+        this.head = node;
+        this.head.next = next;
+      } else {
+        prev.next = node;
+        node.prev = prev;
+      }
+      node.next = next;
+      next.prev = node;
     }
-    return result;
+    this.length++;
+  }
+
+  remove(value) {
+    let node = this.find(value);
+    if (node) {
+      let prev = node.prev;
+      let next = node.next;
+
+      if (!prev) {
+        this.head = next;
+      } else {
+        prev.next = next;
+      }
+
+      if (next) {
+        next.prev = prev;
+      } else {
+        this.tail = prev;
+      }
+
+      this.length--;
+      return true;
+    }
+    return false;
+  }
+}
+
+const list = new SortedList();
+list.insert(222);
+list.insert(111);
+list.insert(333);
+list.insert(555);
+list.insert(444);
+list.insert(777);
+list.insert(666);
+console.log(list);
+```
+
+## 環狀鏈結串列 Circular Linked List
+
+有一道非常有名的面試題：約瑟夫問題（Josephus problem），會使用到環狀鏈結串列。
+
+先了解一下規則：在一個房間裡有 n 個人（編號 0 ~ n-1），只能有最後一個人活下來。按照如下的規則進行：
+
+1. 所有人圍成一圈。
+2. 順時針報數，每次報到 q 的人將被移出。
+3. 從下一個人開始重新報數，重複步驟 2 直到只剩下一個人。
+
+所描述的規則可以用下圖的約瑟夫環來表示：
+
+<div>
+  <img src="https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/data-structures/linked-list/circular-linked-list/images/josephus.png" alt="Josephus problem" width="500"/>
+</div>
+
+接下來你要做的就是：當你在這一群人之間時，你必須選擇一個位置讓你成為剩餘的最後一人。
+
+這看起來很困難，但是有了環狀鏈結串列，就很好解決了。首先在雙向鏈結串列的 head 與 tail 是不同的節點，而環狀鏈結串列的這兩個都指向同一處。既然如此我們只保持一個 head 就足夠了。其次，forEach 與 find 方法需要做一下處理避免無限迴圈。因為只有一個節點的環狀鏈結串列，它的 next 和 prev 都會指向自己。
+
+來看一下雙向鏈結串列和環狀鏈結串列的 forEach 方法：
+
+```js
+// 雙向鏈結串列
+forEach(cb) {
+  let current = this.head;
+  let i = 0;
+  while (current) {
+    cb(current.data, i);
+    current = current.next;
+    i++;
+  }
+}
+
+// 環狀鏈結串列
+forEach(cb) {
+  let current = this.head;
+  let first = this.head;
+  let i = 0;
+  while (current) {
+    cb(current.data, i);
+    current = current.next;
+    if (current === first) {
+      break; // 迴圈結束
+    }
+    i++;
   }
 }
 ```
 
-## 複雜度（Complexity）
+我們模仿實作有序鏈結串列的時候，讓它繼承雙向鏈結串列，然後重寫 forEach、findIndex、insertAt 與 removeAt 方法：
 
-| Name           |    Average    |     Best      |  Worst   |    Space    |  Method  | Stable |
-| -------------- | :-----------: | :-----------: | :------: | :---------: | :------: | :----: |
-| **Quick sort** | $O(n \log n)$ | $O(n \log n)$ | $O(n^2)$ | $O(\log n)$ | In-place |   No   |
+```js
+class CircularLink extends DoublyList {
+  forEach(cb) {
+    let current = this.head;
+    let first = current;
+    let i = 0;
+    while (current) {
+      cb(current.data, i);
+      current = current.next;
+      if (current === first) {
+        break;
+      }
+      i++;
+    }
+  }
+
+  findIndex(index) {
+    const n = this.length;
+    if (index > n) {
+      return null;
+    }
+    // 判斷尋找方向
+    const dir = index > n >> 1;
+    let current = dir ? this.head.prev : this.head;
+    let first = current;
+    let prop = dir ? 'prev' : 'next';
+    let add = dir ? -1 : 1;
+    let i = dir ? n - 1 : 0;
+
+    while (current) {
+      if (index === i) {
+        return current;
+      }
+      current = current[prop];
+      if (current === first) {
+        return current;
+      }
+      i += add;
+    }
+
+    return null;
+  }
+
+  insertAt(index, data) {
+    if (index <= this.length) {
+      const node = new DoublyNode(data);
+
+      if (index === 0 && !this.head) {
+        this.head = node;
+        node.prev = node;
+        node.next = node;
+      } else {
+        let prev = this.findIndex(index - 1);
+        let next = prev.next;
+
+        prev.next = node;
+        node.prev = prev;
+        node.next = next;
+        next.prev = node;
+      }
+
+      this.length++;
+    }
+  }
+
+  removeAt(index) {
+    const node = this.findIndex(index);
+    if (node) {
+      if (node.next === node) {
+        this.head = null;
+      } else {
+        let prev = node.prev;
+        let next = node.next;
+        prev.next = next;
+        next.prev = prev;
+
+        if (node === this.head) {
+          this.head = next;
+        }
+      }
+      this.length--;
+      return true;
+    }
+    return false;
+  }
+}
+
+const list = new CircularLink();
+
+list.insertAt(0, 111);
+list.insertAt(1, 222);
+list.insertAt(2, 333);
+list.insertAt(1, 444);
+list.insertAt(3, 666);
+
+list.forEach((el, i) => console.log(el, i));
+
+list.removeAt(0);
+console.log(list);
+```
+
+實際執行上面的程式碼後可以在控制台看到如圖的輸出：
+
+<div>
+  <img src="https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/data-structures/linked-list/circular-linked-list/images/circular-link.png" alt="circular linked list" width="550"/>
+</div>
+
+現在讓我們來解決約瑟夫問題，這個問題主要思路來自 `forEach` 與 `remove` 方法。我們先建立一個環狀的 list 與一個不斷遞迴呼叫的 `kill` 方法，`kill` 在只剩一個人時停止，如何判定只剩一個人，可以用 `node.next === node` 或 `list.length === 1` 來判斷。
+
+```js
+function kill(list, node, m) {
+  let i = 1;
+  while (i <= m) {
+    if (i === m) {
+      if (node.next === node) {
+        console.log('最後一個', node.data);
+        return true;
+      }
+      let prev = node.prev;
+      let next = node.next;
+      prev.next = next;
+      next.prev = prev;
+      list.length--;
+
+      if (node === list.head) {
+        list.head = next;
+      }
+      console.log('出局', node.data);
+    }
+    i++;
+    node = node.next;
+  }
+  kill(list, node, m);
+}
+
+function josephus(n, m) {
+  const list = new CircularLink();
+  for (let i = 0; i < n; i++) {
+    list.insertAt(i, i + 1);
+  }
+  kill(list, list.head, m);
+
+  return list.head.data;
+}
+```
+
+其實這道題跟前面在講 Queue 的時候提到的 Hot Potato 問題幾乎一樣，只是這次我們換成使用環狀鏈結串列來解決。
+
+## 總結
+
+鏈結串列在建立的過程和陣列不同，陣列是連續的記憶體空間，而鏈結串列是零散的，每個節點都有自己的記憶體空間，並且每個節點都有指向下一個節點的指標，這樣就可以串起來了。當有資料要進來時，我們只需要根據指標找到下一個儲存空間的位置，然後把資料保存起來，接著指向下一個儲存資料的位置，這樣一來就可以把一些零散的記憶體空間利用起來了，雖然串列是線性表，但不會按照線性的順序儲存資料。
+
+也因為鏈結串列是以這種方式儲存資料，所以它在插入和刪除資料時比較容易，只需要改變指標的指向就可以了，舉個例子： 0 -> 1 -> 2 -> 3 -> 4，如果要在 1 和 2 之間插入一個 5，只需要把 1 的指標指向 5，然後把 5 的指標指向 2，這樣就完成了插入操作，不需要去管 5 實際的記憶體位置在哪裡，也不會對其他節點造成影響。但是如果是想要從串列中讀取一條資料，就要從 0 號開始一個一個往下找，直到找到我們要找的資料為止。
+
+所以我們可以根據實際的需求來選擇使用陣列或鏈結串列，如果需要頻繁的插入和刪除操作，就可以使用鏈結串列，如果需要頻繁的查詢操作，就可以使用陣列。
 
 ## 參考資料
 

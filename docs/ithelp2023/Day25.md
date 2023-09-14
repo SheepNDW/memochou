@@ -2,174 +2,145 @@
 outline: deep
 ---
 
-# 搜尋演算法 - Sequential Search & Binary Search
+# 隨機演算法 - Fisher-Yates Shuffle
 
-## 循序搜尋 Sequential Search
+我們花了很多時間在學習如何將資料排序，但是有時候我們也需要將資料打亂，例如：在一個網頁中，我們想要隨機顯示一些廣告。今天我們就來學習一下如何將一個陣列隨機打亂。
 
-循序或是線性搜尋（Linear Search）是最基本的搜尋演算法，它的概念是將每一個資料結構中的元素和我們要找的元素做比較，直到找到相同的元素為止。
+## Shuffle an array
 
-我們在尋找過程有可能在第一個元素就找到，也有可能在最後一個元素才找到，或者是根本找不到。在最壞的情況下，我們需要將所有元素都比較一次，因此時間複雜度為 O(n)，是一種比較低效的搜尋演算法。
+提到洗牌（Shuffle），我們常會想到在玩撲克牌時，為了打亂牌的順序我們會在發牌前先進行洗牌。我們可以想成要打亂一個陣列，洗牌只是一種應用。不過其實現實生活中的洗牌有很多種方式，有一般常見的交疊洗牌、印度洗牌又或是一張一張分開交疊的完美洗牌，LeetCode 上剛好有一題就是完美洗牌：[1470. Shuffle the Array](https://leetcode.com/problems/shuffle-the-array/)，簡單來說就是要將一組陣列分成兩半，然後交錯合併成一個新的陣列。
 
-下面是循序搜尋的程式碼實作：
+但是今天要介紹的不是現實中的洗牌，而是一種演算法，叫做 Fisher–Yates shuffle，其用意是為了公平的打亂，使得每種組合的機率相等。其實說白就是要隨機去打亂一個陣列，這個需求其實在實際開發場景中也會遇到，例如：在一個網頁中，我們想要隨機顯示一些廣告。不知道大家都是怎麼去實作這個“隨機”的呢？
+
+### 直覺的做法
+
+宣告一個新的 `array`，然後從原來的牌堆（陣列）中隨機取出一個牌（元素），放到新的陣列中，重複這個動作直到原來的陣列中沒有元素為止。
 
 ```js
-const DOES_NOT_EXIST = -1;
-
-function sequentialSearch(arr, value) {
-  for (let i = 0; i < arr.length; i++) {
-    if (arr[i] === value) return i;
+function shuffle(deck) {
+  const newDeck = [];
+  while (deck.length > 0) {
+    const r = Math.floor(Math.random() * deck.length);
+    const card = deck.splice(r, 1);
+    newDeck.push(...card);
   }
-  return DOES_NOT_EXIST;
+  return newDeck;
 }
 ```
 
-實作很簡單，就是直接迭代整個陣列，並將每個陣列元素和搜尋目標做比較，如果找到相同的元素，演算法就會回傳一個值來表示搜尋成功。回傳值可以是元素的索引，或者是一個布林值；如果沒有找到就回傳一個 `-1` 或 `false` 等等。
+這樣寫沒什麼問題，但是我們可以發現，每次都要從原來的陣列中刪除一個元素，這樣的話時間複雜度就會變成 $O(n^2)$，如果陣列很大的話，效能就會很差。
 
-## 二分搜尋 Binary Search
+### 直覺的做法（改良版）
 
-循序搜尋適合用在**未排序**的資料中，但是如果資料已經排序過了，我們就可以使用更快速的搜尋演算法來加速整個搜尋過程，讓複雜度降低到 O(log n)。而我今天要介紹的是二分搜尋法（Binary Search）。
-
-Binary Search 是一種在**已排序**的資料中尋找目標值的搜尋演算法。它的原理和猜數字遊戲很像，例如在 1 ~ 100 範圍內猜一個數字，然後出題者會根據你猜的數字給你一個提示，例如「太大了」、「太小了」或是「猜對了」，然後我們根據提示來縮小範圍，直到猜對為止。
-
-### Binary Search 的步驟
-
-1. 先找到陣列的中間值。
-2. 將中間值和目標值做比較，如果中間值等於目標值，那麼搜尋結束。
-3. 如果目標值比中間值小，則回到步驟 1 並在中間值的左邊子陣列中尋找。
-4. 如果目標值比中間值大，則回到步驟 1 並在中間值的右邊子陣列中尋找。
-
-### 實作
-
-在開始之前我們要先確認一件事，就是我們的陣列必須是已經排序過的，如果沒有排序過，我們就必須先對陣列做排序，確認已經排序過之後，我們就可以開始利用 binary search 來尋找目標值了。
+我們可以直接跑迴圈從第一張牌開始，每次都隨機跟其他張牌交換位置，這樣就不用刪除元素了，時間複雜度就會變成 $O(n)$。
 
 ```js
-function binarySearch(arr, target) {
-  let left = 0;
-  let right = arr.length - 1;
-
-  while (left <= right) {
-    const mid = Math.floor((left + right) / 2);
-
-    if (arr[mid] === target) {
-      return mid;
-    }
-
-    if (arr[mid] < target) {
-      left = mid + 1;
-    } else {
-      right = mid - 1;
-    }
+function shuffle2(deck) {
+  for (let i = 0; i < deck.length; i++) {
+    const r = Math.floor(Math.random() * deck.length);
+    [deck[i], deck[r]] = [deck[r], deck[i]];
   }
-
-  return -1;
+  return deck;
 }
 ```
 
-整個搜尋過程如下圖所示：
+看起來很簡單，但是這個方法其實存在著一個問題，就是它並不是真的隨機，我們稍後會再來討論這個問題。
 
-<div align="center">
-  <img src="https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/algorithms/search/binary-search/images/binary-search.png" alt="Binary Search" width="600"/>
-</div>
+### `sort()`
 
-### 練習
-
-我們來看幾道關於 binary search 的題目：
-
-首先是 [704. Binary Search](https://leetcode.com/problems/binary-search/)，這題其實就是要你實作 binary search，我們直接拿剛才的程式碼套進去就可以了，可以試著自己再實作一次看看。
-
-#### Search Insert Position
-
-接下來我們來看 [35. Search Insert Position](https://leetcode.com/problems/search-insert-position/)，題目如下：
-
-給你一個已經排序過的陣列 `nums` 和一個目標值 `target`，如果目標值存在於陣列中，則回傳目標值的索引，如果目標值不存在於陣列中，則回傳目標值應該被插入的位置索引。另外要求你必須在 O(log n) 的時間複雜度內完成。
-
-例如：
-
-`target` 存在於陣列中：
-
-```txt
-Input: nums = [1,3,5,6], target = 5
-Output: 2
-```
-
-`target` 不存在於陣列中：
-
-```txt
-Input: nums = [1,3,5,6], target = 2
-Output: 1
-```
-
-思路：其實也是一個基本的 binary search，只是當 `target` 不存在於陣列中時，我們要回傳的是 `left` 的值，因為 `left` 的值就是 `target` 應該被插入的位置索引。實作如下：
+在我工作中第一次遇到這個需求時，前輩教了我一種神奇的方法，就是使用 JavaScript 內建的 `sort()` 方法，然後用一種非常簡潔的寫法將一個陣列做亂數排序：
 
 ```js
-function searchInsert(nums, target) {
-  let left = 0;
-  let right = nums.length - 1;
-
-  while (left <= right) {
-    const mid = left + Math.floor((right - left) / 2);
-
-    if (target === nums[mid]) {
-      return mid;
-    }
-
-    if (target < nums[mid]) {
-      right = mid - 1;
-    } else {
-      left = mid + 1;
-    }
-  }
-
-  return left;
+function shuffle3(arr) {
+  return arr.sort(() => Math.random() - 0.5);
 }
 ```
 
-#### Find Peak Element
+如果你是第一次看到，讓我先來解釋一下原理，首先我們都知道 `Math.random()` 會回傳一個 `0~1` 的數字，我們把它扣掉 `0.5` 之後，就會得到一個 `-0.5~0.5` 的數字，這個數字會決定 `sort()` 方法的排序順序，因為這個數字是隨機生成的，所以結果也會是隨機的。
 
-最後我們來看 [162. Find Peak Element](https://leetcode.com/problems/find-peak-element/)，題目如下：
+看起來很美好，行數少又優雅，不過其實這個寫法存在著一些問題，在前面我們學習排序演算法時，我們知道 `sort()` 方法的時間複雜度是 $O(n \log n)$，所以在對一個較龐大的陣列使用時可能會導致效能下降。
 
-給你一個陣列 `nums`，你需要找出一個 peak element，peak element 的定義是：陣列中的一個元素，大於左右相鄰的元素。你可以假設 `nums[-1] = nums[n] = -∞`，也就是說陣列的邊界元素是負無窮，此外陣列中可能存在複數個 peak element。現在要請你寫一個時間複雜度為 O(log n) 的演算法來解決這個問題。
-
-例如：
-
-```txt
-Input: nums = [1,2,3,1]
-Output: 2
-Explanation: 3 是一個 peak element，因為 3 大於左右相鄰的元素 2 和 1。
-```
-
-```txt
-Input: nums = [1,2,1,3,5,6,4]
-Output: 1 or 5
-Explanation: 這個陣列有兩個 peak element，1 和 5，你可以回傳任何一個。
-```
-
-思路：直覺反應一定是直接迴圈把每一個都掃過一次檢查看是不是 peak，但是這樣的複雜度是 O(n)，題目要求我們必須在 O(log n) 的時間複雜度內完成，所以我們要使用 binary search 來解決這個問題。這題和前面的 binary search 稍微不同的地方在於，我們要找的不是一個特定的值，而是一個條件，也就是 peak element，我們可以從中點元素和它的右邊鄰居的大小關係來縮小搜尋範圍：
-
-- 如果 `nums[mid] < nums[mid + 1]`，那麼在 `mid` 的右邊一定存在一個 peak element。
-- 如果 `nums[mid] > nums[mid + 1]`，那麼在 `mid` 的左邊一定存在一個 peak element。
-
-實作程式碼如下：
+另外還有一個問題是，它的機率分佈其實也是不均勻的，讓我們來看一下用 `sort()` 還有剛才前一個的實作方式，對於一個陣列 `[1, 2, 3]`，它們的機率分佈是怎麼樣的：
 
 ```js
-function findPeakElement(nums) {
-  let left = 0;
-  let right = nums.length - 1;
+const count = { 123: 0, 132: 0, 213: 0, 231: 0, 312: 0, 321: 0 };
 
-  while (left < right) {
-    const mid = Math.floor((right + left) / 2);
+for (let i = 0; i < 600000; i++) {
+  const array = [1, 2, 3];
+  const rArray = shuffle(array);
+  count[rArray.join('')]++;
+}
 
-    if (nums[mid] > nums[mid + 1]) {
-      right = mid;
-    } else {
-      left = mid + 1;
-    }
-  }
-
-  return left;
+for (const key in count) {
+  console.log(key + ':', count[key]);
 }
 ```
+
+```bash
+# shuffle
+123: 100040
+132: 100038
+213: 99833
+231: 99750
+312: 100463
+321: 99876
+
+# shuffle2
+123: 88750
+132: 111122
+213: 110972
+231: 111228
+312: 88877
+321: 89051
+
+# shuffle3
+123: 225288
+132: 37504
+213: 74831
+231: 37407
+312: 37487
+321: 187483
+```
+
+我們可以發現 `shuffle2` 和 `shuffle3` 的機率分佈都是不均勻的，先來看看我們使用 `sort()` 實作的 `shuffle3`，為什麼它的機率分佈會不均勻呢？因為 JavaScript 的 `sort()` 是一個黑盒子，各家瀏覽器實作的方式不同，無法保證比較的次數。不過不管如何，我們都可以確定的是它實際測試的結果是一個不均勻的機率分佈。
+
+再來看看 `shuffle2` 的實作方式，我們帶入 `[1,2,3]` 來看看，正常打亂 123 的結果可能有 3 x 2 x 1 = 3! = 6 種，分別是 123、132、213、231、312、321。但是我們可以發現 `shuffle2` 實作的交換法會出現 $3^3$ = 27 種結果，但實際上不一樣的組合只有 6 種，所以有些組合的機率就會比較高。
+
+### Fisher–Yates shuffle
+
+接下來要介紹的 Fisher-Yates 演算法非常適合用來亂數排序一個陣列，這個演算法是由 Fisher 和 Yates 提出的，一樣是透過一個迴圈去迭代陣列，但是它的方式是從最後一個元素開始，每次都跟前面一個隨機的元素交換位置。這樣的話，可以保證隨機過的位置不會再被交換，就不會出現重複的情況：
+
+```js
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const randomIndex = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[randomIndex]] = [arr[randomIndex], arr[i]];
+  }
+  return arr;
+}
+```
+
+整個過程可以參考下圖：
+
+![Fisher–Yates shuffle](https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/algorithms/fisher-yates-shuffle/images/shuffle.png)
+
+這個演算法的時間複雜度是 $O(n)$，而且它的機率分佈也是均勻的，我們可以用剛才的例子來驗證一下得出的結果為：
+
+```bash
+# Fisher–Yates shuffle
+123: 99435
+132: 99885
+213: 100231
+231: 99867
+312: 100605
+321: 99977
+```
+
+知道了 Fisher-Yates shuffle 的原理之後，就可以試試去解 LeetCode 上的 [384. Shuffle an Array](https://leetcode.com/problems/shuffle-an-array/) 了，基本上是一樣的概念，這邊就留給大家自己練習了。
 
 ## 參考資料
 
+- [Fisher–Yates shuffle](https://marsgoat.github.io/XNnote/coding/FisherYatesShuffle.html)
 - [《Learning JavaScript Data Structures and Algorithms, 3/e》](https://www.tenlong.com.tw/products/9781788623872?list_name=trs-f)
+- [JavaScript 學演算法（二十一）- 洗牌演算法](https://chupai.github.io/posts/2008/shuffle_algorithm/)
+- [Shuffle an array](https://javascript.info/task/shuffle)

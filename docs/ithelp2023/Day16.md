@@ -1,305 +1,185 @@
-# 鏈結串列 Linked List (2)
+---
+outline: deep
+---
 
-我們昨天已經看過了單向及雙向的鏈結串列，今天我們再來看看另外兩種鏈結串列。
+# 搜尋演算法 - Sequential Search & Binary Search
 
-## 有序的鏈結串列 Sorted Linked List
+從今天開始我們將進入演算法的學習，從前面幾天我們已經學習了各種資料結構，都說資料結構是用來儲存資料，那我們總不可能存進去後就再也不管它了吧？肯定是為了將來再把拿出來使用，那麼問題來了，我們要如何去從一堆資料中找出我們要的那筆資料呢？
 
-有序鏈結串列跟前面兩種鏈結串列相比，就是在插入節點時，保證資料是有序的。陣列在向中間插入、移除資料時，其中一側的資料都要往後或向前移動，但鏈結串列就不需要煩惱這個。
+這時候就要考驗我們如何去設計一個好的搜尋演算法，讓我們可以在最短的時間內找到我們要的資料。今天我們就來學習兩個常見的搜尋演算法，分別是循序搜尋（Sequential Search）和二分搜尋（Binary Search）。
 
-有序鏈結串列的許多功能與單向鏈結串列和雙向鏈結串列相同，沒有必要再寫一次，直接用繼承的方式就可以了，然後在原類別的基礎上新增 3 個方法：`find`、`insert`、`value`。其中 `find` 方法需要一點技巧，因為插入時，我們只能插入到比目標值大的節點前面，不能使用等於，而在移除時，我們又想準確刪除 data 等於 value 的節點，因此設置了第 2 個參數 `useByInsert` 進行區分。但為了防止使用者誤傳一個參數，我們可以傳入一個唯一的 flag 進行比較。
+## 循序搜尋 Sequential Search
+
+循序或是線性搜尋（Linear Search）是最基本的搜尋演算法，它的概念是將每一個資料結構中的元素和我們要找的元素做比較，直到找到相同的元素為止。
+
+我們在尋找過程有可能在第一個元素就找到，也有可能在最後一個元素才找到，或者是根本找不到。在最壞的情況下，我們需要將所有元素都比較一次，因此時間複雜度為 O(n)，是一種比較低效的搜尋演算法。
+
+下面是循序搜尋的程式碼實作：
+
+```js
+const DOES_NOT_EXIST = -1;
+
+function sequentialSearch(arr, value) {
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i] === value) return i;
+  }
+  return DOES_NOT_EXIST;
+}
+```
+
+實作很簡單，就是直接迭代整個陣列，並將每個陣列元素和搜尋目標做比較，如果找到相同的元素，演算法就會回傳一個值來表示搜尋成功。回傳值可以是元素的索引，或者是一個布林值；如果沒有找到就回傳一個 `-1` 或 `false` 等等。
+
+## 二分搜尋 Binary Search
+
+循序搜尋適合用在**未排序**的資料中，但是如果資料已經排序過了，我們就可以使用更快速的搜尋演算法來加速整個搜尋過程，讓複雜度降低到 O(log n)。而我今天要介紹的是二分搜尋法（Binary Search）。
+
+Binary Search 是一種在**已排序**的資料中尋找目標值的搜尋演算法。它的原理和猜數字遊戲很像，例如在 1 ~ 100 範圍內猜一個數字，然後出題者會根據你猜的數字給你一個提示，例如「太大了」、「太小了」或是「猜對了」，然後我們根據提示來縮小範圍，直到猜對為止。
+
+### Binary Search 的步驟
+
+1. 先找到陣列的中間值。
+2. 將中間值和目標值做比較，如果中間值等於目標值，那麼搜尋結束。
+3. 如果目標值比中間值小，則回到步驟 1 並在中間值的左邊子陣列中尋找。
+4. 如果目標值比中間值大，則回到步驟 1 並在中間值的右邊子陣列中尋找。
+
+### 實作
+
+在開始之前我們要先確認一件事，就是我們的陣列必須是已經排序過的，如果沒有排序過，我們就必須先對陣列做排序，確認已經排序過之後，我們就可以開始利用 binary search 來尋找目標值了。
+
+```js
+function binarySearch(arr, target) {
+  let left = 0;
+  let right = arr.length - 1;
+
+  while (left <= right) {
+    const mid = Math.floor((left + right) / 2);
+
+    if (arr[mid] === target) {
+      return mid;
+    }
+
+    if (arr[mid] < target) {
+      left = mid + 1;
+    } else {
+      right = mid - 1;
+    }
+  }
+
+  return -1;
+}
+```
+
+整個搜尋過程如下圖所示：
+
+<div align="center">
+  <img src="https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/algorithms/search/binary-search/images/binary-search.png" alt="Binary Search" width="600"/>
+</div>
+
+### 練習
+
+我們來看幾道關於 binary search 的題目：
+
+首先是 [704. Binary Search](https://leetcode.com/problems/binary-search/)，這題其實就是要你實作 binary search，我們直接拿剛才的程式碼套進去就可以了，可以試著自己再實作一次看看。
+
+#### Search Insert Position
+
+接下來我們來看 [35. Search Insert Position](https://leetcode.com/problems/search-insert-position/)，題目如下：
+
+給你一個已經排序過的陣列 `nums` 和一個目標值 `target`，如果目標值存在於陣列中，則回傳目標值的索引，如果目標值不存在於陣列中，則回傳目標值應該被插入的位置索引。另外要求你必須在 O(log n) 的時間複雜度內完成。
+
+例如：
+
+`target` 存在於陣列中：
+
+```txt
+Input: nums = [1,3,5,6], target = 5
+Output: 2
+```
+
+`target` 不存在於陣列中：
+
+```txt
+Input: nums = [1,3,5,6], target = 2
+Output: 1
+```
+
+思路：其實也是一個基本的 binary search，只是當 `target` 不存在於陣列中時，我們要回傳的是 `left` 的值，因為 `left` 的值就是 `target` 應該被插入的位置索引。實作如下：
+
+```js
+function searchInsert(nums, target) {
+  let left = 0;
+  let right = nums.length - 1;
+
+  while (left <= right) {
+    const mid = left + Math.floor((right - left) / 2);
+
+    if (target === nums[mid]) {
+      return mid;
+    }
+
+    if (target < nums[mid]) {
+      right = mid - 1;
+    } else {
+      left = mid + 1;
+    }
+  }
+
+  return left;
+}
+```
+
+#### Find Peak Element
+
+最後我們來看 [162. Find Peak Element](https://leetcode.com/problems/find-peak-element/)，題目如下：
+
+給你一個陣列 `nums`，你需要找出一個 peak element，peak element 的定義是：陣列中的一個元素，大於左右相鄰的元素。你可以假設 `nums[-1] = nums[n] = -∞`，也就是說陣列的邊界元素是負無窮，此外陣列中可能存在複數個 peak element。現在要請你寫一個時間複雜度為 O(log n) 的演算法來解決這個問題。
+
+例如：
+
+```txt
+Input: nums = [1,2,3,1]
+Output: 2
+Explanation: 3 是一個 peak element，因為 3 大於左右相鄰的元素 2 和 1。
+```
+
+```txt
+Input: nums = [1,2,1,3,5,6,4]
+Output: 1 or 5
+Explanation: 這個陣列有兩個 peak element，1 和 5，你可以回傳任何一個。
+```
+
+思路：直覺反應一定是直接迴圈把每一個都掃過一次檢查看是不是 peak，但是這樣的複雜度是 O(n)，題目要求我們必須在 O(log n) 的時間複雜度內完成，所以我們要使用 binary search 來解決這個問題。這題和前面的 binary search 稍微不同的地方在於，我們要找的不是一個特定的值，而是一個條件，也就是 peak element，我們可以從中點元素和它的右邊鄰居的大小關係來縮小搜尋範圍：
+
+- 如果 `nums[mid] < nums[mid + 1]`，那麼在 `mid` 的右邊一定存在一個 peak element。
+- 如果 `nums[mid] > nums[mid + 1]`，那麼在 `mid` 的左邊一定存在一個 peak element。
 
 實作程式碼如下：
 
 ```js
-const useByInsert = Symbol('useByInsert');
+function findPeakElement(nums) {
+  let left = 0;
+  let right = nums.length - 1;
 
-class SortedList extends DoublyList {
-  find(value, second) {
-    let current = this.head;
-    let i = 0;
-    while (current) {
-      if (second === useByInsert ? current.data > value : current.data === value) {
-        return current;
-      }
-      current = current.next;
-      i++;
-    }
-  }
+  while (left < right) {
+    const mid = Math.floor((right + left) / 2);
 
-  insert(value) {
-    let next = this.find(value, useByInsert);
-    let node = new DoublyNode(value);
-    if (!next) {
-      let last = this.tail;
-      // 如果沒有節點比它大，它就是 tail
-      this.tail = node;
-      if (last) {
-        // append
-        last.next = node;
-        node.prev = last;
-      } else {
-        // 什麼也沒有，它就是 head
-        this.head = node;
-      }
+    if (nums[mid] > nums[mid + 1]) {
+      right = mid;
     } else {
-      let prev = next.prev;
-      if (!prev) {
-        this.head = node;
-        this.head.next = next;
-      } else {
-        prev.next = node;
-        node.prev = prev;
-      }
-      node.next = next;
-      next.prev = node;
+      left = mid + 1;
     }
-    this.length++;
   }
 
-  remove(value) {
-    let node = this.find(value);
-    if (node) {
-      let prev = node.prev;
-      let next = node.next;
-
-      if (!prev) {
-        this.head = next;
-      } else {
-        prev.next = next;
-      }
-
-      if (next) {
-        next.prev = prev;
-      } else {
-        this.tail = prev;
-      }
-
-      this.length--;
-      return true;
-    }
-    return false;
-  }
-}
-
-const list = new SortedList();
-list.insert(222);
-list.insert(111);
-list.insert(333);
-list.insert(555);
-list.insert(444);
-list.insert(777);
-list.insert(666);
-console.log(list);
-```
-
-## 環狀鏈結串列 Circular Linked List
-
-有一道非常有名的面試題：約瑟夫問題（Josephus problem），會使用到環狀鏈結串列。
-
-先了解一下規則：在一個房間裡有 n 個人（編號 0 ~ n-1），只能有最後一個人活下來。按照如下的規則進行：
-
-1. 所有人圍成一圈。
-2. 順時針報數，每次報到 q 的人將被移出。
-3. 從下一個人開始重新報數，重複步驟 2 直到只剩下一個人。
-
-所描述的規則可以用下圖的約瑟夫環來表示：
-
-<div>
-  <img src="https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/data-structures/linked-list/circular-linked-list/images/josephus.png" alt="Josephus problem" width="500"/>
-</div>
-
-接下來你要做的就是：當你在這一群人之間時，你必須選擇一個位置讓你成為剩餘的最後一人。
-
-這看起來很困難，但是有了環狀鏈結串列，就很好解決了。首先在雙向鏈結串列的 head 與 tail 是不同的節點，而環狀鏈結串列的這兩個都指向同一處。既然如此我們只保持一個 head 就足夠了。其次，forEach 與 find 方法需要做一下處理避免無限迴圈。因為只有一個節點的環狀鏈結串列，它的 next 和 prev 都會指向自己。
-
-來看一下雙向鏈結串列和環狀鏈結串列的 forEach 方法：
-
-```js
-// 雙向鏈結串列
-forEach(cb) {
-  let current = this.head;
-  let i = 0;
-  while (current) {
-    cb(current.data, i);
-    current = current.next;
-    i++;
-  }
-}
-
-// 環狀鏈結串列
-forEach(cb) {
-  let current = this.head;
-  let first = this.head;
-  let i = 0;
-  while (current) {
-    cb(current.data, i);
-    current = current.next;
-    if (current === first) {
-      break; // 迴圈結束
-    }
-    i++;
-  }
+  return left;
 }
 ```
-
-我們模仿實作有序鏈結串列的時候，讓它繼承雙向鏈結串列，然後重寫 forEach、findIndex、insertAt 與 removeAt 方法：
-
-```js
-class CircularLink extends DoublyList {
-  forEach(cb) {
-    let current = this.head;
-    let first = current;
-    let i = 0;
-    while (current) {
-      cb(current.data, i);
-      current = current.next;
-      if (current === first) {
-        break;
-      }
-      i++;
-    }
-  }
-
-  findIndex(index) {
-    const n = this.length;
-    if (index > n) {
-      return null;
-    }
-    // 判斷尋找方向
-    const dir = index > n >> 1;
-    let current = dir ? this.head.prev : this.head;
-    let first = current;
-    let prop = dir ? 'prev' : 'next';
-    let add = dir ? -1 : 1;
-    let i = dir ? n - 1 : 0;
-
-    while (current) {
-      if (index === i) {
-        return current;
-      }
-      current = current[prop];
-      if (current === first) {
-        return current;
-      }
-      i += add;
-    }
-
-    return null;
-  }
-
-  insertAt(index, data) {
-    if (index <= this.length) {
-      const node = new DoublyNode(data);
-
-      if (index === 0 && !this.head) {
-        this.head = node;
-        node.prev = node;
-        node.next = node;
-      } else {
-        let prev = this.findIndex(index - 1);
-        let next = prev.next;
-
-        prev.next = node;
-        node.prev = prev;
-        node.next = next;
-        next.prev = node;
-      }
-
-      this.length++;
-    }
-  }
-
-  removeAt(index) {
-    const node = this.findIndex(index);
-    if (node) {
-      if (node.next === node) {
-        this.head = null;
-      } else {
-        let prev = node.prev;
-        let next = node.next;
-        prev.next = next;
-        next.prev = prev;
-
-        if (node === this.head) {
-          this.head = next;
-        }
-      }
-      this.length--;
-      return true;
-    }
-    return false;
-  }
-}
-
-const list = new CircularLink();
-
-list.insertAt(0, 111);
-list.insertAt(1, 222);
-list.insertAt(2, 333);
-list.insertAt(1, 444);
-list.insertAt(3, 666);
-
-list.forEach((el, i) => console.log(el, i));
-
-list.removeAt(0);
-console.log(list);
-```
-
-實際執行上面的程式碼後可以在控制台看到如圖的輸出：
-
-<div>
-  <img src="https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/data-structures/linked-list/circular-linked-list/images/circular-link.png" alt="circular linked list" width="550"/>
-</div>
-
-現在讓我們來解決約瑟夫問題，這個問題主要思路來自 `forEach` 與 `remove` 方法。我們先建立一個環狀的 list 與一個不斷遞迴呼叫的 `kill` 方法，`kill` 在只剩一個人時停止，如何判定只剩一個人，可以用 `node.next === node` 或 `list.length === 1` 來判斷。
-
-```js
-function kill(list, node, m) {
-  let i = 1;
-  while (i <= m) {
-    if (i === m) {
-      if (node.next === node) {
-        console.log('最後一個', node.data);
-        return true;
-      }
-      let prev = node.prev;
-      let next = node.next;
-      prev.next = next;
-      next.prev = prev;
-      list.length--;
-
-      if (node === list.head) {
-        list.head = next;
-      }
-      console.log('出局', node.data);
-    }
-    i++;
-    node = node.next;
-  }
-  kill(list, node, m);
-}
-
-function josephus(n, m) {
-  const list = new CircularLink();
-  for (let i = 0; i < n; i++) {
-    list.insertAt(i, i + 1);
-  }
-  kill(list, list.head, m);
-
-  return list.head.data;
-}
-```
-
-其實這道題跟前面在講 Queue 的時候提到的 Hot Potato 問題幾乎一樣，只是這次我們換成使用環狀鏈結串列來解決。
 
 ## 總結
 
-鏈結串列在建立的過程和陣列不同，陣列是連續的記憶體空間，而鏈結串列是零散的，每個節點都有自己的記憶體空間，並且每個節點都有指向下一個節點的指標，這樣就可以串起來了。當有資料要進來時，我們只需要根據指標找到下一個儲存空間的位置，然後把資料保存起來，接著指向下一個儲存資料的位置，這樣一來就可以把一些零散的記憶體空間利用起來了，雖然串列是線性表，但不會按照線性的順序儲存資料。
+我們比較兩種搜尋法後應該會注意到一件事，如果我們今天在存資料的時候，有事先整理過的話，那麼就可以減少我們將來搜尋的時間，像是我們對資料做了排序後，就可以使用 binary search 來加速搜尋的過程，而不用使用循序搜尋。甚至我們可以使用 hash table 來儲存資料，這樣我們就可以在 O(1) 的時間複雜度內找到我們要的資料。
 
-也因為鏈結串列是以這種方式儲存資料，所以它在插入和刪除資料時比較容易，只需要改變指標的指向就可以了，舉個例子： 0 -> 1 -> 2 -> 3 -> 4，如果要在 1 和 2 之間插入一個 5，只需要把 1 的指標指向 5，然後把 5 的指標指向 2，這樣就完成了插入操作，不需要去管 5 實際的記憶體位置在哪裡，也不會對其他節點造成影響。但是如果是想要從串列中讀取一條資料，就要從 0 號開始一個一個往下找，直到找到我們要找的資料為止。
-
-所以我們可以根據實際的需求來選擇使用陣列或鏈結串列，如果需要頻繁的插入和刪除操作，就可以使用鏈結串列，如果需要頻繁的查詢操作，就可以使用陣列。
+這也是為什麼我們在設計資料結構的時候，要考慮到我們將來會怎麼使用這些資料，如果我們知道我們將來會需要對資料做搜尋，那麼我們就要考慮到如何將資料排序分類，或是使用一些特定的資料結構來儲存資料。
 
 ## 參考資料
 
-- [《JavaScript 算法：基本原理與代碼實現》](https://www.tenlong.com.tw/products/9787115596154?list_name=r-zh_cn)
+- [《Learning JavaScript Data Structures and Algorithms, 3/e》](https://www.tenlong.com.tw/products/9781788623872?list_name=trs-f)

@@ -2,174 +2,190 @@
 outline: deep
 ---
 
-# 希爾排序法（Shell Sort）
+# 雙端佇列 Deque
 
-希爾排序法（Shell Sort）是 Donald Shell 於 1959 年提出的一種排序演算法，是插入排序法（Insertion Sort）的一種改良版本，也稱為縮小增量排序法（Diminishing Increment Sort），同時它也是第一批突破 $O(n^2)$ 的演算法之一。
+雙端佇列（Double-ended Queue, Deque）是一種允許在前端和後端進行插入和刪除操作的特殊佇列。
 
-這個演算法的基本思想是：將陣列分割成多個子陣列，每個子陣列是由索引值相差某個 gap（間距或間隔）的元素所組成，並對每個子陣列進行插入排序，然後減少 gap 的值，重新分割大陣列為新的子陣列，重複進行插入排序，直到 gap 為 1。
+以現實生活中來舉例的話，就像是排隊買電影票，先到的人先買票，後到的人後買票，如果有一個剛買完票的人只是還需要確認一些事情，那麼他可以直接插回隊伍的前面。另一方面在隊伍尾巴的人如果趕時間，他可以直接離開隊伍。
 
-為什麼這麼做呢？因為在插入排序中有個缺點，如果我們要移動元素，它們相距越遠，需要移動的次數就越多，希爾排序的分組法就是為了減少移動次數而發明的。
+在電腦科學中，雙端佇列的一個常見應用是儲存一系列的撤銷操作，例如：在文字編輯器中，我們可以在每次輸入文字時將其儲存在雙端佇列中，當我們需要撤銷（例如 ctrl + z 還原）時，只需要從佇列的後端刪除最後一個元素即可（就像是 Stack），而當儲存的撤銷操作超過一定的數量時，我們可以從佇列的前端刪除最早的元素，這樣就可以限制撤銷操作的數量。也就是說 Deque 同時具有 Stack 和 Queue 的特性。
 
-我們以 4 為 gap，對陣列進行分組，如下所示，要注意的是，我們只是邏輯上進行了分組，並沒有真的將陣列分成多個子陣列。
+## Deque 的常用方法
 
-| 原始陣列 | 5   | 7   | 8   | 3   | 1   | 2   | 4   | 6   |
-| -------- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 第一組   | 5   | -   | -   | -   | 1   | -   | -   | -   |
-| 第二組   | -   | 7   | -   | -   | -   | 2   | -   | -   |
-| 第三組   | -   | -   | 8   | -   | -   | -   | 4   | -   |
-| 第四組   | -   | -   | -   | 3   | -   | -   | -   | 6   |
-
-然後對子陣列進行插入排序，這會讓原陣列部分有序，如下：
-
-| 原始陣列 | 5   | 7   | 8   | 3   | 1   | 2   | 4   | 6   |
-| -------- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 第一組   | 1   | -   | -   | -   | 5   | -   | -   | -   |
-| 第二組   | -   | 2   | -   | -   | -   | 7   | -   | -   |
-| 第三組   | -   | -   | 4   | -   | -   | -   | 8   | -   |
-| 第四組   | -   | -   | -   | 3   | -   | -   | -   | 6   |
-| 排序之後 | 1   | 2   | 4   | 3   | 5   | 7   | 8   | 6   |
-
-然後我們縮減這個 gap，這個 gap 是基於某種數列算出來的，只會不斷減少。這時我們選擇 2 為 gap，原陣列便在邏輯上分成了兩個子陣列，如下：
-
-| 原始陣列 | 1   | 2   | 4   | 3   | 5   | 7   | 8   | 6   |
-| -------- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 第一組   | 1   | -   | 4   | -   | 5   | -   | 8   | -   |
-| 第二組   | -   | 2   | -   | 3   | -   | 7   | -   | 6   |
-
-然後對子陣列進行插入排序，得到下面的結果：
-
-| 原始陣列 | 1   | 2   | 4   | 3   | 5   | 7   | 8   | 6   |
-| -------- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 第一組   | 1   | -   | 4   | -   | 5   | -   | 8   | -   |
-| 第二組   | -   | 2   | -   | 3   | -   | 6   | -   | 7   |
-| 排序之後 | 1   | 2   | 4   | 3   | 5   | 6   | 8   | 7   |
-
-最後我們將 gap 設為 1，這時陣列就變成了一個子陣列，也就是它本身。此時整個陣列已經接近有序了，可以發現希爾排序的效率非常高。
-
-### 間距序列（Gap Sequence）
-
-我們每趟用到的 gap，共同組成一個陣列，稱為間距序列（Gap Sequence）。常用的 gap sequence 由 Knuth 提出，透過遞迴表達式 $h = 3 * h + 1$ 計算出來，其中 h 初始化為1。這就是說，這個數列會是：1, 4, 13, 40,...等等。當數值超過陣列長度時，就停止這個遞迴。對於一個含有 1000 個元素的陣列，我們使用數列的前 6 個數值就可以了。
-
-### 實作
+和之前一樣我們會先定義一個 Deque 類別來實作，既然它是一個特殊的 Queue 那麼我們可以直接沿用部分程式碼：
 
 ```js
-function shellSort(array) {
-  // 產生 gap sequence 3x+1 [1, 4, 13, 40, 121, 364,...]
-  const n = array.length;
-  const gaps = [1];
-  let gap = 1;
-  while (true) {
-    gap = 3 * gap + 1;
-    if (gap > n) break; // gap 不能大於 array 長度
-    gaps.push(gap);
+class Deque {
+  #items = {};
+  #headCount = 0;
+  #count = 0;
+
+  isEmpty() {
+    return this.size() === 0;
   }
 
-  while ((gap = gaps.pop())) {
-    // 對每個子陣列進行 insertion sort
-    for (let g = 0; g < gap; g++) {
-      for (let i = g + gap; i < n; i += gap) {
-        let target = array[i]; // 從無序區取元素
-        if (target < array[i - gap]) {
-          // 無序區比有序區小
-          let j = i;
-          while (j > 0 && array[j - gap] > target) {
-            // 有序區元素往後移
-            array[j] = array[j - gap];
-            j -= gap; // 不是 -1 而是 -gap
-          }
-          array[j] = target; // 插入元素
-        }
-      }
+  size() {
+    return this.#count - this.#headCount;
+  }
+
+  clear() {
+    this.#items = {};
+    this.#headCount = 0;
+    this.#count = 0;
+  }
+
+  toString() {
+    let str = '';
+
+    for (let i = this.#headCount; i < this.#count; i++) {
+      str += this.#items[i] + (i < this.#count - 1 ? ',' : '');
     }
+
+    return str;
   }
 }
 ```
 
-Shell Sort 沒有規定要用哪種 gap 公式，不同的公式，其時間複雜度也不同。因此 Shell Sort 是一種不穩定的排序演算法。在 Shell 的原稿中，他建議初始的間距為 $n/2$，簡單地把每一次排序分成兩半。因此對於一個 n=100 的陣列，逐漸減少的間距序列會是：50, 25, 12, 6, 3, 1。具體實作如下：
+我們會有下面幾個方法：
+
+- **addFront(data)**：在佇列的前端新增一個元素。
+- **addBack(data)**：在佇列的後端新增一個元素（和原本的 `enqueue` 方法一樣）。
+- **removeFront()**：刪除佇列的前端元素（和原本的 `dequeue` 方法一樣）。
+- **removeBack()**：刪除佇列的後端元素（跟 Stack 的 `pop` 方法一樣）。
+- **peekFront()**：回傳佇列的前端元素（和原本的 `peek` 方法一樣）。
+- **peekBack()**：回傳佇列的後端元素（跟 Stack 的 `peek` 方法一樣）。
+
+所以我們的 Deque 目前會長這樣：
 
 ```js
-function shellSort2(array) {
-  // shell sequence [1, 2, 4, 9, 19, 39, 78, 156, 312, 625, 1250, 2500, 5000]
-  const n = array.length;
-  const gaps = [];
-  let gap = n;
-  while (gap != 1) {
-    gap = Math.floor(gap / 2);
-    gaps.unshift(gap);
+class Deque {
+  #items = {};
+  #headCount = 0;
+  #count = 0;
+
+  addBack(data) {
+    this.#items[this.#count] = data;
+    this.#count++;
   }
 
-  while ((gap = gaps.pop())) {
-    // 對每個子陣列進行 insertion sort
+  removeFront() {
+    if (this.isEmpty()) return;
+    const head = this.#items[this.#headCount];
+    delete this.#items[this.#headCount];
+    this.#headCount++;
+    return head;
   }
+
+  removeBack() {
+    if (this.isEmpty()) return;
+    this.#count--;
+    const tail = this.#items[this.#count];
+    delete this.#items[this.#count];
+    return tail;
+  }
+
+  peekFront() {
+    return this.#items[this.#headCount];
+  }
+
+  peekBack() {
+    if (this.isEmpty()) return;
+    return this.#items[this.#count - 1];
+  }
+
+  isEmpty() {}
+  size() {}
+  clear() {}
+  toString() {}
 }
 ```
 
-Shell Sort 的排序效率和 gap sequence 有直接關係，相關 gap sequence 如下：
+### `addFront` 方法
 
-1. Shell Sequence： $n/2, n/4, n/8, ..., 1$（重複除以 2）
-2. Hibbard Sequence： $1, 3, 7, ..., 2^k-1$
-3. Knuth Sequence： $1, 4, 13, ..., (3^k-1)/2$
-4. Sedgewick Sequence： $1, 5, 19, 41, 109, ...$
-
-目前最好的序列是 Sedgewick Sequence，它能讓 Shell Sort 的時間複雜度達到 $O(n^{4/3})$，快於 $O(n\log_2n)$ 的 Heap Sort，其計算公式：
+現在讓我們來看 `addFront` 要怎麼來實作：
 
 ```js
-function getSedgewickSeq(n) {
-  const array = [];
-  let startup1 = 0;
-  let startup2 = 2;
-  for (let i = 0; i < n; i++) {
-    if (i % 2 == 0) {
-      array[i] = 9 * Math.pow(4, startup1) - 9 * Math.pow(2, startup1) + 1;
-      startup1++;
+addFront(data) {
+  // #1 if empty
+  if (this.isEmpty()) {
+    this.addBack(data);
+  } else {
+    // #2 headCount > 0
+    if (this.#headCount > 0) {
+      this.#headCount--;
+      this.#items[this.#headCount] = data;
     } else {
-      array[i] = Math.pow(4, startup2) - 3 * Math.pow(2, startup2) + 1;
-      startup2++;
-    }
-    if (array[i] >= n) {
-      break;
+      // #3 headCount === 0
+      for (let i = this.#count; i > 0; i--) {
+        this.#items[i] = this.#items[i - 1];
+      }
+
+      this.#items[0] = data;
+      this.#count++;
     }
   }
-  return array;
-}
-
-function shellSort3(array) {
-  const n = array.length;
-  const gaps = getSedgewickSeq(n);
-  let gap = 1
-  // 略
 }
 ```
 
-最後來看看幾種排序的效能比較：
+有三個情境需要考慮：
 
-```bash
-========
-部分有序的情況 selectSort2 37
-完全亂序的情況 selectSort2 33
-========
-部分有序的情況 insertionSort2 2
-完全亂序的情況 insertionSort2 19
-========
-部分有序的情況 shellSort 4
-完全亂序的情況 shellSort 3
-========
-部分有序的情況 shellSort2 4
-完全亂序的情況 shellSort2 3
-========
-部分有序的情況 shellSort3 4
-完全亂序的情況 shellSort3 2
+第一個是如果目前佇列是空的，那麼我們就可以直接呼叫 `addBack` 方法。因為 `addBack` 本身已經處理了 `count` 的增加，所以我們不需要再處理。
+
+第二個情境是如果 `headCount` 大於 0，這表示已經有元素被從前端刪除過，所以 `headCount` 會大於 0，這時候我們只需要將 `headCount` 減 1，並且在 `headCount` 的位置新增元素即可。假設目前的佇列內部是：
+
+```js
+items = {
+  1: 15,
+  2: 32
+};
+count = 3;
+headCount = 1;
 ```
 
-## 複雜度（Complexity）
+如果我們要插一個 `30` 到前端，那麼就會進到這個情境，我們會將 `headCount` 減 1 變成 0，並且在 key 為 0 的位置填上 `30`。
 
-時間複雜度高度依賴於使用的 gap sequence
+第三個情境是如果 `headCount` 等於 0，我們可以使用負數的 key 來新增元素，然後去更新用來計算佇列長度的邏輯，讓它能夠計算包含負數 key 時的長度。這樣也能夠保持在新增元素時的時間複雜度為 O(1)。但是為了方便理解，我們這邊使用較為簡單的方式來實作，就是把它想像成是陣列，要在第一個位置新增元素時，我們需要將所有元素往後移動一個位置，將第一個位置給空出來。所以我們需要從最後一個元素開始迭代，將 `i - 1` 賦值給 `i`，最後再將 `0` 的位置填上新的元素。
 
-| Name           |         Average         |     Best     |      Worst       | Space  |  Method  | Stable |
-| :------------- | :---------------------: | :----------: | :--------------: | :----: | :------: | :----: |
-| **Shell sort** | depends on gap sequence | $O(n\log n)$ | $O(n(\log n)^2)$ | $O(1)$ | In-place |   No   |
+## Deque 的應用
+
+### Palindrome Checker
+
+回文（Palindrome）是一種正向和反向讀取都相同的單詞、句子或數字的序列，例如：`racecar`、`level`。
+
+題目需求是給你一個字串要你判斷它是否為回文，另外如果字元中間有空白的話，例如：`never odd or even`，我們可以先將空白移除後再判斷是否為回文。
+
+有很多種方法可以判斷一個字串是否為回文，例如最簡單的方式就是將字串反轉後和原本的字串比較，如果相同就表示是回文；也可以使用 Stack 來判斷，不過如果要用資料結構來解的話，直接使用剛才封裝好的 Deque 會是最簡單的方法：
+
+```js
+function palindromeChecker(str) {
+  // 移除字串中的空白
+  const lowerStr = str.toLocaleLowerCase().split(' ').join('');
+
+  const deque = new Deque();
+
+  for (let i = 0; i < lowerStr.length; i++) {
+    deque.addBack(lowerStr[i]);
+  }
+
+  while (deque.size() > 1) {
+    if (deque.removeFront() !== deque.removeBack()) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+console.log('level', palindromeChecker('level'));
+console.log('Step on no pets', palindromeChecker('Step on no pets'));
+```
+
+首先將字串進行處理，將所有字元轉成小寫並且移除空白，接著將字串中的每個字元都加入到 Deque 中，最後使用迴圈來判斷 Deque 中的第一個元素和最後一個元素是否相同，如果不相同就表示不是回文，如果相同就繼續迴圈，直到 Deque 中只剩下一個元素或是沒有元素，這時候就表示是回文。
+
+## 總結
+
+我們在實作 `addFront` 方法的第三個情境時模擬了陣列的 `shift` 方法的行為，所以新增元素到前端的時間複雜度會變成 O(n)，這也給了我們一個提示，陣列固然非常方便，但是在刪除或新增時都會有額外的成本，那麼有沒有一種資料結構可以在刪除或新增時都能夠保持 O(1) 的時間複雜度呢？答案是有的，那就是 Linked List，我會在明天的文章去介紹它。
 
 ## 參考資料
 
-- [《JavaScript 算法：基本原理與代碼實現》](https://www.tenlong.com.tw/products/9787115596154?list_name=r-zh_cn)
-- [Tutorials Point](https://www.tutorialspoint.com/data_structures_algorithms/shell_sort_algorithm.htm)
+- [《Learning JavaScript Data Structures and Algorithms, 3/e》](https://www.tenlong.com.tw/products/9781788623872?list_name=trs-f)

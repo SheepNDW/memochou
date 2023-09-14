@@ -1,144 +1,60 @@
----
-outline: deep
----
+# 排序總結
 
-# 隨機演算法 - Fisher-Yates Shuffle
+過去一週裡我們提到了 9 種排序演算法，也提了一些各自的變化版本，現在讓我們簡單回顧一下這些排序法以及最早在介紹 Heap 時提到過的 Heap Sort。 
 
-## Shuffle an array
+- Bubble Sort：
 
-提到洗牌（Shuffle），我們常會想到在玩撲克牌時，為了打亂牌的順序我們會在發牌前先進行洗牌。我們可以想成要打亂一個陣列，洗牌只是一種應用。不過其實現實生活中的洗牌有很多種方式，有一般常見的交疊洗牌、印度洗牌又或是一張一張分開交疊的完美洗牌，LeetCode 上剛好有一題就是完美洗牌：[1470. Shuffle the Array](https://leetcode.com/problems/shuffle-the-array/)，簡單來說就是要將一組陣列分成兩半，然後交錯合併成一個新的陣列。
+雙重迴圈，每層都從 0 到 n，每次都比較相鄰的兩個元素，如果前面的元素比後面的元素大，就交換位置，整個陣列會從後面開始逐漸排序。
 
-但是今天要介紹的不是現實中的洗牌，而是一種演算法，叫做 Fisher–Yates shuffle，其用意是為了公平的打亂，使得每種組合的機率相等。其實說白就是要隨機去打亂一個陣列，這個需求其實在實際開發場景中也會遇到，例如：在一個網頁中，我們想要隨機顯示一些廣告。不知道大家都是怎麼去實作這個“隨機”的呢？
+- Selection Sort：
 
-### 直覺的做法
+將陣列區分為已排序與未排序兩個部分，前面是已排序的，後面是未排序的。每次從未排序的部分中找出最小的元素，然後放到已排序的部分的最後面，直到全部排序完成。
 
-宣告一個新的 `array`，然後從原來的牌堆（陣列）中隨機取出一個牌（元素），放到新的陣列中，重複這個動作直到原來的陣列中沒有元素為止。
+- Insertion Sort：
 
-```js
-function shuffle(deck) {
-  const newDeck = [];
-  while (deck.length > 0) {
-    const r = Math.floor(Math.random() * deck.length);
-    const card = deck.splice(r, 1);
-    newDeck.push(...card);
-  }
-  return newDeck;
-}
-```
+也分成已排序與未排序兩個部分。前面為已排序的，每次會從取出未排序的第一個元素放到已排序區間中的適當位置，因此會有一個往後挪坑的過程。在陣列元素比較少的時候，效率會比較好。
 
-這樣寫沒什麼問題，但是我們可以發現，每次都要從原來的陣列中刪除一個元素，這樣的話時間複雜度就會變成 $O(n^2)$，如果陣列很大的話，效能就會很差。
+- Shell Sort：
 
-### 直覺的做法（改良版）
+選擇一個 gap sequence，透過它每次會將陣列分成幾個子陣列（子陣列中元素不連續，它們間隔為目前的 gap），然後每個子陣列各自排序，最後再將 gap sequence 逐漸縮小，直到 gap 為 1。
 
-我們可以直接跑迴圈從第一張牌開始，每次都隨機跟其他張牌交換位置，這樣就不用刪除元素了，時間複雜度就會變成 $O(n)$。
+- Merge Sort：
 
-```js
-function shuffle2(deck) {
-  for (let i = 0; i < deck.length; i++) {
-    const r = Math.floor(Math.random() * deck.length);
-    [deck[i], deck[r]] = [deck[r], deck[i]];
-  }
-  return deck;
-}
-```
+分為兩個步驟，分割與合併。將陣列分割到最小單位，然後利用一個時間複雜度為 O(n) 的 merge 函式來合併兩個已排序的陣列，一路合併到最後。
 
-看起來很簡單，但是這個方法其實存在著一個問題，就是它並不是真的隨機，我們稍後會再來討論這個問題。
+- Heap Sort：
 
-### `sort()`
+透過將陣列當成一個二元樹，然後透過元素上浮或是下沉的方式來形成一個 max 或 min heap。然後再將根節點取出，進行選擇排序，然後重新調整 heap，重複過程直到全部取出。
 
-在我工作中第一次遇到這個需求時，前輩教了我一種神奇的方法，就是使用 JavaScript 內建的 `sort()` 方法，然後用一種非常簡潔的寫法將一個陣列做亂數排序：
+- Quick Sort：
 
-```js
-function shuffle3(arr) {
-  return arr.sort(() => Math.random() - 0.5);
-}
-```
+透過一個 partition 函式，將陣列分成兩個部分，左邊的部分都比 pivot 小，右邊的部分都比 pivot 大，然後再對左右兩個部分遞迴進行 quick sort。
 
-如果你是第一次看到，讓我先來解釋一下原理，首先我們都知道 `Math.random()` 會回傳一個 `0~1` 的數字，我們把它扣掉 `0.5` 之後，就會得到一個 `-0.5~0.5` 的數字，這個數字會決定 `sort()` 方法的排序順序，因為這個數字是隨機生成的，所以結果也會是隨機的。
+- Counting Sort：
 
-看起來很美好，行數少又優雅，不過其實這個寫法存在著一些問題，在前面我們學習排序演算法時，我們知道 `sort()` 方法的時間複雜度是 $O(n \log n)$，所以在對一個較龐大的陣列使用時可能會導致效能下降。
+類似投票的概念，準備足夠的 bucket 來存放元素，每個元素放進與 bucket 編號相同的 bucket 中，bucket 計數加一，最後再根據編號順序將 bucket 中的元素取出。
 
-另外還有一個問題是，它的機率分佈其實也是不均勻的，讓我們來看一下用 `sort()` 還有剛才前一個的實作方式，對於一個陣列 `[1, 2, 3]`，它們的機率分佈是怎麼樣的：
+- Bucket Sort：
 
-```js
-const count = { 123: 0, 132: 0, 213: 0, 231: 0, 312: 0, 321: 0 };
+容易跟 counting sort 搞混，counting sort 的 bucket 是足夠多的，可以不實際放東西進去，只要計數就好。bucket sort 的 bucket 比較少，每個元素在放進去之前，都需要透過計算來找到自己應該放的位置。在 bucket 內部再進行 insertion sort，最後所有 bucket 合併起來就是排序好的陣列。
 
-for (let i = 0; i < 600000; i++) {
-  const array = [1, 2, 3];
-  const rArray = shuffle(array);
-  count[rArray.join('')]++;
-}
+- Radix Sort：
 
-for (const key in count) {
-  console.log(key + ':', count[key]);
-}
-```
+透過 LSD（Least Significant Digit）或是 MSD（Most Significant Digit）來進行排序，LSD 是從個位數開始，MSD 是從最高位數開始。每次都會將陣列分成 10 個 bucket，然後根據當前位數的數字來放進對應的 bucket 中，最後再將 bucket 中的元素合併起來。
 
-```bash
-# shuffle
-123: 100040
-132: 100038
-213: 99833
-231: 99750
-312: 100463
-321: 99876
+接著來複習一下各自的複雜度分析：
 
-# shuffle2
-123: 88750
-132: 111122
-213: 110972
-231: 111228
-312: 88877
-321: 89051
+| Name               |         Average         |     Best      |      Worst       |    Space    |  Method   | Stable |
+| ------------------ | :---------------------: | :-----------: | :--------------: | :---------: | :-------: | :----: |
+| **Bubble sort**    |        $O(n^2)$         |    $O(n)$     |     $O(n^2)$     |   $O(1)$    | In-place  |  Yes   |
+| **Selection sort** |        $O(n^2)$         |   $O(n^2)$    |     $O(n^2)$     |   $O(1)$    | In-place  |   No   |
+| **Insertion sort** |        $O(n^2)$         |    $O(n)$     |     $O(n^2)$     |   $O(1)$    | In-place  |  Yes   |
+| **Shell sort**     | depends on gap sequence | $O(n\log n)$  | $O(n(\log n)^2)$ |   $O(1)$    | In-place  |   No   |
+| **Merge sort**     |      $O(n \log n)$      | $O(n \log n)$ |  $O(n \log n)$   |   $O(n)$    | Out-place |  Yes   |
+| **Quick sort**     |      $O(n \log n)$      | $O(n \log n)$ |     $O(n^2)$     | $O(\log n)$ | In-place  |   No   |
+| **Heap sort**      |      $O(n \log n)$      | $O(n \log n)$ |  $O(n \log n)$   |   $O(1)$    | In-place  |   No   |
+| **Counting sort**  |       $O(n + k)$        |  $O(n + k)$   |    $O(n + k)$    |   $O(k)$    | Out-place |  Yes   |
+| **Bucket sort**    |       $O(n + k)$        |  $O(n + k)$   |     $O(n^2)$     | $O(n + k)$  | Out-place |  Yes   |
+| **Radix sort**     |        $O(n*k)$         |   $O(n*k)$    |     $O(n*k)$     |  $O(n+k)$   | Out-place |  Yes   |
 
-# shuffle3
-123: 225288
-132: 37504
-213: 74831
-231: 37407
-312: 37487
-321: 187483
-```
-
-我們可以發現 `shuffle2` 和 `shuffle3` 的機率分佈都是不均勻的，先來看看我們使用 `sort()` 實作的 `shuffle3`，為什麼它的機率分佈會不均勻呢？因為 JavaScript 的 `sort()` 是一個黑盒子，各家瀏覽器實作的方式不同，無法保證比較的次數。不過不管如何，我們都可以確定的是它實際測試的結果是一個不均勻的機率分佈。
-
-再來看看 `shuffle2` 的實作方式，我們帶入 `[1,2,3]` 來看看，正常打亂 123 的結果可能有 3 x 2 x 1 = 3! = 6 種，分別是 123、132、213、231、312、321。但是我們可以發現 `shuffle2` 實作的交換法會出現 $3^3$ = 27 種結果，但實際上不一樣的組合只有 6 種，所以有些組合的機率就會比較高。
-
-### Fisher–Yates shuffle
-
-接下來要介紹的 Fisher-Yates 演算法非常適合用來亂數排序一個陣列，這個演算法是由 Fisher 和 Yates 提出的，一樣是透過一個迴圈去迭代陣列，但是它的方式是從最後一個元素開始，每次都跟前面一個隨機的元素交換位置。這樣的話，可以保證隨機過的位置不會再被交換，就不會出現重複的情況：
-
-```js
-function shuffle(arr) {
-  for (let i = arr.length - 1; i > 0; i--) {
-    const randomIndex = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[randomIndex]] = [arr[randomIndex], arr[i]];
-  }
-  return arr;
-}
-```
-
-整個過程可以參考下圖：
-
-![Fisher–Yates shuffle](https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/algorithms/fisher-yates-shuffle/images/shuffle.png)
-
-這個演算法的時間複雜度是 $O(n)$，而且它的機率分佈也是均勻的，我們可以用剛才的例子來驗證一下得出的結果為：
-
-```bash
-# Fisher–Yates shuffle
-123: 99435
-132: 99885
-213: 100231
-231: 99867
-312: 100605
-321: 99977
-```
-
-知道了 Fisher-Yates shuffle 的原理之後，就可以試試去解 LeetCode 上的 [384. Shuffle an Array](https://leetcode.com/problems/shuffle-an-array/) 了，基本上是一樣的概念，這邊就留給大家自己練習了。
-
-## 參考資料
-
-- [Fisher–Yates shuffle](https://marsgoat.github.io/XNnote/coding/FisherYatesShuffle.html)
-- [《Learning JavaScript Data Structures and Algorithms, 3/e》](https://www.tenlong.com.tw/products/9781788623872?list_name=trs-f)
-- [JavaScript 學演算法（二十一）- 洗牌演算法](https://chupai.github.io/posts/2008/shuffle_algorithm/)
-- [Shuffle an array](https://javascript.info/task/shuffle)
+我們已經學習了如何將資料做排序，但如果今天接到需求不是叫你整理資料，而是要你將它打亂呢？明天我們就要來看隨機演算法，透過它來將我們的資料隨機且公平地打亂。

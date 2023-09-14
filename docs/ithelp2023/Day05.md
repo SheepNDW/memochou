@@ -1,198 +1,240 @@
-# 選擇排序法與插入排序法
+---
+outline: deep
+---
 
-接續前一天，讓我們繼續來看兩個平均複雜度為 $O(n^2)$ 的排序法，分別是選擇排序法與插入排序法。
+# 佇列 Queue
 
-## 選擇排序法（Selection Sort）
+佇列（Queue）是一種先進先出（First In First Out）的資料結構，就像排隊買票一樣，先到的人先買票，後到的人後買票。
 
-選擇排序的行為與氣泡排序相反，它每一次遍歷都是找到最小的數然後放到前面，第一次遍歷放在第一個位置，第二次遍歷放在第二個位置...依此類推。因此我們需要一個變數來記錄目前遍歷的最小值索引。
+和 stack 一樣，queue 也是一種操作受限制的線性結構，但是它只允許在前端（front）進行刪除操作，而在後端（rear）進行插入操作。
 
-| 步驟   | 陣列狀態（刪除線代表已排序）          | 註解                                          |
-| ------ | ------------------------------------- | --------------------------------------------- |
-| 初始   | [ 3, 6, 4, 2, 11, 10, 5 ]             | 初始狀態                                      |
-| Step 1 | [ **2**, 6, 4, **3**, 11, 10, 5 ]     | 2 是最小值，與第一個元素 3 交換               |
-| Step 2 | [ ~~2~~, **3**, 4, **6**, 11, 10, 5 ] | 在剩餘元素中 3 是最小值，與第二個元素 6 交換  |
-| Step 3 | [ ~~2, 3~~, **4**, 6, 11, 10, 5 ]     | 在剩餘元素中 4 是最小值，已在正確位置         |
-| Step 4 | [ ~~2, 3, 4~~, **5**, 11, 10, **6** ] | 在剩餘元素中 5 是最小值，與第四個元素 6 交換  |
-| Step 5 | [ ~~2, 3, 4, 5~~, **6**, 10, **11** ] | 在剩餘元素中 6 是最小值，與第五個元素 11 交換 |
-| Step 6 | [ ~~2, 3, 4, 5, 6~~, **10**, 11 ]     | 在剩餘元素中 10 是最小值，已在正確位置        |
-| Step 7 | [ ~~2, 3, 4, 5, 6, 10~~, **11** ]     | 在剩餘元素中 11 是最小值，已在正確位置        |
-| 最終   | [ 2, 3, 4, 5, 6, 10, 11 ]             | 排序完成                                      |
+具體可以參考下圖：
 
-這是 wiki 上的 gif 圖，可以更清楚的看到過程：
+<div align="center">
+  <img src="https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/data-structures/queue/images/queue.png" alt="queue" width="600px">
+</div>
 
-![Selection Sort](https://upload.wikimedia.org/wikipedia/commons/9/94/Selection-Sort-Animation.gif)
+## Queue 的常用方法
 
-Selection Sort 的具體實作程式碼如下：
+- size：回傳佇列的長度
+- isEmpty：判斷佇列是否為空
+- enqueue/add：在佇列的後端插入元素
+- dequeue/remove：刪除佇列的前端元素
+- peek：存取第一個元素
+
+我們也可以透過陣列來實作 queue，不過要注意的是，陣列的 `push` 和 `shift` 方法分別對應到 queue 的 `enqueue` 和 `dequeue` 方法，實作程式碼如下：
 
 ```js
-function selectSort(array) {
-  let n = array.length;
-  for (let i = 0; i < n; i++) {
-    let minIndex = i; // 保存目前最小值的索引
-    for (let j = i + 1; j < n; j++) { // 每次只從 i 的下一個開始比較
-      if (array[j] < array[minIndex]) {
-        minIndex = j; // 更新最小值索引
-      }
-    }
-    if (i !== minIndex) {
-      swap(array, i, minIndex);
-    }
+class Queue {
+  #data = [];
+
+  enqueue(el) {
+    this.#data.push(el);
+  }
+
+  dequeue() {
+    return this.#data.shift();
+  }
+
+  size() {
+    return this.#data.length;
+  }
+
+  isEmpty() {
+    return this.size() === 0;
+  }
+
+  peek() {
+    return this.#data[0];
+  }
+
+  front() {
+    return this.peek();
+  }
+
+  toString() {
+    return this.#data.toString();
+  }
+
+  clear() {
+    this.#data = [];
   }
 }
 ```
 
-我們可以發現，氣泡排序跟選擇排序都會將目前陣列劃分成兩個部分，一個是已排序的部分，一個是未排序的部分。氣泡排序的以排序部分在陣列的尾部，而選擇排序的已排序部分在陣列的頭部。
-
-再來嘗試從兩端同時排序會如何：
+不過用陣列實作 queue 有個缺點，就是用 `shift` 刪除元素時，陣列會將後面的元素往前移動，這是一個 O(n) 的操作，這樣會有一些效能上的問題，我們也可以使用物件來實作：
 
 ```js
-function selectSort2(array) {
-  let left = 0;
-  let right = array.length - 1;
-  let min = left; // 保存目前最小值的索引
-  let max = left; // 保存目前最大值的索引
+class Queue {
+  #items = {};
+  #headCount = 0; // 記錄佇列的前端位置
+  #count = 0; // 記錄新元素的位置
 
-  while (left <= right) {
-    min = left;
-    max = left;
-    // 這裡只能用 <=, 因為要取 array[right] 的值
-    for (let i = left; i <= right; i++) {
-      if (array[i] < array[min]) {
-        min = i;
-      }
-      if (array[i] > array[max]) {
-        max = i;
-      }
+  enqueue(data) {
+    this.#items[this.#count] = data;
+    this.#count++;
+  }
+
+  dequeue() {
+    if (this.isEmpty()) return;
+    const head = this.#items[this.#headCount]; // 記錄將要刪除的元素
+    delete this.#items[this.#headCount]; // 刪除前端的元素
+    this.#headCount++; // 前端位置往後移動
+    return head; // 回傳被刪除的元素
+  }
+
+  peek() {
+    return this.#items[this.#headCount];
+  }
+
+  front() {
+    return this.peek();
+  }
+
+  isEmpty() {
+    return this.size() === 0;
+  }
+
+  size() {
+    return this.#count - this.#headCount;
+  }
+
+  clear() {
+    this.#items = {};
+    this.#headCount = 0;
+    this.#count = 0;
+  }
+
+  // 我們改成了物件，所以要自己實作 toString 方法
+  toString() {
+    let str = '';
+
+    for (let i = this.#headCount; i < this.#count; i++) {
+      str += this.#items[i] + (i < this.#count - 1 ? ',' : '');
     }
-    swap(array, left, min);
-    if (left === max) {
-      max = min;
-    }
-    swap(array, right, max);
-    left++;
-    right--;
+
+    return str;
   }
 }
 ```
 
-用測試來看一下效能，會發現並沒有提升多少，因此我們只記住 selection sort 的原始版本就好了。將這兩種寫法與 bubble sort 去跑耗時測試：
+## 用 Queue 來實作出 Stack
 
-```bash
-========
-部分有序的情況 bubbleSort1 91
-完全亂序的情況 bubbleSort1 394
-========
-部分有序的情況 bubbleSort2 20
-完全亂序的情況 bubbleSort2 390
-========
-部分有序的情況 bubbleSort3 7
-完全亂序的情況 bubbleSort3 335
-========
-部分有序的情況 selectSort 47
-完全亂序的情況 selectSort 46
-========
-部分有序的情況 selectSort2 37
-完全亂序的情況 selectSort2 35
-```
+我們來練習一下 Queue 的操作，順便來用 Queue 實作出昨天介紹過的 Stack 結構，這題取自 [225. Implement Stack using Queues](https://leetcode.com/problems/implement-stack-using-queues/)，題目要求實作一個後進先出（LIFO）的 Stack 結構，但條件是僅使用兩個 Queue 來完成。
 
-### 複雜度（Complexity）
+實作的 MyStack 類別需要具有以下幾個方法：
 
-| Name               | Average  |   Best   |  Worst   | Space  |  Method  | Stable |
-| ------------------ | :------: | :------: | :------: | :----: | :------: | :----: |
-| **Selection sort** | $O(n^2)$ | $O(n^2)$ | $O(n^2)$ | $O(1)$ | In-place |   No   |
+- `push(x)`: 將元素 x 放入堆疊的頂部。
+- `pop()`: 移除堆疊頂部的元素並回傳該元素。
+- `top()`: 回傳堆疊頂部的元素。
+- `empty()`: 若堆疊為空，則回傳 true，否則回傳 false。
 
-## 插入排序法（Insertion Sort）
+要注意的是，必須僅使用 Queue 的標準操作，例如將元素加入尾端、從前端取出或查看元素、查詢佇列大小（size）和判斷佇列是否為空（isEmpty）。
 
-插入排序法（Insertion Sort），它類似選擇排序，也是將陣列分成兩個區域，左邊第 1 個數為有序區域，右邊所有數在無序區域。不同的是，插入排序每次跑迴圈時不是找最小的數，而是將無序區域的第 1 個數插入到有序區域的適當位置。這樣有序區域不斷增加，無序區域不斷減少，直到無序區域為空，排序完成。
-
-它和我們在打撲克牌時，將手上的牌從小到大排列的方式非常相似，我們會將手上的牌分成兩堆，一堆是已經排好序的牌，另一堆是還沒排好序的牌。我們會從還沒排好序的牌中拿出一張牌，然後插入到已經排好序的牌中的適當位置。由於突出“插入”這個動作，因此稱為插入排序。
-
-“插入”這個行為我們需要在有序區域找到要插入的位置，然後將比它大的數往後移動一格，挪出一個“坑位”，然後將無序區域的第 1 個元素放到坑位上。我們可以參考 wiki 的這張 gif：
-
-![Insertion Sort](https://upload.wikimedia.org/wikipedia/commons/0/0f/Insertion-sort-example-300px.gif)
-
-Insertion sort 實作起來有點複雜，需要寫兩個內部的迴圈：
+一般在解題時，我們會直接利用陣列來模擬 Queue 的操作：
 
 ```js
-function insertionSort(array) {
-  let n = array.length;
-  for (let i = 1; i < n; i++) { // #1 搜尋：在有序區域找到目標元素
-    let target = array[i];
-    let j;
-    for (j = i - 1; j >= 0; j--) {
-      if (target > array[j]) {
-        break;
-      }
+class MyStack {
+  queue1 = [];
+  queue2 = [];
+
+  push(x) {
+    // 將新元素放入 queue2
+    this.queue2.push(x);
+
+    // 將 queue1 的元素全部取出放入 queue2
+    while (this.queue1.length > 0) {
+      this.queue2.push(this.queue1.shift());
     }
-    if (j !== i - 1) {
-      // 將比 target 大的元素往後移動一位
-      for (let k = i - 1; k > j; k--) { // #2 挪坑：挪到位置，留出坑位  
-        array[k + 1] = array[k];
-      }
-      array[j + 1] = target;
-    }
+    // 交換 queue1 和 queue2
+    [this.queue1, this.queue2] = [this.queue2, this.queue1];
+  }
+
+  pop() {
+    return this.queue1.shift() ?? null;
+  }
+
+  top() {
+    return this.queue1[0] ?? null;
+  }
+
+  empty() {
+    return this.queue1.length === 0;
   }
 }
 ```
 
-這樣程式碼太長了，不夠清晰，我們可以把搜尋跟挪坑這兩步合併，即每次 `array[i]` 先和前一個元素 `array[i - 1]` 比較，如果 `array[i] >= array[i - 1]`，說明 `array[0...i]` 也是有序的，不需要再做任何事情；否則就令 `j = i - 1`，`target = array[i]`。然後一邊將 `array[i]` 向後移動，一邊向前搜尋，當有 `array[j] < array[i]` 時停止，並將 `target` 放到 `array[j + 1]` 的位置。
+不過我們剛才已經實作過 Queue 了，所以我們可以直接利用 Queue 來實作：
 
 ```js
-function insertionSort(array) {
-  const n = array.length;
-  for (let i = 1; i < n; i++) {
-    const target = array[i];
-    let j;
-    // 合併兩個內部迴圈
-    for (j = i - 1; j >= 0 && array[j] > target; j--) {
-      array[j + 1] = array[j]; // 挪出空位
+class MyStack {
+  queue1 = new Queue();
+  queue2 = new Queue();
+
+  push(x) {
+    this.queue2.enqueue(x);
+
+    while (!this.queue1.isEmpty()) {
+      this.queue2.enqueue(this.queue1.dequeue());
     }
-    array[j + 1] = target; // 插入目標值
+
+    [this.queue1, this.queue2] = [this.queue2, this.queue1];
+  }
+
+  pop() {
+    return this.queue1.dequeue() ?? null;
+  }
+
+  top() {
+    return this.queue1.front() ?? null;
+  }
+
+  empty() {
+    return this.queue1.isEmpty();
   }
 }
 ```
 
-接著再將 for 迴圈改成 while 迴圈：
+最後題目留了一個問題，就是如果只使用一個 Queue 來實作，該怎麼做呢？這個就留給大家去練習了。
+
+## Queue 的應用
+
+### Hot Potato Game
+
+燙手山芋遊戲（擊鼓傳花），遊戲規則如下：
+
+- 玩家們坐成一圈，主持人開始放音樂，然後手上有山芋的人開始把它傳給旁邊的人，直到音樂停止。
+- 音樂停止時手上拿著山芋的人就會被淘汰，並且山芋會從他手上拿走，交給下一個人
+- 重複上面的步驟，直到只剩下一個人就是贏家
+
+這個遊戲情境可以想像成是一個 queue，每個人都是 queue 裡的一個元素，當音樂響起時，就把山芋傳給下一個人，相當於 `dequeue`，然後把這個暫時安全的這個人再 `enqueue` 回去，直到音樂停止，這個時候就直接 `dequeue` 這個人，並且淘汰他。
+
+這時候就可以利用 queue 來找出如果主持人固定每一次都播 `num` 秒音樂且假設山芋都會傳給下一個人，該場遊戲的贏家是誰。實作程式碼如下：
 
 ```js
-function insertionSort2(array) {
-  const n = array.length;
-  for (let i = 1; i < n; i++) {
-    const target = array[i];
-    let j = i - 1;
-    while (j >= 0 && array[j] > target) {
-      array[j + 1] = array[j]; // 前面覆蓋後面
-      j--;
+function hotPotato(participants, num) {
+  const queue = new Queue();
+  participants.forEach((item) => queue.enqueue(item));
+
+  while (queue.size() > 1) {
+    for (let i = 0; i < num; i++) {
+      queue.enqueue(queue.dequeue());
     }
-    array[j + 1] = target; // 插入目標值
+    console.log(`${queue.dequeue()} 被淘汰了`);
   }
+
+  return queue.dequeue();
 }
 ```
 
-### 複雜度（Complexity）
+### 回顧 JS 裡的 event loop
 
-| Name               | Average  |  Best  |  Worst   | Space  |  Method  | Stable |
-| ------------------ | :------: | :----: | :------: | :----: | :------: | :----: |
-| **Insertion sort** | $O(n^2)$ | $O(n)$ | $O(n^2)$ | $O(1)$ | In-place |  Yes   |
+現在讓我們回顧一下以前在學 event loop 的時候，有一個叫做 task queue 的東西，這個 task queue 就是一個 queue，它會把所有的 callback function 都放進去，然後等到 call stack 裡的程式都執行完後，再把 task queue 裡的 callback function 按照放入的順序一個一個拿出來執行。這個就是一個 queue 的應用。
 
-Insertion sort 的時間複雜度也是 $O(n^2)$，但經過測試後發現，在大多數情況下，Insertion sort 的效率比 Bubble sort 和 Selection sort 還要高，這是因為它的平均複雜度為 $O(n^2/4)$，最好的情況能達到 $O(n)$。我們把 Insertion sort 也加入耗時測試一起比較，得出結果為：
-
-```bash
-========
-部分有序的情況 bubbleSort3 6
-完全亂序的情況 bubbleSort3 330
-========
-部分有序的情況 selectSort 46
-完全亂序的情況 selectSort 44
-========
-部分有序的情況 insertionSort 1
-完全亂序的情況 insertionSort 20
-========
-部分有序的情況 insertionSort2 1
-完全亂序的情況 insertionSort2 19
-```
+<div align="center">
+  <img src="https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/data-structures/queue/images/event-loop.png" alt="event-loop" width="600px">
+</div>
 
 ## 參考資料
 
-- [《JavaScript 算法：基本原理與代碼實現》](https://www.tenlong.com.tw/products/9787115596154?list_name=r-zh_cn)
-
+- [《Learning JavaScript Data Structures and Algorithms, 3/e》](https://www.tenlong.com.tw/products/9781788623872?list_name=trs-f)

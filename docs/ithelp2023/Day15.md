@@ -1,374 +1,246 @@
----
-outline: deep
----
+# 優先佇列 Priority Queue
 
-# 鏈結串列 Linked List (1)
+首先我們來回憶一下佇列，普通的佇列是一種先進先出（FIFO）的資料結構，元素只能從佇列尾部加入，從佇列頭部取出。而優先佇列（Priority Queue）是一種特殊的佇列，它的元素是有優先級的，有最高優先級的元素會被最先取出，就像 VIP，就算他最晚來，也會被優先服務。
 
-JavaScript 並沒有內建 Linked List，我們可以想像成它是一個個連接起來的物件，每個物件都有一個 `next` 屬性指向下一個物件。從記憶體的角度來看，它是不連續分配的，每個物件都可以散落在記憶體的任何地方。
+既然 VIP 需要最先得到服務，我們需要將優先級最高的元素在加入佇列時就調整到最前面，如果使用 linked list 或是普通陣列來實作，時間複雜度會是 $O(n)$；如果換成 max heap 或 min heap，每次加入和取出的時間複雜度都是 $O(\log n)$。我們在上面已經學過如何構建 heap 和調整 heap，而想要實作一個 priority queue，還需要實作 heap 的移除與新增元素的方法。
 
-Linked list 也分成很多種，它本身是複合資料結構，最基本單位是節點（Node），每個節點都有兩個屬性，一個是資料（data），另一個是指向下一個節點的指標（pointer）。如下圖所示：
-
-![linked-list](https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/data-structures/linked-list/images/linked-list.png)
-
-對於這個 Node，可以用下面的程式碼表示：
+先來看一下 priority queue 的 API：
 
 ```js
-class Node {
-  constructor(data) {
-    this.data = data;
-    this.next = null;
-  }
-}
-```
+class PriorityQueue {
+  heap = [];
 
-為了方便使用，通常會為 Linked List 加上一些和陣列同樣功能的方法與屬性，用於增刪改查。
+  push() {} // 新增元素，調整 heap
 
-## 單向鏈結串列 Singly Linked List
+  pop() {} // 彈出最大元素，調整 heap
 
-Singly Linked List 是最簡單的一種 Linked List，特色是每兩個節點之間只有一個單向的連結。想像一群小朋友需要有序的入場，為了防止人員走散，後面的人都會拉著前面的人的衣服（next），依此構建了如下圖所示的一個 Singly Linked List：
-
-![singly-linked-list](https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/data-structures/linked-list/images/singly-linked-list.png)
-
-Singly Linked List 通常包含如下操作：
-
-- **head**：插入節點的起點。
-- **insertAt(index, data)**：插入一個節點到指定位置。
-- **removeAt(index)**：移除指定位置的節點。
-- **findIndex(index)**：尋找一個節點。
-- **forEach(cb)**：遍歷所有節點。
-- **size**：回傳串列長度。
-- **isEmpty**：判斷串列是否為空。
-- **clear**：清空所有資料。
-
-實作程式碼如下：
-
-```js
-class List {
-  constructor() {
-    this.head = null;
-    this.length = 0;
+  peek() { // 回傳最大元素
+    return this.heap[0];
   }
 
   size() {
-    return this.length;
+    return this.heap.length;
   }
 
   isEmpty() {
-    return this.size() === 0;
+    return this.heap.length === 0;
   }
 
-  clear() {
-    this.head = null;
-    this.length = 0;
-  }
-
-  forEach(cb) {
-    let current = this.head;
-    let index = 0;
-    while (current) {
-      cb(current.data, index++);
-      current = current.next;
-    }
-  }
-
-  findIndex(index) {
-    let current = this.head;
-    let i = 0;
-    while (current) {
-      if (index === i) {
-        return current;
-      }
-      current = current.next;
-      i++;
-    }
-    return null;
-  }
-
-  insertAt(index, data) {
-    if (index >= 0 && index <= this.length) {
-      const node = new Node(data);
-      if (index === 0) {
-        const current = this.head;
-        node.next = current;
-        this.head = node;
-      } else {
-        const prev = this.findIndex(index - 1);
-        node.next = prev.next;
-        prev.next = node;
-      }
-      this.length++;
-    } else {
-      throw `${index} 超過 list 長度 ${this.length}`;
-    }
-  }
-
-  removeAt(index) {
-    if (this.head && index >= 0 && index < this.length) {
-      const prev = this.findIndex(index - 1);
-      const current = this.findIndex(index);
-      if (!prev) { // 前面沒有節點，代表要移除的是第一個
-        this.head = current.next;
-      } else {
-        prev.next = current.next;
-      }
-      this.length--;
-    } else {
-      throw `${index} 超過 list 長度 ${this.length}`;
-    }
+  toString() {
+    return this.heap.toString();
   }
 }
-
-// 可以執行下面的程式碼在瀏覽器的 console 上測試
-const list = new List();
-list.insertAt(0, 111);
-list.insertAt(1, 222);
-list.insertAt(1, 333);
-list.insertAt(3, 444);
-list.forEach((el, i) => console.log(el, i));
-try {
-  list.insertAt(8, 333);
-} catch (error) {
-  console.log(error);
-}
-list.removeAt(1);
-list.forEach((el, i) => console.log(el, i));
 ```
 
-這邊稍微提一下單元測試的部分，如果有在控制台上打印出 List 應該會發現它會是一個巢狀的結構，我們需要不斷的點開 `next` 才能看到我們要的資料，這樣很不方便，所以我們可以利用一個 `helper` 來將 List 的資料轉換成陣列，這樣會比較好觀察跟測試：
+困難的地方在新增與刪除元素兩個方法。我們先來看看新增元素，一般是將元素放到最後，然後讓它上浮到適當的位置。元素上浮是“孩子要去找父親”，父節點是基於 `parent = Math.floor((child - 1) / 2)` 計算出來的。我們現在要實作一個 max heap 的 priority queue，因此如果子節點比父節點大，就交換它們的位置，然後繼續上浮，直到無法交換為止。
+
+push 方法實作如下：
 
 ```js
-function listToArray(head) {
-  const result = [];
-  let current = head;
+push(el) {
+  const array = this.heap;
+  array.push(el);
+  let child = array.length - 1;
+  let parent = Math.floor((child - 1) / 2);
 
-  while (current !== null) {
-    result.push(current.data);
-    current = current.next;
+  while (array[child] > array[parent]) {
+    swap(array, child, parent); // 讓大的元素往上浮
+    child = parent;
+    parent = Math.floor((child - 1) / 2);
+  }
+}
+```
+
+再來看刪除元素，我們只刪除優先級最高的，也就是第一個元素，當然也可以刪除指定的元素，只要找到目標元素後，就將它與最後一個元素交換。這時要保證新的第一個元素的優先級是最高的，又不能影響到最後一個，所以我們要從第一個元素開始下沉，當我們的元素碰到目標元素後就停止，最後把元素刪除。
+
+pop 方法實作如下：
+
+```js
+pop(el) {
+  const array = this.heap;
+  let index = 0;
+  for (let i = 0; i < array.length; i++) {
+    if (array[i] === el) {
+      index = i;
+      break;
+    }
+  }
+
+  const target = array[index];
+  swap(array, index, array.length - 1);
+
+  // 從父節點開始下沉 (陣列的右邊方向)
+  let parent = 0;
+  let child = parent * 2 + 1;
+  while (true) {
+    if (array[child] < array[child + 1] && array[child + 1] !== target) {
+      child++;
+    }
+
+    if (array[parent] < array[child] && array[child] !== target) {
+      swap(array, parent, child);
+      parent = child;
+      child = parent * 2 + 1; // 不斷向右
+    } else {
+      break;
+    }
+  }
+
+  return array.pop();
+}
+```
+
+我們可以試著執行一下下面的程式碼，可以發現 heap 值並不是完全按照順序排列的，它只保證第一個值是最大的：
+
+```js
+const pq = new PriorityQueue();
+
+pq.push(1);
+pq.push(3);
+pq.push(20);
+pq.push(5);
+
+console.log(pq.toString()); // 20,5,3,1
+
+pq.push(30);
+
+console.log(pq.toString()); // 30,20,3,1,5
+
+pq.push(25);
+
+console.log(pq.toString()); // 30,20,25,1,5,3
+
+pq.pop();
+
+console.log(pq.toString()); // 25,20,3,1,5
+
+pq.pop(3);
+
+console.log(pq.toString()); // 25,20,5,1
+```
+
+透過 priority queue 我們可以很容易地解決前面的 TopK 問題，只要把陣列中的元素全部加入 priority queue，然後再從 priority queue 中 pop 出前 K 個元素即可。
+
+最後再讓我們來實作一下以 min heap 為基礎的 priority queue，其實也非常簡單，只要在 pop 與 push 涉及元素比較的地方將大於和小於符號對調即可。具體程式碼如下：
+
+```js
+class MinPriorityQueue extends PriorityQueue {
+  constructor() {
+    super();
+  }
+
+  push(el) {
+    const array = this.heap;
+    array.push(el);
+    let child = array.length - 1;
+    let parent = Math.floor((child - 1) / 2);
+
+    while (array[child] < array[parent]) {
+      swap(array, child, parent); // 讓小的元素往上浮
+      child = parent;
+      parent = Math.floor((child - 1) / 2);
+    }
+  }
+
+  pop(el) {
+    const array = this.heap;
+    let index = 0;
+    for (let i = 0; i < array.length; i++) {
+      if (array[i] === el) {
+        index = i;
+        break;
+      }
+    }
+
+    const target = array[index];
+    swap(array, index, array.length - 1);
+
+    let parent = 0;
+    let child = parent * 2 + 1;
+    while (true) {
+      if (array[child] > array[child + 1] && array[child + 1] !== target) {
+        child++;
+      }
+
+      if (array[parent] > array[child] && array[child] !== target) {
+        swap(array, parent, child);
+        parent = child;
+        child = parent * 2 + 1;
+      } else {
+        break;
+      }
+    }
+
+    return array.pop();
+  }
+}
+```
+
+## Ugly Number
+
+Ugly number 是一個質因數只包含 2, 3, 5 的正整數，並且我們將 1 當作第一個 ugly number。給你一個整數 `n`，請你求出第 `n` 個 ugly number。也就是要從符合條件的 ugly number 數列中如：1, 2, 3, 4, 5, 6, 8, 9, 10, 12...，找出第 `n` 個數字。
+
+Example 1:
+
+```txt
+Input: n = 10
+Output: 12
+Explanation: 1, 2, 3, 4, 5, 6, 8, 9, 10, 12 is the sequence of the first 10 ugly numbers.
+```
+
+Example 2:
+
+```txt
+Input: n = 1
+Output: 1
+```
+
+稍微分析一下後，我們觀察到除了第一個數字 1 以外，其他的數字都是乘以 2、3、5 得出的，在每次相乘得到的數中，移除被乘數後，找到最小的數，繼續乘以 2、3、5。也就是：
+
+```txt
+[2, 3, 5] => 彈出 2，然後乘以 2、3、5 得到 4, 6, 10 加入佇列
+[3, 5, 4, 6, 10] => 彈出 3，乘以 2、3、5 加入佇列
+[4, 5, 6, 10, 6, 9, 15] => priority queue 會將最小的浮上去，然後彈出 4 繼續同樣操作
+```
+
+我們可以看到會有重複的數字出現，我們可以利用 hash table 來去除重複的數字，並且使用 MinPriorityQueue 來確保每次取出的數字都是最小的。程式碼如下：
+
+```js
+function nthUglyNumber(n) {
+  const hash = new Set();
+  const queue = new MinPriorityQueue();
+  queue.push(1);
+  hash.add(1);
+
+  const factors = [2, 3, 5];
+  let result = 1;
+  for (let i = 0; i < n; i++) {
+    result = queue.pop();
+    for (const factor of factors) {
+      const next = result * factor;
+      if (!hash.has(next)) {
+        hash.add(next);
+        queue.push(next);
+      }
+    }
   }
 
   return result;
 }
-
-// 測試程式碼
-it('should insert an element at a given position in the list', () => {
-  const list = new List();
-  list.insertAt(0, 1);
-  list.insertAt(1, 2);
-  list.insertAt(2, 3);
-  list.insertAt(3, 4);
-  list.insertAt(2, 5);
-
-  const listArr = listToArray(list.head);
-  const expected = [1, 2, 5, 3, 4];
-
-  expect(listArr).toEqual(expected);
-});
-```
-> 還有一種做法是寫一個 `toString` 方法轉成字串，那樣也行，但這裡就不去實作了。
-
-### 練習：反轉鏈結串列
-
-接著讓我們來看一道題目熟悉一下對於 Linked List 的操作，這是 LeetCode 上的原題，題目如下：
-
-給你一個 singly linked list 的頭節點 `head`，請你反轉它，並返回反轉後的 list。像這樣：
-
-![](https://assets.leetcode.com/uploads/2021/02/19/rev1ex1.jpg)
-
-思路：我們會遍歷整個 list，每次都把當前節點的 `next` 指向前一個節點，但是這樣會導致當前節點的 `next` 丟失，所以我們需要一個變數 `prev` 來保存當前節點的 `next`，然後再把當前節點的 `next` 指向前一個節點，最後把 `prev` 賦值給當前節點，這樣就完成了一次反轉。
-
-```js
-function reverseList(head) {
-  let prev = null; // 初始值設為 null，表示 list 的最後一個節點的 next 為 null
-  let curr = head; // curr 從頭節點 head 開始
-
-  while (curr !== null) {
-    const next = curr.next; // 先把 curr 的 next 指向的節點保存起來
-    curr.next = prev; // 反轉 curr 的 next 指向
-    prev = curr; // 把 prev 移動到 curr 的位置
-    curr = next; // 把 curr 移動到 next 的位置（原本的 curr.next）
-  }
-
-  // 最後 prev 會指向 list 的最後一個節點，也就是反轉後的 head
-  return prev;
-}
 ```
 
-最後讓我們把鏈結串列拿來跟陣列做比較，由於 Linked list 沒有索引值這種可以一次到位的“神器”，要存取某個元素都必須遍歷整串 list，所以時間複雜度是 O(n)，但是在增刪元素時，Linked list 的效率就比陣列高了，因為它不需要像陣列一樣，把後面的元素都往後移動，只需要改變指標的指向就可以了，所以時間複雜度是 O(1)，不過要注意的是，當我們在操作 list 的指標時要特別小心，一旦不小心丟失指標我們就找不到節點位置了。
+## 總結
 
-| 操作 | Array | Linked List |
-| ---- | ----- | ----------- |
-| 存取 | O(1)  | O(n)        |
-| 插入 | O(n)  | O(1)        |
-| 刪除 | O(n)  | O(1)        |
+binary heap 是 priority queue 的實現方式之一，它有兩個特性：
 
-## 雙向鏈結串列 Doubly Linked List
+1. 它是一棵完整二元樹，因此完整二元樹的特性也適用於它。
+2. 每個節點都比其子節點大（或小）。
 
-單向鏈結串列只能從一個方向開始遍歷，即使我們知道這個 list 的長度為 1000，要存取它的第 1000 個元素也要從頭開始遍歷所有元素，為了改進這種效率，又出現了雙向鏈結串列。
+JavaScript 沒有內建 priority queue，因此需要自己封裝一個。
 
-雙向鏈結串列的每一個節點比起單向鏈結串列多了一個指向前一個節點的指標（prev），list 本身也多了一個 tail 屬性指向最後一個節點。每次在增刪節點時，我們會呼叫一個更快的 `findIndex` 方法，它會根據傳入的索引值決定是從頭或尾開始搜尋。
+heap sort 是一種利用 heap 來實現的排序演算法，它的時間複雜度是 $O(n \log n)$，空間複雜度是 $O(1)$。
 
-Doubly Linked List 可以想像成幾個人站成一排，但不是手拉手，左邊的人用右手（next）拉右邊的人的衣角，右邊的人用左手（prev）拉左邊的人的衣角。如果從中間插入一個人，就要斷開重連，此時涉及 4 個屬性的修改。
-
-可以參考這個示意圖：
-
-![Doubly Linked List](https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/data-structures/linked-list/doubly-linked-list/images/doubly-linked-list.png)
-
-實作程式碼如下：
-
-```js
-class DoublyNode {
-  constructor(data) {
-    this.data = data;
-    this.next = null;
-    this.prev = null;
-  }
-}
-
-class DoublyList {
-  constructor() {
-    this.head = null;
-    this.tail = null;
-    this.length = 0;
-  }
-
-  size() {
-    return this.length;
-  }
-
-  clear() {
-    this.head = null;
-    this.tail = null;
-    this.length = 0;
-  }
-
-  isEmpty() {
-    return this.size() === 0;
-  }
-
-  getHead() {
-    return this.head;
-  }
-
-  getTail() {
-    return this.tail;
-  }
-
-  findIndex(index) {
-    const n = this.length;
-    if (index > n) {
-      throw `Index ${index} is greater than list size ${n}`;
-    }
-    // 判斷查詢方向
-    const dir = index > n >> 1;
-    let current = dir ? this.tail : this.head;
-    let prop = dir ? 'prev' : 'next';
-    let add = dir ? -1 : 1;
-    let i = dir ? n - 1 : 0;
-    while (current) {
-      if (index === i) {
-        return current;
-      }
-      current = current[prop];
-      i = i + add;
-    }
-    return null;
-  }
-
-  forEach(cb) {
-    let current = this.head;
-    let i = 0;
-    while (current) {
-      cb(current.data, i);
-      current = current.next;
-      i++;
-    }
-  }
-
-  insertAt(index, data) {
-    if (index <= this.length) {
-      let node = new DoublyNode(data);
-
-      if (index === 0 && !this.head) {
-        this.tail = this.head = node;
-      } else {
-        let prev = this.findIndex(index - 1);
-        if (!prev) {
-          // 前面節點不存在，說明插入的是第一個節點，把 head 指向新節點
-          node.next = this.head;
-          this.head.prev = node;
-          this.head = node;
-        } else {
-          let curr = prev.next; // curr 如果不存在代表從尾部插入
-          prev.next = node;
-          node.prev = prev;
-
-          node.next = curr;
-          if (curr) {
-            curr.prev = node;
-          }
-        }
-      }
-
-      if (index === this.length) {
-        this.tail = node;
-      }
-
-      this.length++;
-    } else {
-      throw `Index ${index} is greater than list size ${this.length}`;
-    }
-  }
-
-  removeAt(index) {
-    if (this.head && index < this.length) {
-      let prev = this.findIndex(index - 1);
-      let curr = this.findIndex(index);
-      let next = curr.next;
-
-      if (!prev) {
-        // 前面節點不存在，說明移除的是第一個節點，把 head 指向下一個節點
-        this.head = next;
-      } else {
-        prev.next = next;
-      }
-
-      if (next) {
-        // 如果 next 存在，說明移除的不是最後一個節點，把 next 的 prev 指向 prev
-        next.prev = prev;
-      } else {
-        // 如果 next 不存在，說明移除的是最後一個節點，把 tail 指向 prev
-        this.tail = prev;
-      }
-
-      this.length--;
-      return curr.data;
-    }
-
-    return null;
-  }
-}
-
-const list = new DoublyList();
-
-list.insertAt(0, 111);
-list.insertAt(1, 222);
-list.insertAt(2, 333);
-list.insertAt(3, 444);
-list.insertAt(4, 555);
-list.insertAt(5, 666);
-list.insertAt(0, 888);
-
-list.forEach((el, i) => console.log(el, i));
-
-try {
-  list.insertAt(10, 777);
-} catch (error) {
-  console.log(error);
-}
-
-list.removeAt(1);
-list.forEach((el, i) => console.log(el, i));
-```
+TopK 問題很適合使用 heap 來解決，建立 heap 的時間複雜度 $O(n)$，加入元素和取出元素的時間複雜度都是 $O(\log K)$。
 
 ## 參考資料
 

@@ -2,190 +2,280 @@
 outline: deep
 ---
 
-# 雙端佇列 Deque
+# 堆積 Heap
 
-雙端佇列（Double-ended Queue, Deque）是一種允許在前端和後端進行插入和刪除操作的特殊佇列。
+不要被標題所迷惑，這個還是以 Tree 為基礎的資料結構。堆積（Heap）是一種根節點比子節點都來得大（或小）的樹，在這裡我們會介紹 binary heap。而之後會提到的優先佇列（Priority Queue）有很多實作方式，但最常見的就是使用 heap 來實作。
 
-以現實生活中來舉例的話，就像是排隊買電影票，先到的人先買票，後到的人後買票，如果有一個剛買完票的人只是還需要確認一些事情，那麼他可以直接插回隊伍的前面。另一方面在隊伍尾巴的人如果趕時間，他可以直接離開隊伍。
+## 二元堆積 Binary Heap
 
-在電腦科學中，雙端佇列的一個常見應用是儲存一系列的撤銷操作，例如：在文字編輯器中，我們可以在每次輸入文字時將其儲存在雙端佇列中，當我們需要撤銷（例如 ctrl + z 還原）時，只需要從佇列的後端刪除最後一個元素即可（就像是 Stack），而當儲存的撤銷操作超過一定的數量時，我們可以從佇列的前端刪除最早的元素，這樣就可以限制撤銷操作的數量。也就是說 Deque 同時具有 Stack 和 Queue 的特性。
+二元堆積是一種特殊的二元樹，下面是它的三個特性：
 
-## Deque 的常用方法
+1. 它是一顆完整二元樹，可以是空。
+2. 樹的葉節點的值總是不大於或不小於其父節點的值。
+3. 每一個節點的子樹也是一個二元堆積。
 
-和之前一樣我們會先定義一個 Deque 類別來實作，既然它是一個特殊的 Queue 那麼我們可以直接沿用部分程式碼：
+其中尤其是第二點，它決定了這個 heap 是最大堆積（max heap）或最小堆積（min heap）。
+
+- 最大堆積（max heap）：根節點的值是所有節點中最大的，且每個節點的值都比其子節點的值大。
+- 最小堆積（min heap）：根節點的值是所有節點中最小的，且每個節點的值都比其子節點的值小。
+
+具體如圖所示：
+
+<div align="center">
+  <img src="https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/data-structures/heap/images/binary-heap.png" alt="Binary Heap" width="500px">
+</div>
+
+在 max heap 中，父節點的值總是大於或等於其子節點的值。而在 min heap 中，父節點的值總是小於或等於其子節點的值。這就是所謂的堆積屬性（min-heap or max-heap property），並且這個屬性對 heap 中的所有節點都成立。
+
+根據這個屬性，我們可以得知在 max heap 的根節點是所有節點中最大的，而在 min heap 的根節點是所有節點中最小的。
+
+我們可以用陣列來表示一個 heap，像是下面這張圖：
+
+<div align="center">
+  <img src="https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/data-structures/heap/images/heap-to-array.png" alt="Binary Heap Array" width="500px">
+</div>
+
+上面這個 min heap: `[10, 30, 25, 80, 40, 60, 50]`，其實就是對樹進行廣度優先走訪的結果。
+
+那如果一開始只給你這樣一個陣列，不給出樹的圖形，要怎麼知道哪一個節點是父節點哪一個是它的子節點呢？根據完整二元樹的特性，節點在陣列中的位置可以用下面的公式計算：
 
 ```js
-class Deque {
-  #items = {};
-  #headCount = 0;
-  #count = 0;
-
-  isEmpty() {
-    return this.size() === 0;
-  }
-
-  size() {
-    return this.#count - this.#headCount;
-  }
-
-  clear() {
-    this.#items = {};
-    this.#headCount = 0;
-    this.#count = 0;
-  }
-
-  toString() {
-    let str = '';
-
-    for (let i = this.#headCount; i < this.#count; i++) {
-      str += this.#items[i] + (i < this.#count - 1 ? ',' : '');
-    }
-
-    return str;
-  }
-}
+parent(i) = Math.floor((i - 1) / 2)
+left(i) = 2 * i + 1
+right(i) = 2 * i + 2
 ```
 
-我們會有下面幾個方法：
+`right(i)`  就是 `left(i) + 1`。左右節點總是處於相鄰的位置。我們把這個公式套用到下面的樹中驗證一下：
 
-- `addFront(data)`：在佇列的前端新增一個元素。
-- `addBack(data)`：在佇列的後端新增一個元素（和原本的 `enqueue` 方法一樣）。
-- `removeFront()`：刪除佇列的前端元素（和原本的 `dequeue` 方法一樣）。
-- `removeBack()`：刪除佇列的後端元素（跟 Stack 的 `pop` 方法一樣）。
-- `peekFront()`：回傳佇列的前端元素（和原本的 `peek` 方法一樣）。
-- `peekBack()`：回傳佇列的後端元素（跟 Stack 的 `peek` 方法一樣）。
+<div align="center">
+  <img src="https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/data-structures/heap/images/binary-tree-index.png" alt="Binary Heap Array" width="400px">
+</div>
 
-所以我們的 Deque 目前會長這樣：
+| 節點 | 陣列索引 | `parent(i)` | `left(i)` | `right(i)` |
+| ---- | -------- | ----------- | --------- | ---------- |
+| 90   | 0        | null        | 1         | 2          |
+| 80   | 1        | 0           | 3         | 4          |
+| 50   | 2        | 0           | 5         | 6          |
+| 60   | 3        | 1           | 7         | null       |
+| 50   | 4        | 1           | null      | null       |
+| 40   | 5        | 2           | null      | null       |
+| 30   | 6        | 2           | null      | null       |
+| 40   | 7        | 3           | null      | null       |
+
+在 max heap 中，父節點的值總是大於或等於其子節點的值。所以下面的公式對陣列中任意一個索引值 `i` 都成立：
 
 ```js
-class Deque {
-  #items = {};
-  #headCount = 0;
-  #count = 0;
-
-  addBack(data) {
-    this.#items[this.#count] = data;
-    this.#count++;
-  }
-
-  removeFront() {
-    if (this.isEmpty()) return;
-    const head = this.#items[this.#headCount];
-    delete this.#items[this.#headCount];
-    this.#headCount++;
-    return head;
-  }
-
-  removeBack() {
-    if (this.isEmpty()) return;
-    this.#count--;
-    const tail = this.#items[this.#count];
-    delete this.#items[this.#count];
-    return tail;
-  }
-
-  peekFront() {
-    return this.#items[this.#headCount];
-  }
-
-  peekBack() {
-    if (this.isEmpty()) return;
-    return this.#items[this.#count - 1];
-  }
-
-  isEmpty() {}
-  size() {}
-  clear() {}
-  toString() {}
-}
+array[parent(i)] >= array[i]
 ```
 
-### `addFront` 方法
+這些公式允許我們在不使用指標的情況下，就可以在陣列中找到節點的父節點和子節點。進行計算時只需要 $O(1)$ 的時間複雜度。
 
-現在讓我們來看 `addFront` 要怎麼來實作：
+根據特性 1 我們還可以推導出節點數量與樹高的關係，因為我們必須填滿上一層，才能填下一層，每層的節點數量都是 2 的 n 次方，如 1, 2, 4, 8, 16...，所以有一個 heap 如果有 `n` 個節點，那麼它的樹高就是 `h = Math.floor(Math.log2(n))`。
+
+例如上面的 `Math.floor(Math.log2(8)) = 3`，因為是從零開始算，所以是 4 層。
+
+最下面的一層是葉節點，由於上面是滿的，共有 `n/2` 個節點。所以我們可以得知，一個 heap 的葉節點的索引值範圍是 `Math.floor(n/2) <= i <= n - 1`。
+
+## 堆積排序 Heap Sort
+
+heap sort 是指利用 heap 這種資料結構來實作的排序演算法，就是一個將二元樹轉換成 heap 的過程。
+
+heap 的轉換過程與 selection sort 很像（在後面幾天會介紹到）。陣列被分為已排序的部分和未排序的部分，已排序的部分一開始是空的，然後每次從未排序的部分中找到最小的元素，並將它加入到已排序的部分中，直到未排序的部分被取完。我們可以發現未排序部分的最小元素就是已排序部分的最大元素。
+
+selection sort 最差的情況下，時間複雜度是 $O(n^2)$，這是因為未排序的部分是沒有規律可言的，每次都要把裡面全部掃一遍。要想提高效率，就要讓未排序部分先轉換成某種規律的形式，藉此來提高尋找的效率。heap sort 就是先把一個無序的系統轉換成 heap，並且每次都把根節點（最小或最大的元素）取出，然後再次保持 heap 的特性。
+
+heap sort 分成兩部分：
+
+1. 將陣列轉成一個 heap。
+2. 將 heap 的根節點取出並放到已排序的部分，再調整剩下的節點，使其成為一個新的 heap，然後重複這個過程，直到所有的節點都被取出。
+
+先將原始陣列當成一個二元樹，然後從最後一個非葉節點開始著手，因為它與它的子節點最多形成一棵不超過 3 個節點的子樹。根據 `left(i) = 2i + 1; right(i) = 2i + 2` 的公式，我們很容易拿到這 3 個節點，然後交換它們的位置，使其成為 max heap 或是 min heap。這種知道父節點找到子節點的交換方式稱為元素下沉。
+
+下沉的實作：首先判斷最大的子節點是左邊還是右邊，取出最大子節點的索引值，並且需要確認子節點有沒有超過陣列的長度。其次，讓父節點與最大的子節點比較，如果父節點比子節點小，就交換它們的位置，然後讓父節點繼續遞迴這個過程，直到子節點的長度超過陣列長度。
 
 ```js
-addFront(data) {
-  // #1 if empty
-  if (this.isEmpty()) {
-    this.addBack(data);
-  } else {
-    // #2 headCount > 0
-    if (this.#headCount > 0) {
-      this.#headCount--;
-      this.#items[this.#headCount] = data;
-    } else {
-      // #3 headCount === 0
-      for (let i = this.#count; i > 0; i--) {
-        this.#items[i] = this.#items[i - 1];
+function swap(array, a, b) {
+  const temp = array[a];
+  array[a] = array[b];
+  array[b] = temp;
+}
+
+function maxHeapifyDown(array, index, heapSize) {
+  let parent = index;
+  while (parent < heapSize) {
+    let left = 2 * parent + 1;
+    let largest = null;
+
+    if (left < heapSize) { // 存在左子節點（判斷是否越界）
+      largest = left;
+      let right = left + 1;
+      if (right < heapSize && array[left] < array[right]) {
+        // 存在右子節點，且比左子節點大
+        largest = right;
       }
+    }
 
-      this.#items[0] = data;
-      this.#count++;
+    if (largest !== null && array[parent] < array[largest]) {
+      swap(array, parent, largest);
+      parent = largest; // 修正父節點的 index
+    } else {
+      break;
     }
   }
 }
 ```
 
-有三個情境需要考慮：
+heap 建立完成後，`array[0]` 是最大的，我們將它放到最右側（升序排序），再將最右側的元素放到 `array[0]`。此時我們的 max heap 就會變回一般的二元樹，所以要再次將它轉換成 max heap。又因為我們在右邊的已排序區已經佔了一個元素，所以現在的 heap 長度要減 1。我們在不斷縮小的 max heap 中抽出最大的元素，並且放到已排序的區域，然後再次轉換成 heap ...這個過程如下圖所示：
 
-第一個是如果目前佇列是空的，那麼我們就可以直接呼叫 `addBack` 方法。因為 `addBack` 本身已經處理了 `count` 的增加，所以我們不需要再處理。
+<div align="center">
+  <img src="https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/data-structures/heap/images/heap-sort.png" alt="Heap Sort" width="500px">
+</div>
 
-第二個情境是如果 `headCount` 大於 0，這表示已經有元素被從前端刪除過，所以 `headCount` 會大於 0，這時候我們只需要將 `headCount` 減 1，並且在 `headCount` 的位置新增元素即可。假設目前的佇列內部是：
-
-```js
-items = {
-  1: 15,
-  2: 32
-};
-count = 3;
-headCount = 1;
-```
-
-如果我們要插一個 `30` 到前端，那麼就會進到這個情境，我們會將 `headCount` 減 1 變成 0，並且在 key 為 0 的位置填上 `30`。
-
-第三個情境是如果 `headCount` 等於 0，我們可以使用負數的 key 來新增元素，然後去更新用來計算佇列長度的邏輯，讓它能夠計算包含負數 key 時的長度。這樣也能夠保持在新增元素時的時間複雜度為 O(1)。但是為了方便理解，我們這邊使用較為簡單的方式來實作，就是把它想像成是陣列，要在第一個位置新增元素時，我們需要將所有元素往後移動一個位置，將第一個位置給空出來。所以我們需要從最後一個元素開始迭代，將 `i - 1` 賦值給 `i`，最後再將 `0` 的位置填上新的元素。
-
-## Deque 的應用
-
-### Palindrome Checker
-
-回文（Palindrome）是一種正向和反向讀取都相同的單詞、句子或數字的序列，例如：`racecar`、`level`。
-
-題目需求是給你一個字串要你判斷它是否為回文，另外如果字元中間有空白的話，例如：`never odd or even`，我們可以先將空白移除後再判斷是否為回文。
-
-有很多種方法可以判斷一個字串是否為回文，例如最簡單的方式就是將字串反轉後和原本的字串比較，如果相同就表示是回文；也可以使用 Stack 來判斷，不過如果要用資料結構來解的話，直接使用剛才封裝好的 Deque 會是最簡單的方法：
+最後給出完整實作：
 
 ```js
-function palindromeChecker(str) {
-  // 移除字串中的空白
-  const lowerStr = str.toLocaleLowerCase().split(' ').join('');
-
-  const deque = new Deque();
-
-  for (let i = 0; i < lowerStr.length; i++) {
-    deque.addBack(lowerStr[i]);
+function heapSort(array) {
+  const n = array.length;
+  // 陣列現在分成兩區，左側是 max heap，右側是已排序的元素
+  for (let i = Math.floor(n / 2); i >= 0; i--) {
+    maxHeapifyDown(array, i, n); // 找到最後一個非葉節點並將其與子節點比較
   }
 
-  while (deque.size() > 1) {
-    if (deque.removeFront() !== deque.removeBack()) {
-      return false;
+  // 現在 array[0] 是 heap 的根節點，也就是最大的元素
+  for (let i = n - 1; i > 0; i--) {
+    swap(array, 0, i); // 將最大元素移動到已排序區的最前面
+    maxHeapifyDown(array, 0, i); // 將剩下的元素重新構建成 max heap
+    console.log(array); // 可以在這打一個 log 看看排序的過程
+  }
+}
+```
+
+上面的排序稱為 max heap sort，接著我們來看看 min heap sort 的實作：
+
+```js
+function minHeapifyDown(array, index, heapSize) {
+  let parent = index;
+  while (parent < heapSize) {
+    let left = 2 * parent + 1;
+    let smallest = null;
+
+    if (left < heapSize) {
+      smallest = left;
+      let right = left + 1;
+      if (right < heapSize && array[left] > array[right]) {
+        // 存在右子節點，且比左子節點小
+        smallest = right;
+      }
+    }
+
+    if (smallest !== null && array[parent] > array[smallest]) {
+      // 讓父節點與最小的子節點交換，確保值小的在上面
+      swap(array, parent, smallest);
+      parent = smallest; // 修正父節點的 index
+    } else {
+      break;
+    }
+  }
+}
+
+function heapSort2(array) {
+  const n = array.length;
+  // 陣列現在分成兩區，左側是 min heap，右側是已排序的元素
+  for (let i = Math.floor(n / 2); i >= 0; i--) {
+    minHeapifyDown(array, i, n);
+  }
+
+  for (let i = n - 1; i > 0; i--) {
+    swap(array, 0, i);
+    minHeapifyDown(array, 0, i);
+  }
+}
+```
+
+但此時會發現得到的是一個降序的結果，所以我們不能直接複製貼上之前的程式碼。我們可以先複製一個陣列，建構成一個 min heap，然後再將元素從 min heap 中取出，放到陣列第 `i` 個位置，然後調整縮小 min heap：
+
+```js
+function popMin(heap, heapSize) {
+  const min = heap[0];
+  heap[0] = heap[heapSize - 1];
+  minHeapifyDown(heap, 0, heapSize - 1);
+  return min;
+}
+
+function heapSort2(array) {
+  const n = array.length;
+  const heap = [...array];
+
+  for (let i = Math.floor(n / 2); i >= 0; i--) {
+    minHeapifyDown(heap, i, n);
+  }
+
+  // 依序從 heap 中取出最小的元素覆蓋到 array 中對應的位置
+  for (let i = 0; i < n; i++) {
+    array[i] = popMin(heap, n - i);
+  }
+}
+```
+
+## TopK 問題
+
+TopK 問題是一個經典的大量資料處理問題，例如前十熱銷商品、學校期中考前三名等等，從一堆亂序的資料中找出前 K 大或前 K 小的元素都被歸類為 TopK 問題。
+
+這個問題有許多解法，例如直接暴力排序後再取值、quick select、priority queue（JavaScript 沒有內建，它也是用 min heap 實作的），還有使用 min heap 或 max heap 的解法。
+
+我們先來看看取第 K 大的元素，程式碼如下：
+
+```js
+function findKthLargest(array, k) { // k 從 0 開始
+  const n = array.length;
+  for (let i = Math.floor(n / 2); i >= 0; i--) {
+    maxHeapifyDown(array, i, n);
+  }
+
+  if (k === 0) {
+    console.log(array);
+    return array[0];
+  }
+  k--;
+  for (let i = n - 1; i > 0; i--) {
+    swap(array, 0, i);
+    maxHeapifyDown(array, 0, i);
+    if (k-- === 0) {
+      return array[0];
+    }
+  }
+}
+```
+
+如果求最大的 K 個元素，我們可以先建立一個長度為 K 的 min heap，然後將陣列中剩下的元素逐一與 min heap 的根節點比較，如果比根節點大，就把根節點取出，並且把新元素放到根節點的位置，然後再次調整 min heap，直到所有元素都遍歷完畢，剩下在 min heap 中的元素就是最大的 K 個元素。
+
+```js
+function findLargest(array, k) {
+  const n = array.length;
+  const result = array.slice(0, k);
+
+  for (let i = Math.floor(k / 2); i >= 0; i--) {
+    minHeapifyDown(result, i, k);
+  }
+
+  for (let i = k; i < n; i++) {
+    if (result[0] < array[i]) {
+      result[0] = array[i];
+      minHeapifyDown(result, 0, k);
     }
   }
 
-  return true;
+  return result;
 }
 
-console.log('level', palindromeChecker('level'));
-console.log('Step on no pets', palindromeChecker('Step on no pets'));
+const result = findLargest([3, 11, 1, 5, 6, 9, 7, 8], 4);
+console.log(result); // [ 7, 9, 8, 11 ] 注意這裡不是排序的結果，只是最大的 4 個元素
 ```
 
-首先將字串進行處理，將所有字元轉成小寫並且移除空白，接著將字串中的每個字元都加入到 Deque 中，最後使用迴圈來判斷 Deque 中的第一個元素和最後一個元素是否相同，如果不相同就表示不是回文，如果相同就繼續迴圈，直到 Deque 中只剩下一個元素或是沒有元素，這時候就表示是回文。
+因為僅保存了 K 個元素，調整 min heap 的時間複雜度是 $O(\log K)$，所以整體的時間複雜度是 $O(n \log K)$。
 
-## 總結
-
-我們在實作 `addFront` 方法的第三個情境時模擬了陣列的 `shift` 方法的行為，所以新增元素到前端的時間複雜度會變成 O(n)，這也給了我們一個提示，陣列固然非常方便，但是在刪除或新增時都會有額外的成本，那麼有沒有一種資料結構可以在刪除或新增時都能夠保持 O(1) 的時間複雜度呢？答案是有的，那就是 Linked List，我會在明天的文章去介紹它。
+今天學到了 heap 結構，明天我們要繼續接著看一種利用 heap 實作的資料結構：優先佇列（Priority Queue）。
 
 ## 參考資料
 
-- [《Learning JavaScript Data Structures and Algorithms, 3/e》](https://www.tenlong.com.tw/products/9781788623872?list_name=trs-f)
+- [《JavaScript 算法：基本原理與代碼實現》](https://www.tenlong.com.tw/products/9787115596154?list_name=r-zh_cn)

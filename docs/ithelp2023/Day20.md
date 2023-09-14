@@ -1,317 +1,318 @@
----
-outline: deep
----
+# 合併排序法 Merge Sort
 
-# Tree 的廣度優先走訪與樹的打印
+Shell Sort 給我們帶來一個新思路，將一個問題拆分成幾個小規模的子問題，然後用現成的方案解決這些子問題，再慢慢合併來解決原問題。後來的人們稱這種思路為分治法（Divide and Conquer）。
 
-昨天我們已經介紹了深度優先走訪的三種方式，今天我們來介紹廣度優先走訪，並且實作一下如何在控制台 print 出一棵樹的結構。
+當解決一個給定問題，演算法需要一次或多次遞迴呼叫自身來解決相關的子問題時，這種演算法通常是採用了 D&C 的策略。分治模式在每 1 層遞迴時都有 3 個步驟：
 
-## 樹的廣度優先走訪
+1. **分解**：將原問題分解成一系列子問題。
+2. **解決**：遞迴地求解各子問題，若子問題足夠小則直接求解。
+3. **合併**：將子問題的解合併成原問題的解。 
 
-廣度優先走訪又叫作層序走訪（Level Order Traversal），比如我們要按照層次輸出一棵樹的所有節點的組合（LeetCode 107），又比如求一棵樹的最左節點（LeetCode 513），這些都是廣度優先走訪的應用。其走訪樹結構如圖所示：
+Merge Sort 的分解部分被分解得非常徹底，一口氣將每個子陣列切到只剩 1 個元素，因為長度為 1 的陣列可以看作是已排序的。然後將相鄰的兩個有序陣列合併成一個有序陣列，並不斷遞迴這個過程，直到包含元陣列的所有元素。整個合併過程可以參考下面取自 wiki 的圖：
 
-<div align="center">
-  <img src="https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/data-structures/tree/images/level-order.png" width="600px">
-  <p>廣度優先走訪樹結構</p>
-</div>
+![Merge Sort](https://upload.wikimedia.org/wikipedia/commons/c/cc/Merge-sort-example-300px.gif)
 
-廣度優先走訪比較好實作，我們參考前序走訪的過程，先放入根節點，然後跑迴圈，在迴圈中把根節點拿出來打印，然後再依次放入左子節點和右子節點，再回到迴圈中，把左子節點拿出來打印.....這個過程需要先進先出，所以用 `queue` 來實作。
+![Merge Sort](https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Merge_sort_algorithm_diagram.svg/480px-Merge_sort_algorithm_diagram.svg.png)
+
+首先要先來研究一下如何合併兩個陣列。我們需要寫一個 `mergeArray` 方法，你可以直接使用 `concat` 之類的內建方法來合併兩個陣列，不過這裡我們練習一下 `while` 迴圈的操作，讓自己習慣一下：
 
 ```js
-levelOrder(callback) {
-  const queue = [];
-  let node = this.root;
-  node && queue.push(node);
+function mergeArray(arrA, arrB) {
+  const lengthA = arrA.length - 1;
+  const lengthB = arrB.length - 1;
+  const mergedArr = [];
+  let indexA = 0;
+  let indexB = 0;
+  let indexMerged = 0;
 
-  while (queue.length) {
-    node = queue.shift();
-    callback(node);
-    if (node.left) {
-      queue.push(node.left);
-    }
-    if (node.right) {
-      queue.push(node.right);
-    }
+  while (indexA <= lengthA && indexB <= lengthB) {
+    // 先比較兩個陣列等長的部分，看誰的元素小，就先放入 mergedArray
+    mergedArr[indexMerged++] = arrA[indexA] < arrB[indexB] ? arrA[indexA++] : arrB[indexB++];
   }
+
+  // 可能是 arrB 先跑完，此時 arrA 還有剩
+  while (indexA <= lengthA) {
+    mergedArr[indexMerged++] = arrA[indexA++];
+  }
+  // 也可能是 arrA 先跑完，此時 arrB 還有剩
+  while (indexB <= lengthB) {
+    mergedArr[indexMerged++] = arrB[indexB++];
+  }
+
+  return mergedArr;
 }
 ```
 
-## 樹的打印
+接著，我們需要一些輔助變數，因為合併時同時存在左陣列和右陣列。為了知道它們是否是鄰居關係，我們還需要還需要設置一個頂點，方便往上找上一層的陣列，這個上一層的陣列也要找它的鄰居進行合併。於是我們需要給陣列元素新增 `top`、`left`、`right` 屬性，用來分別引用切割後的子陣列和父陣列。
 
-要檢測輸入的順序是否正確，最佳的方法是圖形化地將樹打印出來。要 print 出一棵樹與樹的走訪息息相關，接下來我們來看兩種常用的打印方式。
-
-### 1. 縱向打印
-
-這是一種常見的目錄 tree 的打印方式，先打印出根節點，然後打印出左右子樹，所以我們需要用到前序走訪。具體實作如下：
+那麼在合併階段時，我們要怎麼知道當下是否處於合併階段呢，當陣列長度是 `1` 嗎？
+可是，如果再往上一層進行合併時，就不能繼續用這個條件了。因此我們需要多傳入一個參數 `toMerge = true`。像這樣分割後，就能一直進行合併。合併時，每個元素都要找到它的鄰居。首先要先知道自己是左邊還是右邊，然後再找到鄰居。對它的鄰居也要判斷是否已經排序過了。當一個陣列長度為 `1`，或者已經被調整過，我們就為它新增一個屬性 `array.sorted = true`。
 
 ```js
-toString() {
-  let out = [];
-  this.preOrder((node) => {
-    const parent = node.parent;
-    if (parent) {
-      const isRight = parent.right === node;
-      out.push(parent.prefix + (isRight ? '└── ' : '├── ') + node.data);
-      const indent = parent.prefix + (isRight ? '    ' : '│   ');
-      node.prefix = indent;
-    } else {
-      node.prefix = '   ';
-      out.push('└──' + node.data);
-    }
-  });
-
-  return out.join('\n');
-}
-
-const tree = new Tree();
-tree.insert(1);
-tree.insert(2);
-tree.insert(3);
-tree.insert(4);
-tree.insert(5);
-tree.insert(6);
-tree.insert(7);
-tree.insert(8);
-console.log(tree.toString());
-```
-
-執行上面的程式碼後，打印出來的結構如下：
-
-```
-└──1
-   ├── 2
-   │   ├── 5
-   │   └── 7
-   └── 3
-       ├── 4
-       └── 6
-           ├── 8
-```
-
-在 1 所對應的垂直線上，有兩條相交的水平線，上面代表左節點，下面是右節點，其他的節點也是這樣。
-
-### 2. 橫向打印
-
-縱向打印說實話還是沒有非常直觀，需要我們去想象一下樹的結構。如果我們打印的樹是這種樣子，是不是就更好理解了呢？
-
-```txt
-:             50
-      ────────  ────────
-    30                  70
-```
-
-我們首先從分層開始，這要借助 queue 與一個 `0` 作為目前層級的結束標記。具體實作如下：
-
-```js
-printNodeByLevel(callback) {
-  const queue = [];
-  let node = this.root;
-  if (node) {
-    queue.push(node);
-    queue.push(0);
-  }
-  while (queue.length > 0) {
-    node = queue.shift();
-    if (node) {
-      callback(node);
-      if (node.left) {
-        queue.push(node.left);
+function mergeSort(array, toMerge) {
+  // 如果陣列還可以分割，並且處於分割模式
+  if (array.length > 1 && toMerge !== true) {
+    const top = array;
+    const mid = ~~(array.length/2);
+    top.left = array.slice(0, mid);
+    top.right = array.slice(mid);
+    top.left.top = top;
+    top.right.top = top;
+    console.log(top.left, top.right, '分割');
+    mergeSort(top.left);
+    mergeSort(top.right);
+    // 如果陣列只剩下一個或是處於合併模式
+  } else if (array.length === 1 || toMerge) {
+    if (array.top && !array.merged) { // 如果左邊合併了右邊，那麼右邊就不用再合併左邊
+      const isLeft = array === array.top.left;
+      const neighbor = isLeft ? array.top.right : array.top.left;
+      if (neighbor.length === 1 || neighbor.sorted) {
+        const temp = mergeArray(array, neighbor);
+        neighbor.merged = true; // 記錄已經合併過了
+        console.log(temp, '合併');
+        for (let i = 0; i < temp.length; i++) {
+          array.top[i] = temp[i];
+        }
+        array.top.sorted = true;
+        mergeSort(array.top, true);
       }
-      if (node.right) {
-        queue.push(node.right);
-      }
-    } else if (queue.length > 0) {
-      callback(node); // output 0
-      queue.push(0);
     }
   }
-  callback(0);
 }
-
-toString() {
-  const allLevels = [];
-  let currLevel = [];
-  this.printNodeByLevel((node) => {
-    if (node === 0) { // 目前層級結束
-      allLevels.push(currLevel);
-      currLevel = [];
-    } else {
-      currLevel.push(node.data); // 收集目前層級的所有節點
-    }
-  });
-
-  return allLevels.map((level) => level.join(',')).join('\n');
-}
-
-const tree = new Tree();
-[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].forEach((num) => tree.insert(num));
-console.log(tree.toString());
 ```
 
-執行上面的程式碼後，會看到如下的結果：
+這次我們來換到瀏覽器上來看看，因為這個 log 會比較長：
 
-```
-1
-2,3
-5,7,4,6
-9,11,8,10
-```
-
-這樣第一步就算大功告成了，接下來我們需要在數字間新增一些空白和連線，讓它看起來更像一棵樹。假設樹只有根與左右子樹，那麼樹分為兩層。第一層根節點左邊的空白應該要是左子樹值的長度，而根節點右邊只需要給它一個換行符就行了。第二層裡，左子樹已經在最左邊，所以左邊不需要填充空白，中間則填上與根節點相同長度的空白，右子樹已經在最右邊，所以不需要再放東西了。
-
-具體看起來會像這樣：
-
-![](https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/data-structures/tree/images/tree-structure.png)
-
-如果不止兩層，我們就要考慮 left 是否有子節點，這個子節點的左邊有多少空白，left 本身又需要多少空白，但這樣計算起來非常複雜，而且每個節點長度不一樣，無法規律的計算某一層的某一個位置相對左側需要多少距離。因此我們需要統一 data 的長度。想像我們的樹是一座金字塔，每個磚頭的長度是 4，如果這些磚頭可能放節點的 data，此時長度不夠就用 “_” 補在兩旁，如果放的是空白，那就要確保是長度為 4 的空白。如下圖：
-
-![](https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/data-structures/tree/images/tree-structure2.png)
-
-然後我們再把一些空白全部換成底線，例如 a 兩側的 space，如下：
-
-![](https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/data-structures/tree/images/tree-structure3.png)
-
-此時我們就可以認出 b、c 是 a 的子節點，但是其他結構還是不太明顯，我們可以在每層間再墊高一層，加上一些斜線，金字塔就成形了，如下：
-
-![](https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/data-structures/tree/images/tree-structure4.png)
-
-要實現這樣的效果，我們需要進行兩次樹的走訪，第一次是廣度優先走訪，得到每一層的節點；第二次是中序走訪，計算每個節點的索引值，也就是它在陣列中的位置。有了索引值就可以計算出它到最左邊的距離。
-
-現在來重寫一下 `toString` 方法：
+在 `main.js` 匯入剛才的 `mergeSort` 然後貼上這段程式碼，執行 `pnpm dev` 打開 `localhost:5173` 然後打開控制台查看結果：
 
 ```js
-toString(displayData) {
-  // 輔助方法，讓資料置中對齊
-  const brickLen = 6;
-  const SW = ' ';
-  const LINE = '_';
+import { mergeSort } from '@/007-day7-code/MergeSort';
 
-  displayData =
-    displayData ||
-    function (node) {
-      const { data, left, right } = node;
-      let s = '(' + data + ')';
-      const isLeaf = !left && !right;
-      const fillChar = isLeaf ? SW : LINE;
-      const paddingLength = brickLen - s.length;
+const arr = [3, 4, 9, 1, 8, 2, 0, 7, 6, 5];
+mergeSort(arr);
 
-      for (let i = 0; i < paddingLength; i++) {
-        if (i % 2 === 0) {
-          s = s.padEnd(s.length + 1, fillChar);
-        } else {
-          s = s.padStart(s.length + 1, fillChar);
+/*
+(5) [3, 4, 9, 1, 8, top: Array(10)] (5) [2, 0, 7, 6, 5, top: Array(10)] '分割'
+(2) [3, 4, top: Array(5)] (3) [9, 1, 8, top: Array(5)] '分割'
+[3, top: Array(2)] [4, top: Array(2)] '分割'
+(2) [3, 4] '合併'
+[9, top: Array(3)] (2) [1, 8, top: Array(3)] '分割'
+[1, top: Array(2)] [8, top: Array(2)] '分割'
+(2) [1, 8] '合併'
+(3) [1, 8, 9] '合併'
+(5) [1, 3, 4, 8, 9] '合併'
+(2) [2, 0, top: Array(5)] (3) [7, 6, 5, top: Array(5)] '分割'
+[2, top: Array(2)] [0, top: Array(2)] '分割'
+(2) [0, 2] '合併'
+[7, top: Array(3)] (2) [6, 5, top: Array(3)] '分割'
+[6, top: Array(2)] [5, top: Array(2)] '分割'
+(2) [5, 6] '合併'
+(3) [5, 6, 7] '合併'
+(5) [0, 2, 5, 6, 7] '合併'
+(10) [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] '合併'
+*/
+```
+
+接著我們試著對其進行改進。因為我們使用了 `slice` 方法，創造了大量實質的陣列，佔用了大量的記憶體。事實上我們只需要一些虛擬的陣列即可，只要知道它們的第一個元素和最後一個元素在原始陣列的索引值，就能算出這些虛擬陣列。調整後的程式碼如下：
+
+```js
+function mergeSortObject(array) {
+  function sort(obj, toMerge) {
+    // 如果陣列還可以分割，並且處於分割模式
+    const { array, begin, end } = obj;
+    const n = end - begin;
+    if (n !== 0 && toMerge !== true) {
+      const mid = begin + Math.floor(n / 2);
+      obj.left = {
+        begin: begin,
+        end: mid,
+        array: array,
+        top: obj,
+      };
+      obj.right = {
+        begin: mid + 1,
+        end: end,
+        array: array,
+        top: obj,
+      };
+      sort(obj.left);
+      sort(obj.right);
+      // 如果陣列只剩下一個或是處於合併模式
+    } else if (n === 0 || toMerge) {
+      if (obj.top && !obj.merged) { // 如果左邊合併了右邊，那麼右邊就不用再合併左邊
+        const top = obj.top;
+        const isLeft = obj === top.left;
+        const neighbor = isLeft ? top.right : top.left;
+        if (neighbor.end == neighbor.begin || neighbor.sorted) {
+          const temp = mergeArrayByIndex(array, begin, end, neighbor.begin, neighbor.end);
+          neighbor.merged = true;
+          const b = top.begin;
+          for (let i = 0; i < temp.length; i++) {
+            array[b + i] = temp[i];
+          }
+          top.sorted = true;
+          sort(top, true);
         }
       }
-      return s;
-    };
-
-  // 建立 4 個字元的空白或底線
-  function createPadding(s, n = brickLen) {
-    let ret = '';
-    for (let i = 0; i < n; i++) {
-      ret += s;
-    }
-    return ret;
-  }
-
-  // ==== 以下是主要的 toString 方法 ====
-  // 新增索引值
-  let index = 0;
-  this.inOrder((node) => {
-    node.index = index++;
-  });
-  // 取得每一層的節點
-  const allLevels = [];
-  let currLevel = [];
-  this.printNodeByLevel((node) => {
-    if (node === 0) {
-      allLevels.push(currLevel);
-      currLevel = [];
-    } else {
-      currLevel.push(node);
-    }
-  });
-
-  // bricks 中有 data 的層級，branches 只是用來放斜線的層級，兩個都是二維陣列
-  const bricks = [];
-  const branches = [];
-  for (let i = 0; i < allLevels.length; i++) {
-    if (!bricks[i]) {
-      bricks[i] = [];
-      branches[i] = [];
-    }
-
-    let cbrick = bricks[i];
-    let cbranch = branches[i];
-    let level = allLevels[i];
-    while (level.length > 0) {
-      let el = level.shift();
-      let j = el.index;
-      // 確保 cbirck[j] 與 cbranch[j] 等長
-      cbrick[j] = displayData(el);
-      cbranch[j] = createPadding(SW, cbrick[j].length);
-
-      if (el.parent) {
-        let pbrick = bricks[i - 1];
-        let pbranch = branches[i - 1];
-        let pindex = el.parent.index;
-        if (el === el.parent.left) {
-          // 左子樹
-          for (let k = j + 1; k < pindex; k++) {
-            pbrick[k] = createPadding(LINE);
-          }
-          for (let k = j + 1; k < pindex; k++) {
-            pbranch[k] = createPadding(SW);
-          }
-          pbranch[j] = createPadding(SW, brickLen - 1) + '/';
-        } else {
-          // 右子樹
-          for (let k = pindex + 1; k < j; k++) {
-            pbrick[k] = createPadding(LINE);
-          }
-          for (let k = pindex + 1; k < j; k++) {
-            pbranch[k] = createPadding(SW);
-          }
-          pbranch[j] = '\\' + createPadding(SW, brickLen - 1);
-        }
-      }
-      j--;
-      inner: while (j > -1) {
-        // 添加空白
-        if (cbrick[j] == null) {
-          cbrick[j] = createPadding(SW);
-          cbranch[j] = createPadding(SW);
-        } else {
-          break inner;
-        }
-        j--;
-      }
     }
   }
-  return bricks
-    .map((row, i) => {
-      return row.join('') + '\n' + branches[i].join('');
-    })
-    .join('\n');
+  sort({
+    array: array,
+    begin: 0,
+    end: array.length - 1,
+  });
+  return array;
 }
 ```
 
-然後在控制台中就可以 print 出整棵樹了：
+`mergeArray` 方法也需要改成 `mergeArrayByIndex`：
 
-```txt
-:                       _______(1)________
-                       /                  \     
-            _______(2)__                  _(3)________
-           /            \                /            \     
-      _(5)__             (7)         (4)              _(6)________
-     /      \                                        /            \     
- (9)         (11)                                (8)              _(10)_
-                                                                 /      
-                                                             (12) 
+```js
+function mergeArrayByIndex(arr, begin, end, begin2, end2) {
+  let indexA = begin;
+  let indexB = begin2;
+  let indexMerged = 0;
+  const mergedArr = [];
+
+  while (indexA <= end && indexB <= end2) {
+    // 先比較兩個陣列等長的部分，看誰的元素小，就先放入 mergedArray
+    mergedArr[indexMerged++] = arr[indexA] < arr[indexB] ? arr[indexA++] : arr[indexB++];
+  }
+
+  while (indexA <= end) {
+    mergedArr[indexMerged++] = arr[indexA++];
+  }
+
+  while (indexB <= end2) {
+    mergedArr[indexMerged++] = arr[indexB++];
+  }
+
+  return mergedArr;
+}
 ```
 
-## 小結
+再仔細想想，其實我們也不需要 `top` 這個屬性，因為 `top` 屬性的存在是為了方變我們找 `neighbor` 元素的。如果我們在經過兩次 mergeSort 操作後，立即進行合併操作，就不需要 `neighbor` 了。接著將程式碼修改成這樣：
 
-要在控制台裡實際印出一棵樹在實作上比較繁瑣，需要用上廣度與深度兩種走訪方式，可以當作是一個練習，在控制台畫畫圖也是一種樂趣。
+```js
+function mergeSortObject2(array) {
+  function sort(obj, toMerge) {
+    // 如果陣列還可以分割，並且處於分割模式
+    const { array, begin, end } = obj;
+    const n = end - begin;
+    if (n !== 0 && toMerge !== true) {
+      const mid = begin + Math.floor(n / 2);
+      obj.left = {
+        begin: begin,
+        end: mid,
+        array: array,
+      };
+      obj.right = {
+        begin: mid + 1,
+        end: end,
+        array: array,
+      };
+      sort(obj.left);
+      sort(obj.right);
+      const temp = mergeArrayByIndex(array, begin, mid, mid + 1, end);
+      for (let i = 0; i < temp.length; i++) {
+        array[begin + i] = temp[i];
+      }
+    }
+  }
+  sort({
+    array: array,
+    begin: 0,
+    end: array.length - 1,
+  });
+  return array;
+}
+```
 
-到今天為止已經介紹了樹的基本概念和走訪方式，明天我會介紹一個樹的應用：二元搜尋樹。二元搜尋樹是一個非常經典的資料結構，幾乎所有教學資源在介紹二元樹的同時都會介紹二元搜尋樹，因為它的應用非常廣泛，而且實作也不難，~~至少跟 print 出一棵樹相比起來~~。
+這時我們又發現到，這個 sort 方法的第一個參數 `obj` 可以從物件改回陣列，第二個參數 `toMerge` 也可以刪除：
+
+```js
+function mergeSortSimple(array) {
+  function sort(array, begin, end) {
+    // 如果陣列還可以分割，並且處於分割模式
+    if (begin !== end) {
+      const mid = begin + Math.floor((end - begin) / 2);
+      sort(array, begin, mid);
+      sort(array, mid + 1, end);
+      const temp = mergeArrayByIndex(array, begin, mid, mid + 1, end);
+      for (let i = 0; i < temp.length; i++) {
+        array[begin + i] = temp[i];
+      }
+    }
+  }
+  sort(array, 0, array.length - 1);
+  return array;
+}
+```
+
+這就是一般在網路上常看到的版本，它就是這樣一步步最佳化而來的。我們把上面的程式碼拿來跑耗時測試：
+
+```bash
+========
+部分有序的情況 bubbleSort3 7
+完全亂序的情況 bubbleSort3 376
+========
+部分有序的情況 shellSort 5
+完全亂序的情況 shellSort 3
+========
+部分有序的情況 mergeSort 10
+完全亂序的情況 mergeSort 11
+========
+部分有序的情況 mergeSortObject 11
+完全亂序的情況 mergeSortObject 5
+========
+部分有序的情況 mergeSortObject2 7
+完全亂序的情況 mergeSortObject2 5
+========
+部分有序的情況 mergeSortSimple 3
+完全亂序的情況 mergeSortSimple 2
+```
+
+最後，如果你不在意空間消耗的話，也可以簡單利用 JavaScript 內建的 `slice` 還有 `concat` 來實作：
+
+```js
+function mergeSort2(array) {
+  if (array.length > 1) {
+    const n = array.length;
+    const mid = Math.floor(n / 2);
+
+    const left = mergeSort2(array.slice(0, mid));
+    const right = mergeSort2(array.slice(mid, n));
+    array = mergeSortedArrays(left, right);
+  }
+  return array;
+}
+
+function mergeSortedArrays(left, right) {
+  const sortedArray = [];
+  let leftIndex = 0;
+  let rightIndex = 0;
+
+  while (leftIndex < left.length && rightIndex < right.length) {
+    sortedArray.push(
+      left[leftIndex] <= right[rightIndex] ? left[leftIndex++] : right[rightIndex++]
+    );
+  }
+
+  return sortedArray.concat(
+    leftIndex < left.length ? left.slice(leftIndex) : right.slice(rightIndex)
+  );
+}
+```
+
+## 複雜度（Complexity）
+
+最後我們來看一下它的複雜度。其空間複雜度為 $O(n)$，因為它申請了一個等長的陣列，會消耗一定的空間。如果用最初的版本，新建了這麼多的陣列，其空間複雜度可能就是 $O(n^2)$ 了。它的時間複雜度可以這樣簡單推導一下，我們每次要取中位數，一共對 $O(\log n)$ 層進行了切割合併的操作。每一層的合併操作都是 $O(n)$，所以這個演算法的時間複雜度為 $O(n \log n)$。 
+
+| Name           |    Average    |     Best      |     Worst     | Space  |  Method   | Stable |
+| -------------- | :-----------: | :-----------: | :-----------: | :----: | :-------: | :----: |
+| **Merge sort** | $O(n \log n)$ | $O(n \log n)$ | $O(n \log n)$ | $O(n)$ | Out-place |  Yes   |
+
+## 參考資料
+
+- [《JavaScript 算法：基本原理與代碼實現》](https://www.tenlong.com.tw/products/9787115596154?list_name=r-zh_cn)
+- [Wikipedia](https://en.wikipedia.org/wiki/Merge_sort)

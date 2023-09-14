@@ -2,464 +2,210 @@
 outline: deep
 ---
 
-# 雜湊表 Hash Table
+# 排序簡介與氣泡排序法（Bubble Sort）
 
-我們都知道透過陣列索引的方式來查詢資料的效率非常高，而如果是鏈結串列的話，就需要透過線性搜尋的方式來查詢。可能有人會想，那麼我把所有的資料都存在陣列裡面不就好了嗎？
+昨天在談搜尋演算法時，我們提到了資料如果是有排過序的，那麼我們就可以使用更快速的搜尋演算法來加速整個搜尋過程，那麼要怎麼去對資料進行排序呢？這就是我接下來幾天會介紹到的各種排序演算法。
+## 排序簡介
 
-假設今天我們有十個數字（11, 2, 23, 35, 77, 94, 48, 56, 89, 100）要進行存放，按照剛才的思路，我們直接將它們自己當作索引存進陣列中會發生什麼事呢？我們會需要一個長度為 101 的陣列，然後再對應的索引上放上這十個數字，但是這麼做顯然有問題，因為出現了很多記憶體的浪費。
+排序在生活中是一件很常見的事情，例如：將一副牌從大到小排序、將一堆書依照作者的姓氏排序、將一堆學生依照成績排序等等，而在程式設計中，排序也是一個很常見的問題，例如：將一個陣列依照數字大小排序。以一名前端工程師來說，碰到排序的問題，第一時間想到的就是 `Array.prototype.sort()` 這個內建的方法，不過不知道大家有沒有想過這個內建的 `sort` 是怎麼樣去實作的呢？
 
-現在讓我們來做一點處理，我們將這十個數字 mod 10，得到的結果如下：
+:::info 面試官：「你能在不使用內建的 `sort` 方法的情況下，對一個陣列進行排序嗎？」
 
-```txt
-11 % 10 = 1
-2 % 10 = 2
-23 % 10 = 3
-35 % 10 = 5
-77 % 10 = 7
-94 % 10 = 4
-48 % 10 = 8
-56 % 10 = 6
-89 % 10 = 9
-100 % 10 = 0
-```
+:::
 
-然後我們將取餘數後的結果作為索引，將這十個數字放進陣列中，這樣我們只需要一個長度為 10 的陣列就可以存取這十個數字了，假設將來我們要找 77 這個數字，我們只需要將 77 mod 10 得到 7，然後直接取陣列索引為 7 的元素就可以了，這就是雜湊表的基本思想。
+這是一個很常見的面試題目，其實就是想要知道你對 sorting 有沒有一定的了解。我們在先前已經看過了 heap sort，接著來看看其他還有哪些排序演算法吧！
 
-## 雜湊表的定義
+排序演算法最常見的有下列十大排序法：
 
-我們已經知道，只要知道陣列的索引值就能快速定位到與之對應的元素，但如果索引值不是數字，而是一個字串，那麼該怎麼辦呢？如果我們能設法將一個字串通過某種算法轉換成一個數字，並且這個數字位於某個可接受的範圍（目的是讓底層的陣列不會過長，比如我們要新增 80 個數，那麼轉換成的索引值就不能大於 80），不就可以了嗎？對於增刪的問題，我們可以在元素位置上放入一個 linked list，這樣就能利用其操作很快的優點了。綜合以上優點的這個結合體就是雜湊表，一種透過雜湊演算法定位元素的線性結構。
+1. 氣泡排序法（Bubble Sort）
+2. 選擇排序法（Selection Sort）
+3. 插入排序法（Insertion Sort）
+4. 希爾排序法（Shell Sort）
+5. 合併排序法（Merge Sort）
+6. 快速排序法（Quick Sort）
+7. 計數排序法（Counting Sort）
+8. 桶排序法（Bucket Sort）
+9. 基數排序法（Radix Sort）
+10. 堆積排序法（Heap Sort）
 
-其結構如下圖所示：
+可以簡單歸類於下圖的關係：
 
-<div align="center">
-  <img src="https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/data-structures/map/hash-table/images/hash.png" width="500px">
-  <p>雜湊結構</p>
-</div>
+![](https://github.com/SheepNDW/data-structures-and-algorithms/blob/main/src/algorithms/sorting/images/sorting-category.png?raw=true)
 
-## 雜湊函式 Hash Function
+## 氣泡排序法 Bubble Sort
 
-雜湊函式又叫作雜湊演算法，是一種將任意長度的訊息轉換成固定長度的雜湊值的函式，它可以把訊息或資料壓縮成摘要，使得資料量變小。這個函式會將資料打亂混合成一個雜湊值，這個值我們通常希望它是唯一的，然後我們利用這個值來定位元素，也就成了今天要介紹的雜湊表（Hash Table 或 Hash Map）。
+氣泡排序（Bubble Sort）是一種簡單、直觀的排序演算法，其取名源於自然界中的水中的氣泡在上升的過程中會不斷變大的現象。
 
-### 雜湊碰撞
+氣泡排序的行為類似一個雙重迴圈，外迴圈控制迭代回合數，內迴圈則控制每回合的比較次數，每回合都會將最大的元素「浮」到陣列的最後面。我們可以看下面這張 wiki 上的動畫圖：
 
-雜湊函式的做法有很多種，我在最開始舉的例子中將數字 mod 10 其實就是一種雜湊函式，然而我們可以發現到，如果今天又多一個數字 22，那麼經過 mod 10 之後得到的索引值就會和 2 重複了，這就是所謂的碰撞（collision），然後今天又多了很多 2 結尾的數字，那麼這些數字就會都被放在索引值為 2 的位置上，這樣就會導致雜湊表的查詢效率下降，因為在 index 2 的位置上串了一堆資料，然後我們還需要透過線性搜尋的方式來找到我們要的資料，這樣就和我們一開始的目的背道而馳了。所以在這種情況下 mod 10 就不是一個好的雜湊函式。
+![Algorithm Visualization](https://upload.wikimedia.org/wikipedia/commons/c/c8/Bubble-sort-example-300px.gif)
 
-### 雜湊函式的選擇
+具體步驟為：
 
-通常會有幾種方法，然後我們會根據資料的形式或分佈來決定要選擇什麼方式去設計出合適的雜湊函式。
+1. 比較第 1 個數與第 2 個數，若第 1 個數大於第 2 個數則交換位置。
+2. 比較第 2 個數與第 3 個數，這時第 2 個數應該是第 1 個數和第 2 個數的最大值，它們會重複步驟 1 的行為，將比較大的數放到最後，依此類推直到倒數第 1 個數與倒數第 2 個數比較完畢，最後，末位的數就是陣列中最大的數。這是第一次迭代。
+3. 開始下一次迭代，陣列有 `n` 個元素，就遍歷 `n - 1` 次。
 
-雜湊函式的選擇原則如下：
-
-- 若雜湊函式是一個一一對應的函式，則在搜尋時只需要根據雜湊函式對給定 key 的某種計算得到待搜尋節點的儲存位置，無須進行比較。
-- 一般情況下，雜湊表的空間要比節點的集合大，雖然這浪費了部分空間，但是提高了搜尋的效率。雜湊表空間為 m，填入表中的節點數為 n，則稱比值 `n/m` 為雜湊表的 load factor（表示雜湊表中元素的填滿程度）。load factor 越大，填滿的元素越多，反之，則越少，其取值的範圍一般為 0.65 ~ 0.9。
-- 雜湊函式盡量簡單，其值域必須在雜湊表的範圍內，盡量不要產生碰撞（collision），即兩個 key 得到相同的雜湊值。
-
-雜湊函式的建構方法有以下幾個：
-
-- **直接定址法**：以 key 的某個線性函式值作為雜湊值，可以表示為 $hash(K) = aK + C$，優點是不會產生碰撞，缺點是空間複雜度可能會比較高，適用於元素較少的情況。
-- **除法雜湊法**：將元素 key 除以某個常數所餘的餘數作為雜湊值，該方法計算簡單，適用範圍廣，是經常使用的一種雜湊函式，可以表示為 $hash(K) = K \mod C$。
-- **數字分析法**：該方法取 key 中某些取值較為均勻的數字作為雜湊值，這樣可以避免碰撞，但此方法只適用所有 key 已知的情況，對於想要設計通用的雜湊表並不適用。
-- **平方求和法**：將目前字串轉換成 Unicode，並求出這個值的平方，取平方值的中間幾位作為雜湊值，具體取多少位要取決於雜湊表的大小。
-- **折疊法**：根據目前雜湊表的位數，將要插入的數值分成若干段，把這些數值相加，捨去最高位數，作為雜湊值。
-
-先實作一個簡單不做碰撞處理的雜湊表：
+接下來用程式碼實作一下 bubble sort，我們需要使用雙重迴圈，每次從 `0` 開始，然後到 `n` 結束：
 
 ```js
-class Hash {
-  constructor() {
-    this.table = new Array(1000);
-  }
-
-  hash(data) {
-    let total = 0;
-    for (let i = 0; i < data.length; i++) {
-      total += data.charCodeAt(i);
-    }
-    // 把字串轉成 Unicode 之後進行加總然後平方
-    const s = total * total + '';
-    // 保留中間 2 位
-    const index = s.charAt(s.length / 2 - 1) * 10 + s.charAt(s.length / 2) * 1;
-    console.log('hash value: ' + data + ' -> ' + index);
-    return index;
-  }
-
-  insert(key, data) {
-    const index = this.hash(key);
-    this.table[index] = {
-      name: key,
-      data: data,
-    };
-  }
-
-  get(key) {
-    const index = this.hash(key);
-    const node = this.table[index];
-    return node?.data;
-  }
-
-  forEach(cb) {
-    for (let i = 0; i < this.table.length; i++) {
-      const node = this.table[i];
-      if (node) {
-        cb(node.data, node.name);
+function bubbleSort1(array) {
+  const n = array.length;
+  for (let i = 0; i < n; i++) {
+    for (let j = 0; j < n - i; j++) { // i 增大，內層迴圈比較次數 n - i 減少
+      if (array[j] > array[j + 1]) { // 注意這裡索引變數都是 j
+        swap(array, j, j + 1);
       }
     }
   }
 }
-
-const someNames = [
-  'David',
-  'Jennifer',
-  'Donnie',
-  'Raymond',
-  'Cynthia',
-  'Mike',
-  'Clayton',
-  'Danny',
-  'Jonathan',
-];
-
-const hash = new Hash();
-for (let i = 0; i < someNames.length; i++) {
-  hash.insert(someNames[i], someNames[i]);
-}
-
-hash.forEach((el, i) => {
-  console.log(el, i);
-});
 ```
 
-執行上面的程式碼可以得到以下結果：
-
-```txt
-hash value: David -> 81
-hash value: Jennifer -> 74
-hash value: Donnie -> 60
-hash value: Raymond -> 29
-hash value: Cynthia -> 84
-hash value: Mike -> 21
-hash value: Clayton -> 29
-hash value: Danny -> 60
-hash value: Jonathan -> 7
-Jonathan Jonathan
-Mike Mike
-Clayton Clayton
-Danny Danny
-Jennifer Jennifer
-David David
-Cynthia Cynthia
-```
-
-## 雜湊碰撞的處理方法
-
-在建立雜湊表時，存在一個問題：對於兩個不同的 key，透過 hash function 轉換後得到的雜湊值可能相同，這種情況稱為碰撞（collision）。如圖所示：
-
-<div align="center">
-  <img src="https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/data-structures/map/hash-table/images/hash-collision.png" width="500px">
-  <p>雜湊碰撞</p>
-</div>
-
-即使是經過上面提過的各種方法設計出好的雜湊函式，很多時候也很難避免完全不發生碰撞，甚至可能因為雜湊函式設計得過於複雜，反而會導致效率降低。所以一些小碰撞是可以接受的，那麼通常會怎麼去處理呢？
-
-處理碰撞的技術可以分成兩類：開放雜湊（open hashing）和閉合雜湊（closed hashing）。開放雜湊方法是將碰撞記錄在表外，而閉合雜湊方法是將碰撞記錄在表內的另一個位置上。
-
-### 開放雜湊
-
-open hashing 最著名的實現方法是鏈結法（chaining），它把雜湊中的每個槽（底層陣列的元素）定義為一個 linked list 的 head，雜湊到一個特定槽的所有記錄都放到這個槽的子鏈中。我們在新增元素時，先通過 hash function 計算出索引值，然後判斷是否為空，不為空則遍歷該 linked list 檢查是否已經保存相同的值。否則就建立一個新節點，將其插入到陣列中，原本的 list 則掛在新節點的 next 屬性。刪除時為了方便，就直接將 list 的 data 屬性重置為 null。
-
-<div align="center">
-  <img src="https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/data-structures/map/hash-table/images/chaining.png" width="500px">
-  <p>鏈結法</p>
-</div>
-
-實作程式碼如下：
+用來交換陣列中兩個元素的位置的 `swap` 函式，在之後的程式碼中只要是 `swap` 都是指它：
 
 ```js
-class Node {
-  constructor(name, data) {
-    this.name = name;
-    this.data = data;
-    this.next = null;
-  }
+function swap(array, i, j) {
+  const temp = array[i];
+  array[i] = array[j];
+  array[j] = temp;
 }
+```
 
-class Hash {
-  constructor() {
-    this.table = [];
-  }
+接下來我們來看看目前的實作還有沒有能夠改進的地方
 
-  hash(key) {
-    key += ''; // 強制轉成字串
-    let HASHSIZE = 100;
-    let h = 0;
-    for (let i = 0; i < key.length; i++) {
-      h = key.charCodeAt(i) + h * 31;
-    }
-    // 將整個字串按照特定關係轉化成一個整數，然後對雜湊長度取餘數
-    return h % HASHSIZE;
-  }
+### 最佳化方案 1
 
-  loopup(key) {
-    const hashvalue = this.hash(key);
-    let node = this.table[hashvalue];
-    while (node) {
-      if (node.name == key + '') {
-        return node;
-      }
-      node = node.next;
-    }
-  }
+如果原陣列就是有序的，例如 `[1, 2, 3, 4]`，那麼我們在內層迴圈可以引入一個存取標誌，如果在一次外層迴圈中，滿足比較條件則進行交換，然後更改標誌。如果在一次外層迴圈中，沒有進行過交換，那麼就代表陣列已經有序，可以提前結束迴圈。
 
-  get(key) {
-    const node = this.loopup(key);
-    return node ? node.data : null;
-  }
-
-  remove(key) {
-    const node = this.loopup(key);
-    if (node) {
-      node.data = null;
-    }
-  }
-
-  insert(key, data) {
-    const hashvalue = this.hash(key);
-    // 不管這個雜湊位置有沒有其他節點，直接插入節點
-    let node = this.table[hashvalue];
-    let next = node;
-
-    if (node) {
-      while (node) {
-        if (node.name === key + '') {
-          node.data = data;
-          return; // key data 一致
-        }
-        node = node.next;
+```js
+function bubbleSort2(array) {
+  const n = array.length;
+  for (let i = 0; i < n; i++) {
+    let hasSorted = true;
+    for (let j = 0; j < n - i; j++) {
+      if (array[j] > array[j + 1]) {
+        // 注意這裡索引變數都是 j
+        swap(array, j, j + 1);
+        hasSorted = false;
       }
     }
-    let np = new Node(key, data);
-    this.table[hashvalue] = np;
-    np.next = next;
-  }
-
-  forEach(cb) {
-    for (let i = 0; i < 100; i++) { // HASHSIZE = 100
-      if (this.table[i]) {
-        let link = this.table[i];
-        while (link) {
-          if (link.data !== null) {
-            cb(link.name, link.data);
-          }
-          link = link.next;
-        }
-      }
+    if (hasSorted) {
+      break;
     }
   }
 }
 ```
 
-### 閉合雜湊
+### 最佳化方案 2
 
-closed hashing 可選擇的方案有很多，閉合雜湊將所有記錄都直接存在雜湊表中，可以想成有人佔了你的位置（碰撞發生），你就按照某種規則再去佔別人的位置。這樣做的好處是使用的空間較固定，但如果碰撞嚴重時效率不佳。
-
-- **線性探測法**：當不同的 key 值透過 hash function 映射到同一個位置上時，檢測目前位置的下一個位置是否為空，若為空則插入，否則繼續檢測下一個位置，直到找到空的位置為止。
-- **平方探測法**：這是對線性探測的一種改進，進行線性探測後插入的 key 值太集中，這樣會造成 key 值透過 hash function 後還是無法正確映射，也會造成搜尋、刪除時的效率低下。因此通過平方探測法，取目前位置加上 $i^2$，可以得到新的位置，這樣可以避免 key 值的集中。
-
-線性探測與平方探測的對比圖如下：
-
-<div align="center">
-  <img src="https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/data-structures/map/hash-table/images/linear-quadratic.png" width="600px">
-  <p>線性探測與平方探測的對比</p>
-</div>
-
-從使用效果來看，線性探測不如平方探測，因為線性探測最後會導致索引值都聚集在一起，當資料量大了之後，探測的次數會越來越多。
-
-
-下面是使用平方探測的實作程式碼：
+還有沒有近一步改進的地方呢？ 我們留意操作步驟的最後一句，其中提到，每次排序結束，最後一個元素都是最大的，即大數下沉的策略。當交換時，可以利用臨時變數 `swapPos` 紀錄交換位置。在內層迴圈結束後，將最後一個交換元素的位置賦值給 `k`，這樣可節省下一輪內層迴圈從 `k` 到 `n - i` 的比較：
 
 ```js
-class Node {
-  constructor(name, data) {
-    this.name = name;
-    this.data = data;
-    this.next = null;
-    this.state = true;
+function bubbleSort3(array) {
+  const n = array.length;
+  let k = n - 1;
+  let swapPos = 0;
+  for (let i = 0; i < n; i++) {
+    let hasSorted = true;
+    for (let j = 0; j < k; j++) {
+      if (array[j] > array[j + 1]) {
+        swap(array, j, j + 1);
+        hasSorted = false;
+        swapPos = j; // 記錄交換的位置，直接到內層迴圈最後一個被交換的元素
+      }
+    }
+    if (hasSorted) {
+      break;
+    }
+    k = swapPos; // 重寫內層迴圈的邊界
   }
 }
+```
 
-class Hash {
-  constructor() {
-    this.table = [];
-    this.capacity = 100; // 容量
-    this.length = 0;
-  }
+### 雞尾酒排序法（Cocktail Sort）
 
-  hash(s) {
-    let seed = 131;
-    let hash = 0;
-    for (let i = 0; i < s.length; i++) {
-      hash = s.charCodeAt(i) + hash * seed;
+如果我們要將剛才的繼續進行最佳化，前人發明了一種雙向的氣泡排序法，稱為雞尾酒排序法，又叫搖晃排序法（Shaker Sort）。它是氣泡排序的一種變形，與氣泡排序不同之處在於排序時是以雙向在序列中進行排序。具體可以透過範例來了解：
+
+```js
+function cocktailSort(array) {
+  let left = 0; // 陣列起始索引
+  let right = array.length - 1; // 陣列索引最大值
+  let index = left; // 臨時變數
+
+  // 判斷陣列中是否有多個元素
+  while (right > left) {
+    let isSorted = false;
+    // 每一次進到 while 迴圈，都會找出對應範圍內的最大值和最小值並分別放到對應的位置
+    // 大的排到後面
+    for (let i = left; i < right; i++) {
+      if (array[i] > array[i + 1]) {
+        swap(array, i, i + 1);
+        index = i; // 紀錄目前索引
+        isSorted = true;
+      }
     }
-    return hash & 0x7fffffff;
-  }
-
-  getHash(key, capacity) {
-    return this.hash(key + '') % capacity;
-  }
-
-  size() {
-    return this.length;
-  }
-
-  insert(key, value) {
-    let inserted = false;
-    const index = this.find(key, (item) => {
-      item.data = value;
-      if (!item.state) {
-        this.length++;
+    right = index; // 重寫右邊界（最後一個交換的位置）
+    // 小的排到前面
+    for (let i = right; i > left; i--) { // 從最後一個交換的位置從右往左掃
+      if (array[i] < array[i - 1]) {
+        swap(array, i, i - 1);
+        index = i;
+        isSorted = true;
       }
-      inserted = item.state = true;
-    });
-    if (!inserted) {
-      this.table[index] = new Node(key, value);
-      this.length++;
     }
-    if ((this.length * 10) / this.capacity > 6) {
-      this.capacity *= 2;
-    }
-    return true;
-  }
-
-  find(key, cb) {
-    const table = this.table;
-    let index = this.getHash(key, this.capacity);
-    let i = 1;
-    while (table[index]) {
-      if (table[index].name === key + '') {
-        cb.call(this, table[index]);
-      }
-      index = index + 2 * i - 1;
-      index %= this.capacity;
-      i++;
-    }
-    return index;
-  }
-
-  get(key) {
-    let value = null;
-    this.find(key, (item) => {
-      if (item.state) {
-        value = item.data;
-      }
-    });
-    return value;
-  }
-
-  remove(key) {
-    let oldSize = this.length;
-    this.find(key, (item) => {
-      item.state = false;
-      this.length--;
-      if ((this.length * 10) / this.capacity < 6) {
-        this.capacity /= 2;
-      }
-    });
-    return this.length !== oldSize;
-  }
-
-  forEach(cb) {
-    for (let i = 0; i < this.capacity; i++) {
-      const el = this.table[i];
-      if (el && el.state) {
-        cb(el.name, el.data);
-      }
+    left = index; // 重寫左邊界（最後一個交換的位置）
+    if (!isSorted) {
+      break;
     }
   }
 }
 ```
 
-## 雜湊的應用
+這個排序方式在完全亂序的情況下，效率比氣泡排序高，同時兩端排序的思路也是其他排序沿襲的重要思路。
 
-雜湊的應用非常廣泛，例如：資料壓縮、驗證資料的完整性、加密或是區塊鏈等等。如果關注在解題上的話最常見的應用就是 Hash Table，但我們通常不會去使用 Hash 這個類別，而是會直接使用空物件，JavaScript 的物件就是一種效能非常好的雜湊表。
+現在來確認一下是否都已經通過測試：
 
-### 陣列去除重複元素
+![](https://media.discordapp.net/attachments/1083289750099738624/1143428476855140362/image.png?width=1638&height=1084)
 
-如果陣列都是字串或是數字，我們可以將其全部作為 Hash 索引的 key 放進去，利用 Hash key 的唯一性來去除重複元素。實作程式碼如下：
-
-```js
-function removeDuplicates(arr) {
-  const hash = {};
-  arr.forEach((el) => {
-    hash['.' + el] = el; // 前面加個 "." 是為了保證順序
-  });
-
-  return Object.keys(hash).map((key) => hash[key]);
-}
-```
-
-### 求只出現一次的數字
-
-與上面那題差不多，不過每次放元素時會記錄次數，最後再遍歷一次找出次數為 1 的元素即可。實作程式碼如下：
+最後來看四種 bubble sort 的效率比較（可以實際去執行測試看控制台輸出結果），用來測試執行效率的測試程式碼可以在 `sortTestUtils.js` 中找到，具體實作如下：
 
 ```js
-function findNonRepeatingNumbers(arr) {
-  const hash = {};
-  arr.forEach((el) => {
-    if (hash[el]) {
-      hash[el].count++;
+function testRuntime(sortedFn) {
+  const array = [];
+  // 向陣列寫入 10000 個資料，其中前 1000 個資料倒序，後 9000 個資料順序
+  for (let i = 0; i < 10000; i++) {
+    if (i < 1000) {
+      array[i] = 1000 - i;
     } else {
-      hash[el] = {
-        count: 1,
-        data: el,
-      };
+      array[i] = i;
     }
-  });
-
-  const result = [];
-  Object.keys(hash).forEach((key) => {
-    if (hash[key].count === 1) {
-      result.push(hash[key].data);
-    }
-  });
-
-  return result;
+  }
+  console.log('========');
+  let start = new Date() - 0;
+  sortedFn(array);
+  console.log('部分有序的情況', sortedFn.name, new Date() - start);
+  shuffle(array);
+  start = new Date() - 0;
+  sortedFn(array);
+  console.log('完全亂序的情況', sortedFn.name, new Date() - start);
 }
 ```
 
-### 兩數之和
+我們把測試執行效率的測試給打開，可以在 `vitest ui` 的 Console 中看到測試結果：
 
-twoSum 是一道經典題，網路上甚至有「不知兩數和，刷盡力扣也枉然」的小段子。
-給定一個整數陣列和一個目標值（target），找出兩個數的和等於目標值，並回傳這兩個數的索引值。這題可以用暴力法，但是時間複雜度會是 O(n^2)，我們可以利用 Hash Table 來實作，一邊尋找一邊記錄，這樣時間複雜度就會降到 O(n)。實作程式碼如下：
+![](https://media.discordapp.net/attachments/1080668361618362530/1151798254640566323/image.png?width=1570&height=1084)
 
-```js
-function twoSum(numbers, target) {
-  const hash = new Hash();
-  for (let i = 0; i < numbers.length; i++) {
-    const el = numbers[i] + '';
-    if (hash.get(el) !== null) {
-      const index = hash.get(el);
-      return [index, i];
-    }
-    hash.insert(target - el + '', i); // 在我們的實作中 key 要是字串
-  }
-}
+## 複雜度（Complexity）
 
-// 或是直接使用內建的 Map，因為 Map 的 key 具有唯一性
+氣泡排序的複雜度是 $O(n^2)$，但在最好的情況下能達到 $O(n)$，因為它至少要跑一次迴圈掃過每個元素的位置判斷是否需要交換。
 
-function twoSum(numbers, target) {
-  const hash = new Map();
+| Name            | Average  |  Best  |  Worst   | Space  |  Method  | Stable |
+| --------------- | :------: | :----: | :------: | :----: | :------: | :----: |
+| **Bubble sort** | $O(n^2)$ | $O(n)$ | $O(n^2)$ | $O(1)$ | In-place |  Yes   |
 
-  for (let i = 0; i < numbers.length; i++) {
-    const el = numbers[i];
-    if (hash.has(target - el)) {
-      return [hash.get(target - el), i];
-    }
-    hash.set(el, i);
-  }
-}
-```
+> **Stable**：如果排序後兩個相等的元素相對位置不變，則該排序演算法是穩定的。
 
 ## 參考資料
 
 - [《JavaScript 算法：基本原理與代碼實現》](https://www.tenlong.com.tw/products/9787115596154?list_name=r-zh_cn)
-- [擁抱「資料結構」的「演算法」(16) - 雜湊 Hash](https://ithelp.ithome.com.tw/articles/10246777)
+
