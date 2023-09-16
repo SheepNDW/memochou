@@ -2,320 +2,259 @@
 outline: deep
 ---
 
-# Tree 的廣度優先走訪與樹的打印
+# Tree 的深度優先走訪
 
-昨天我們已經介紹了深度優先走訪的三種方式，今天我們來介紹廣度優先走訪，並且實作一下如何在控制台 print 出一棵樹的結構。
+樹的走訪或者說遍歷（traversal）是一個很基礎的問題，有很多實際應用，可以用來找到匹配的字串、檔案路徑等問題。樹的走訪有兩種方式：深度優先（Depth First Search）和廣度優先（Breadth First Search）。
 
-## 樹的廣度優先走訪
+深度優先走訪又根據處理某個子樹的根節點順序不同，可以分為：前序（Preorder）、中序（Inorder）、後序（Postorder）。
 
-廣度優先走訪又叫作層序走訪（Level Order Traversal），比如我們要按照層次輸出一棵樹的所有節點的組合（LeetCode 107），又比如求一棵樹的最左節點（LeetCode 513），這些都是廣度優先走訪的應用。其走訪樹結構如圖所示：
+- **前序走訪（Preorder）**：先處理最上面的根節點，然後第二步是左子樹，最後是右子樹。
+- **中序走訪（Inorder）**：將最上面的根節點留到第二步，第一步為左子樹，第三步為右子樹。
+- **後序走訪（Postorder）**：根節點留到最後一步處理，第一步是左子樹，第二步是右子樹。
 
-<div align="center">
-  <img src="https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/data-structures/tree/images/level-order.png" width="600px">
-  <p>廣度優先走訪樹結構</p>
-</div>
+![](https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/data-structures/tree/images/tree-traversal.png)
 
-廣度優先走訪比較好實作，我們參考前序走訪的過程，先放入根節點，然後跑迴圈，在迴圈中把根節點拿出來打印，然後再依次放入左子節點和右子節點，再回到迴圈中，把左子節點拿出來打印.....這個過程需要先進先出，所以用 `queue` 來實作。
+## 深度優先走訪的遞迴實作
 
-```js
-levelOrder(callback) {
-  const queue = [];
-  let node = this.root;
-  node && queue.push(node);
-
-  while (queue.length) {
-    node = queue.shift();
-    callback(node);
-    if (node.left) {
-      queue.push(node.left);
-    }
-    if (node.right) {
-      queue.push(node.right);
-    }
-  }
-}
-```
-
-## 樹的打印
-
-要檢測輸入的順序是否正確，最佳的方法是圖形化地將樹打印出來。要 print 出一棵樹與樹的走訪息息相關，接下來我們來看兩種常用的打印方式。
-
-### 1. 縱向打印
-
-這是一種常見的目錄 tree 的打印方式，先打印出根節點，然後打印出左右子樹，所以我們需要用到前序走訪。具體實作如下：
+從上面的流程描述來看，深度優先走訪很適合用遞迴來實現。我們透過下面的程式碼來實作前序、中序、後序這三種走訪方式，然後借助 `type` 去選擇走訪方式：
 
 ```js
-toString() {
-  let out = [];
-  this.preOrder((node) => {
-    const parent = node.parent;
-    if (parent) {
-      const isRight = parent.right === node;
-      out.push(parent.prefix + (isRight ? '└── ' : '├── ') + node.data);
-      const indent = parent.prefix + (isRight ? '    ' : '│   ');
-      node.prefix = indent;
-    } else {
-      node.prefix = '   ';
-      out.push('└──' + node.data);
-    }
-  });
-
-  return out.join('\n');
+inOrder(callback) {
+  this._forEach(this.root, callback, 'middle');
 }
 
-const tree = new Tree();
-tree.insert(1);
-tree.insert(2);
-tree.insert(3);
-tree.insert(4);
-tree.insert(5);
-tree.insert(6);
-tree.insert(7);
-tree.insert(8);
-console.log(tree.toString());
-```
+preOrder(callback) {
+  this._forEach(this.root, callback, 'pre');
+}
 
-執行上面的程式碼後，打印出來的結構如下：
+postOrder(callback) {
+  this._forEach(this.root, callback, 'post');
+}
 
-```
-└──1
-   ├── 2
-   │   ├── 5
-   │   └── 7
-   └── 3
-       ├── 4
-       └── 6
-           ├── 8
-```
-
-在 1 所對應的垂直線上，有兩條相交的水平線，上面代表左節點，下面是右節點，其他的節點也是這樣。
-
-### 2. 橫向打印
-
-縱向打印說實話還是沒有非常直觀，需要我們去想象一下樹的結構。如果我們打印的樹是這種樣子，是不是就更好理解了呢？
-
-```txt
-:             50
-      ────────  ────────
-    30                  70
-```
-
-我們首先從分層開始，這要借助 queue 與一個 `0` 作為目前層級的結束標記。具體實作如下：
-
-```js
-printNodeByLevel(callback) {
-  const queue = [];
-  let node = this.root;
+_forEach(node, callback, type) {
   if (node) {
-    queue.push(node);
-    queue.push(0);
-  }
-  while (queue.length > 0) {
-    node = queue.shift();
-    if (node) {
+    if (type === 'middle') {
+      this._forEach(node.left, callback, type);
       callback(node);
-      if (node.left) {
-        queue.push(node.left);
-      }
-      if (node.right) {
-        queue.push(node.right);
-      }
-    } else if (queue.length > 0) {
-      callback(node); // output 0
-      queue.push(0);
+      this._forEach(node.right, callback, type);
+    } else if (type === 'pre') {
+      callback(node);
+      this._forEach(node.left, callback, type);
+      this._forEach(node.right, callback, type);
+    } else if (type === 'post') {
+      this._forEach(node.left, callback, type);
+      this._forEach(node.right, callback, type);
+      callback(node);
     }
   }
-  callback(0);
 }
-
-toString() {
-  const allLevels = [];
-  let currLevel = [];
-  this.printNodeByLevel((node) => {
-    if (node === 0) { // 目前層級結束
-      allLevels.push(currLevel);
-      currLevel = [];
-    } else {
-      currLevel.push(node.data); // 收集目前層級的所有節點
-    }
-  });
-
-  return allLevels.map((level) => level.join(',')).join('\n');
-}
-
-const tree = new Tree();
-[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].forEach((num) => tree.insert(num));
-console.log(tree.toString());
 ```
 
-執行上面的程式碼後，會看到如下的結果：
+我們在總結一下這三種走訪的輸出結果有什麼特點：
 
-```
-1
-2,3
-5,7,4,6
-9,11,8,10
-```
+- **前序**：陣列的第一個元素是根節點。
+- **中序**：根據根節點劃分了左右子樹的元素。
+- **後序**：陣列的最後一個元素是根節點。
 
-這樣第一步就算大功告成了，接下來我們需要在數字間新增一些空白和連線，讓它看起來更像一棵樹。假設樹只有根與左右子樹，那麼樹分為兩層。第一層根節點左邊的空白應該要是左子樹值的長度，而根節點右邊只需要給它一個換行符就行了。第二層裡，左子樹已經在最左邊，所以左邊不需要填充空白，中間則填上與根節點相同長度的空白，右子樹已經在最右邊，所以不需要再放東西了。
+現在來透過一道題目來驗收一下學習成果：
 
-具體看起來會像這樣：
+已知二元樹的中序和前序走訪結果，如何求後序走訪結果？例如一棵樹的前序走訪是“GDAFEMHZ”，而中序走訪是“ADEFGHMZ”，應該如何求其後序走訪結果？
 
-![](https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/data-structures/tree/images/tree-structure.png)
+具體步驟如下：
 
-如果不止兩層，我們就要考慮 left 是否有子節點，這個子節點的左邊有多少空白，left 本身又需要多少空白，但這樣計算起來非常複雜，而且每個節點長度不一樣，無法規律的計算某一層的某一個位置相對左側需要多少距離。因此我們需要統一 data 的長度。想像我們的樹是一座金字塔，每個磚頭的長度是 4，如果這些磚頭可能放節點的 data，此時長度不夠就用 “_” 補在兩旁，如果放的是空白，那就要確保是長度為 4 的空白。如下圖：
+1. root 最簡單，前序走訪的第一個節點 G 就是 root。
+2. 看中序走訪，ADEF 在 G 的左邊，HMZ 在右邊。
+3. 觀察左子樹 ADEF，左子樹中的根節點必然會是大樹 root 的 leftChild。在前序走訪中，大樹 root 的 leftChild 位於 root 之後，所以左子樹的根節點為 D。
+4. 同樣的道理，root 的右子樹節點中的 HMZ 中的根節點也可以透過前序走訪找到。在前序走訪中，一定會把 root 和 root 的所有左子樹節點都遍歷完之後才會遍歷右子樹，並且遍歷右子樹的第一個節點就是右子樹的根節點。
+如何知道哪裡是前序走訪中左子樹和右子樹的分界點？透過中序走訪去數節點的個數。
+中序走訪中，root 左側是 ADEF，所以有 4 個節點位於 root 左側。那麼在前序走訪中，第一個是 G，2~5 個由 ADEF 組成，所以第 6 個節點就是右子樹的根節點，也就是 M。
+5. 觀察上述步驟發現，所有過程都是遞迴的。先找到目前樹的根節點，然後劃分左子樹、右子樹，然後進入左子樹重複上面過程，再進入右子樹重複上面過程。最後就可以還原出整棵樹的結構。
 
-![](https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/data-structures/tree/images/tree-structure2.png)
+其實如果只是要求寫出後序走訪，甚至不要求專門佔用空間保存還原後的樹。只需要稍微改動第 5 步，就能實現要求。僅需把遞迴過程改成：
 
-然後我們再把一些空白全部換成底線，例如 a 兩側的 space，如下：
+1. 確定根，確定左子樹，確定右子樹。
+2. 在左子樹中遞迴。
+3. 在右子樹中遞迴。
+4. 處理目前的根節點。
 
-![](https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/data-structures/tree/images/tree-structure3.png)
-
-此時我們就可以認出 b、c 是 a 的子節點，但是其他結構還是不太明顯，我們可以在每層間再墊高一層，加上一些斜線，金字塔就成形了，如下：
-
-![](https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/data-structures/tree/images/tree-structure4.png)
-
-要實現這樣的效果，我們需要進行兩次樹的走訪，第一次是廣度優先走訪，得到每一層的節點；第二次是中序走訪，計算每個節點的索引值，也就是它在陣列中的位置。有了索引值就可以計算出它到最左邊的距離。
-
-現在來重寫一下 `toString` 方法：
+用程式表達的話如下：
 
 ```js
-toString(displayData) {
-  // 輔助方法，讓資料置中對齊
-  const brickLen = 6;
-  const SW = ' ';
-  const LINE = '_';
+function getPostorder(preorder, inorder, postorder = []) {
+  const root = preorder[0];
+  const inLeftTree = [];
+  const inRightTree = [];
+  let list = inLeftTree;
 
-  displayData =
-    displayData ||
-    function (node) {
-      const { data, left, right } = node;
-      let s = '(' + data + ')';
-      const isLeaf = !left && !right;
-      const fillChar = isLeaf ? SW : LINE;
-      const paddingLength = brickLen - s.length;
-
-      for (let i = 0; i < paddingLength; i++) {
-        if (i % 2 === 0) {
-          s = s.padEnd(s.length + 1, fillChar);
-        } else {
-          s = s.padStart(s.length + 1, fillChar);
-        }
-      }
-      return s;
-    };
-
-  // 建立 4 個字元的空白或底線
-  function createPadding(s, n = brickLen) {
-    let ret = '';
-    for (let i = 0; i < n; i++) {
-      ret += s;
-    }
-    return ret;
-  }
-
-  // ==== 以下是主要的 toString 方法 ====
-  // 新增索引值
-  let index = 0;
-  this.inOrder((node) => {
-    node.index = index++;
-  });
-  // 取得每一層的節點
-  const allLevels = [];
-  let currLevel = [];
-  this.printNodeByLevel((node) => {
-    if (node === 0) {
-      allLevels.push(currLevel);
-      currLevel = [];
+  // 分離出 inorder 的左右子樹
+  for (let i = 0; i < inorder.length; i++) {
+    if (inorder[i] === root) {
+      list = inRightTree;
     } else {
-      currLevel.push(node);
-    }
-  });
-
-  // bricks 中有 data 的層級，branches 只是用來放斜線的層級，兩個都是二維陣列
-  const bricks = [];
-  const branches = [];
-  for (let i = 0; i < allLevels.length; i++) {
-    if (!bricks[i]) {
-      bricks[i] = [];
-      branches[i] = [];
-    }
-
-    let cbrick = bricks[i];
-    let cbranch = branches[i];
-    let level = allLevels[i];
-    while (level.length > 0) {
-      let el = level.shift();
-      let j = el.index;
-      // 確保 cbirck[j] 與 cbranch[j] 等長
-      cbrick[j] = displayData(el);
-      cbranch[j] = createPadding(SW, cbrick[j].length);
-
-      if (el.parent) {
-        let pbrick = bricks[i - 1];
-        let pbranch = branches[i - 1];
-        let pindex = el.parent.index;
-        if (el === el.parent.left) {
-          // 左子樹
-          for (let k = j + 1; k < pindex; k++) {
-            pbrick[k] = createPadding(LINE);
-          }
-          for (let k = j + 1; k < pindex; k++) {
-            pbranch[k] = createPadding(SW);
-          }
-          pbranch[j] = createPadding(SW, brickLen - 1) + '/';
-        } else {
-          // 右子樹
-          for (let k = pindex + 1; k < j; k++) {
-            pbrick[k] = createPadding(LINE);
-          }
-          for (let k = pindex + 1; k < j; k++) {
-            pbranch[k] = createPadding(SW);
-          }
-          pbranch[j] = '\\' + createPadding(SW, brickLen - 1);
-        }
-      }
-      j--;
-      inner: while (j > -1) {
-        // 添加空白
-        if (cbrick[j] == null) {
-          cbrick[j] = createPadding(SW);
-          cbranch[j] = createPadding(SW);
-        } else {
-          break inner;
-        }
-        j--;
-      }
+      list.push(inorder[i]); // 根節點不會放在兩個子樹中
     }
   }
-  return bricks
-    .map((row, i) => {
-      return row.join('') + '\n' + branches[i].join('');
-    })
-    .join('\n');
+
+  const boundary = inLeftTree.length;
+  const preLeftTree = [];
+  const preRightTree = [];
+
+  // 分離出 preorder 的左右子樹
+  for (let i = 1; i < preorder.length; i++) {
+    const el = preorder[i];
+    if (preLeftTree.length < boundary) {
+      preLeftTree.push(el);
+    } else {
+      preRightTree.push(el);
+    }
+  }
+
+  // postorder 左子樹遞迴
+  if (preLeftTree.length > 0) {
+    getPostorder(preLeftTree, inLeftTree, postorder);
+  }
+
+  // postorder 右子樹遞迴
+  if (preRightTree.length > 0) {
+    getPostorder(preRightTree, inRightTree, postorder);
+  }
+
+  // postorder 處理根節點
+  if (root) {
+    postorder.push(root);
+  }
+
+  return postorder;
 }
 ```
 
-然後在控制台中就可以 print 出整棵樹了：
+## 深度優先走訪的非遞迴實作
 
-```txt
-:                       _______(1)________
-                       /                  \     
-            _______(2)__                  _(3)________
-           /            \                /            \     
-      _(5)__             (7)         (4)              _(6)________
-     /      \                                        /            \     
- (9)         (11)                                (8)              _(10)_
-                                                                 /      
-                                                             (12) 
+使用 stack 取代遞迴，首先要用一個 while 迴圈將所有的節點都放入 stack 中，然後再一個一個取出來處理。先不放根節點，統一在迴圈內部去放。
+
+```js
+xxxOrder(callback) {
+  const stack = [];
+  let node = this.root;
+  while (node || stack.length) { // 將所有子節點推入 stack
+    if (node) {
+      stack.push(node);
+    } else {
+      node = stack.pop();
+    }
+  }
+}
+```
+
+迴圈中有兩個分支，分別做 `push` 和 `pop`，`push` 的條件是 `node` 存在，以這個為界切開迴圈。前序和中序都是先 push left 再 push right，實作程式碼如下：
+
+```js
+preOrder(callback) { // 口訣：中左右
+  const stack = [];
+  let node = this.root;
+  while (node || stack.length) {
+    if (node) {
+      callback(node); // 中先於左
+      stack.push(node);
+      node = node.left; // push left
+    } else {
+      node = stack.pop();
+      node = node.right; // push right
+    }
+  }
+}
+
+inOrder(callback) { // 口訣：左中右
+  const stack = [];
+  let node = this.root;
+  while (node || stack.length) {
+    if (node) {
+      stack.push(node);
+      node = node.left; // push left
+    } else {
+      node = stack.pop();
+      callback(node); // 中先於右
+      node = node.right; // push right
+    }
+  }
+}
+
+postOrder(callback) { // 口訣：左右中
+  const stack = [];
+  const out = [];
+  let node = this.root;
+  while (node || stack.length) {
+    if (node) { // 類似於 preOrder，可以當作 根 -> 右 -> 左，然後再反轉
+      stack.push(node);
+      out.push(node);
+      node = node.right;
+    } else {
+      node = stack.pop();
+      node = node.left;
+    }
+  }
+  while (out.length) {
+    callback(out.pop());
+  }
+}
+```
+
+## 練習：一棵二元搜尋樹，找出樹中第 k 大的節點。
+
+二元搜尋樹後面會介紹到，總之就是一棵樹，每個節點的值都大於左子樹的所有節點的值，我們要從這棵樹中找出第 k 大的節點。我們這裡先關注如何透過中序走訪來解決這個問題。
+
+方法一：最樸素的方法是透過中序走訪將二元樹轉換成陣列，然後取出索引值為 `k-1` 的元素即可。
+
+```js
+function kthNode(root, k) {
+  if (!root || k < 0) {
+    return null;
+  }
+
+  const array = [];
+  inOrder(root, array);
+  if (k > array.length) {
+    return null;
+  }
+  return array[k - 1];
+}
+
+function inOrder(root, array) {
+  if (root === null) {
+    return;
+  }
+  inOrder(root.left, array);
+  array.push(root);
+  inOrder(root.right, array);
+}
+```
+
+方法二：不用收集所有節點，設置一個計數器，在中序走訪的過程中，累加訪問過的節點數，當計數器的值等於 k 時，回傳該節點。
+
+```js
+function kthNode2(root, k) {
+  let index = 0;
+  const _kthNode = (root, k) => {
+    if (root) {
+      let node = _kthNode(root.left, k);
+      if (node !== null) {
+        return node;
+      }
+      index++;
+      if (index === k) {
+        return root;
+      }
+      node = _kthNode(root.right, k);
+      if (node !== null) {
+        return node;
+      }
+    }
+    return null;
+  };
+  return _kthNode(root, k);
+}
 ```
 
 ## 小結
 
-要在控制台裡實際印出一棵樹在實作上比較繁瑣，需要用上廣度與深度兩種走訪方式，可以當作是一個練習，在控制台畫畫圖也是一種樂趣。
-
-到今天為止已經介紹了樹的基本概念和走訪方式，明天我會介紹一個樹的應用：二元搜尋樹。二元搜尋樹是一個非常經典的資料結構，幾乎所有教學資源在介紹二元樹的同時都會介紹二元搜尋樹，因為它的應用非常廣泛，而且實作也不難，~~至少跟 print 出一棵樹相比起來~~。
-
-## 參考資料
-
-- [《JavaScript 算法：基本原理與代碼實現》](https://www.tenlong.com.tw/products/9787115596154?list_name=r-zh_cn)
+我們今天已經看完了深度優先走訪的實作，基本上深度優先走訪的實作都是透過遞迴或者 stack 來實現的，而且遞迴的實現方式比較簡單，所以通常只需要掌握遞迴的實現方式就可以了。明天我們要繼續來看到廣度優先走訪，並且還要來實作如何在終端中 print 出一棵樹。

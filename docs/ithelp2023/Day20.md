@@ -86,7 +86,7 @@ function mergeSort(array, toMerge) {
 在 `main.js` 匯入剛才的 `mergeSort` 然後貼上這段程式碼，執行 `pnpm dev` 打開 `localhost:5173` 然後打開控制台查看結果：
 
 ```js
-import { mergeSort } from '@/007-day7-code/MergeSort';
+import { mergeSort } from '@/day20-merge-sort/MergeSort';
 
 const arr = [3, 4, 9, 1, 8, 2, 0, 7, 6, 5];
 mergeSort(arr);

@@ -2,401 +2,184 @@
 outline: deep
 ---
 
-# 樹與二元樹 Tree and Binary Tree
+# 搜尋演算法 - Sequential Search & Binary Search
 
-Tree 是計算機編程中最重要、最核心的一種資料結構。樹狀結構是日常生活中廣泛存在的一種結構，例如族譜、公司組織架構等等。在程式設計中，Tree 更是無處不在，例如瀏覽器的 DOM、文件系統、編譯器中的語法樹也是一種樹。
+前面幾天我們已經學習了各種線性資料結構，都說資料結構是用來儲存資料，那我們總不可能存進去後就再也不管它了吧？肯定是為了將來再把拿出來使用，那麼問題來了，我們要如何去從一堆資料中找出我們要的那筆資料呢？
 
-而 Tree 這種資料結構，最經典、最基礎的例子就是二元樹（Binary Tree）。掌握好二元樹是學習其他樹狀結構的基石。
+這時候就要考驗我們如何去設計一個好的搜尋演算法，讓我們可以在最短的時間內找到我們要的資料。今天我們就來學習兩個常見的搜尋演算法，分別是循序搜尋（Sequential Search）和二分搜尋（Binary Search）。
 
-## 樹的常見術語
+## 循序搜尋 Sequential Search
 
-鏈結串列的每個節點都是物件，它由一個 next 屬性指向下一個節點，而樹是由多個屬性指向多個節點，然後每個節點都是同一種結構。整體結構可以參考附圖。
+循序或是線性搜尋（Linear Search）是最基本的搜尋演算法，它的概念是將每一個資料結構中的元素和我們要找的元素做比較，直到找到相同的元素為止。
 
-以前端人最熟悉的 HTML DOM Tree 為例：html 就是樹，然後它有兩個孩子 head 和 body，我們可以透過 `html.firstChild`、`html.lastChild` 存取它們。然後他們也可以透過 `parentNode` 存取到 html。head 裡也有許多元素節點。為了方便管理元素，瀏覽器提供了一個 `children` 屬性，裝載了某個元素的所有子元素節點。
+我們在尋找過程有可能在第一個元素就找到，也有可能在最後一個元素才找到，或者是根本找不到。在最壞的情況下，我們需要將所有元素都比較一次，因此時間複雜度為 O(n)，是一種比較低效的搜尋演算法。
 
-<div align="center">
-  <img src="https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/data-structures/tree/images/tree.png">
-  <p>樹的整體結構</p>
-</div>
-
-接著來學習一下樹的基本術語：
-
-- **節點（Node）**：指樹中的一個元素。
-- **分支度（Degree）**：指節點擁有的子樹的個數，二元樹的分支度不大於 2。
-- **階層（Level）**：從根節點開始，根節點的階層為 1，根節點的子節點的階層為 2，以此類推。
-- **兄弟節點（Siblings）**：具有相同父節點的節點互相稱為兄弟節點。如上圖：B、C、D 互為兄弟節點。
-- **父節點（Parent）**：若一個節點含有子節點，則此節點稱為其子節點的父節點。如上圖：B 為 E 的父節點。
-- **子節點（Child）**：如果此節點有上層節點，則此節點稱為其上層節點的子節點。如上圖：G 為 C 的子節點。
-- **根節點（Root）**：沒有父節點的節點稱為根節點。如上圖：A。
-- **葉節點（Leaf）**：沒有子節點的節點。如上圖：K、L、F、G、M、I、J。
-- **非終端節點（Non-terminal Nodes）**：除了樹葉節點之外，其他都是非終端節點。
-- **樹高（Height）或樹深（Depth）**：樹的最大階層數。
-- **祖先節點（Ancestors）**：指某節點到根節點之間所經過的所有節點。
-- **子孫節點（Descendants）**：以某節點為根的子樹中的所有節點。
-
-## 二元樹 Binary Tree
-
-樹的分類有很多種，但基本上都是二元樹的衍生。二元樹顧名思義，就是每個節點最多只能有兩個子節點的樹，這兩個子樹被稱為左子樹和右子樹。而左右子樹也必須是二元樹，並且次序不能任意顛倒。
-
-二元樹是遞迴定義的，所以一般二元樹的相關題目也都可以使用遞迴的思想來解決。當然也有一些可以使用非遞迴的方法解決。
-
-二元樹有 3 種型態：歪斜樹、完滿二元樹、完整二元樹。
-
-- **歪斜樹（Skewed Tree）**：所有節點都只有左子樹（左歪斜樹）或都只有右子樹（右歪斜樹），應用不多。其實也可以看成是鏈結串列。
-- **完滿二元樹（Full Binary Tree）**：所有的分支節點都存在左子樹和右子樹，且所有葉節點都在同一層上。關鍵在於樹的平衡，根據完滿二元樹的定義，得到的特點如下：
-  - 葉節點只能出現在最下層，出現在其他層就不可能達成平衡。
-  - 非葉節點的分支度一定是 2。
-  - 在同樣深度的二元樹中，完滿二元樹的節點個數最多，葉子樹最多。
-  - 節點個數的計算公式：$2^h - 1$，其中 h 為樹高。
-- **完整二元樹（Complete Binary Tree）**：對一棵具有 n 個節點的二元樹按層序編號，如果編號為 i 的節點與同樣深度的完滿二元樹中編號為 i 的節點在二元樹中的位置完全相同，那麼它就是完整二元樹。完滿二元樹一定是完整二元樹，但完整二元樹不一定是完滿二元樹。兩者結構示意圖如下：
-
-<div align="center">
-  <img src="https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/data-structures/tree/images/full-vs-complete.png" width="600px">
-  <p>完滿二元樹與完整二元樹示意圖</p>
-</div>
-
-二元樹的主要方法如下：
-
-- 建立
-- 新增節點
-- 移除節點
-- 尋找節點
-- 取得樹高
-- 取得樹的節點數
-- 各種走訪（遍歷）方式
-
-二元樹的許多方法是遞迴實現的，實作程式碼如下：
+下面是循序搜尋的程式碼實作：
 
 ```js
-class TreeNode {
-  constructor(data) {
-    this.parent = null;
-    this.data = data;
-    this.left = null;
-    this.right = null;
+const DOES_NOT_EXIST = -1;
+
+function sequentialSearch(arr, value) {
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i] === value) return i;
   }
-}
-
-class Tree {
-  constructor() {
-    this.root = null;
-    this._size = 0;
-  }
-
-  insert(data) {}
-
-  remove(data) {}
-
-  size() {}
-
-  minNode() {}
-
-  maxNode() {}
-
-  min() {}
-
-  max() {}
-
-  getNodeSize() {}
-
-  height() {}
-
-  getNodeHeight() {}
+  return DOES_NOT_EXIST;
 }
 ```
 
-### Tree 的插入操作
+實作很簡單，就是直接迭代整個陣列，並將每個陣列元素和搜尋目標做比較，如果找到相同的元素，演算法就會回傳一個值來表示搜尋成功。回傳值可以是元素的索引，或者是一個布林值；如果沒有找到就回傳一個 `-1` 或 `false` 等等。
 
-我們新增一個私有屬性 `_insertLeft`，用來決定資料插入的位置。首先，我們需要判斷它有沒有左子樹節點：沒有則插入左邊，如果有則插入右邊。如果這個節點滿了，那就要選擇是從左子樹還是右子樹繼續往下找。我們通過 `_insertLeft` 來決定是往左邊還是右邊，可以這次是左邊，下次是右邊，每次執行前修改 `_insertLeft` 的值。
+## 二分搜尋 Binary Search
+
+循序搜尋適合用在**未排序**的資料中，但是如果資料已經排序過了，我們就可以使用更快速的搜尋演算法來加速整個搜尋過程，讓複雜度降低到 O(log n)。而我今天要介紹的是二分搜尋法（Binary Search）。
+
+Binary Search 是一種在**已排序**的資料中尋找目標值的搜尋演算法。它的原理和猜數字遊戲很像，例如在 1 ~ 100 範圍內猜一個數字，然後出題者會根據你猜的數字給你一個提示，例如「太大了」、「太小了」或是「猜對了」，然後我們根據提示來縮小範圍，直到猜對為止。
+
+### Binary Search 的步驟
+
+1. 先找到陣列的中間值。
+2. 將中間值和目標值做比較，如果中間值等於目標值，那麼搜尋結束。
+3. 如果目標值比中間值小，則回到步驟 1 並在中間值的左邊子陣列中尋找。
+4. 如果目標值比中間值大，則回到步驟 1 並在中間值的右邊子陣列中尋找。
+
+### 實作
+
+在開始之前我們要先確認一件事，就是我們的陣列必須是已經排序過的，如果沒有排序過，我們就必須先對陣列做排序，確認已經排序過之後，我們就可以開始利用 binary search 來尋找目標值了。
 
 ```js
-constructor() {
-  this.root = null;
-  this._size = 0;
-  this._insertLeft = false;
-}
+function binarySearch(arr, target) {
+  let left = 0;
+  let right = arr.length - 1;
 
-insert(data) {
-  const dir = (this._insertLeft = !this._insertLeft); // 插入方向
+  while (left <= right) {
+    const mid = Math.floor((left + right) / 2);
 
-  function insertIt(node, data) {
-    if (node.data === data) {
-      return false;
-    } else if (!node.left) {
-      node.left = new TreeNode(data);
-      node.left.parent = node;
-      return true;
-    } else if (!node.right) {
-      node.right = new TreeNode(data);
-      node.right.parent = node;
-      return true;
+    if (arr[mid] === target) {
+      return mid;
+    }
+
+    if (arr[mid] < target) {
+      left = mid + 1;
     } else {
-      if (dir === true) {
-        return insertIt(node.left, data); // 遞迴
-      }
-      return insertIt(node.right, data); // 遞迴
+      right = mid - 1;
     }
   }
 
-  let ret = false;
-  if (!this.root) {
-    this.root = new TreeNode(data);
-    ret = true;
-  } else {
-    ret = insertIt(this.root, data);
-  }
-
-  if (ret) {
-    this._size++;
-  }
-
-  return ret;
+  return -1;
 }
-
-const tree = new Tree();
-tree.insert(1);
-tree.insert(2);
-tree.insert(3);
-tree.insert(4);
-tree.insert(5);
-tree.insert(6);
-tree.insert(7);
-tree.insert(8);
-console.log(tree);
 ```
 
-執行一下上面的程式碼，在控制台確認一下結果：
+整個搜尋過程如下圖所示：
 
 <div align="center">
-  <img src="https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/data-structures/tree/images/tree-insert.png" width="600px">
-  <p>二元樹插入操作</p>
+  <img src="https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/algorithms/search/binary-search/images/binary-search.png" alt="Binary Search" width="600"/>
 </div>
 
-### Tree 的搜尋操作
+### 練習
 
-在開始刪除操作之前，我們需要先實作一個搜尋方法，傳入 data，有與之對應的資料就回傳該節點，沒有就回傳 null。 由於我們的樹的資料是沒有放置規則的，所以只能全部遞迴搜尋一遍。
+我們來看幾道關於 binary search 的題目：
+
+首先是 [704. Binary Search](https://leetcode.com/problems/binary-search/)，這題其實就是要你實作 binary search，我們直接拿剛才的程式碼套進去就可以了，可以試著自己再實作一次看看。
+
+#### Search Insert Position
+
+接下來我們來看 [35. Search Insert Position](https://leetcode.com/problems/search-insert-position/)，題目如下：
+
+給你一個已經排序過的陣列 `nums` 和一個目標值 `target`，如果目標值存在於陣列中，則回傳目標值的索引，如果目標值不存在於陣列中，則回傳目標值應該被插入的位置索引。另外要求你必須在 O(log n) 的時間複雜度內完成。
+
+例如：
+
+`target` 存在於陣列中：
+
+```txt
+Input: nums = [1,3,5,6], target = 5
+Output: 2
+```
+
+`target` 不存在於陣列中：
+
+```txt
+Input: nums = [1,3,5,6], target = 2
+Output: 1
+```
+
+思路：其實也是一個基本的 binary search，只是當 `target` 不存在於陣列中時，我們要回傳的是 `left` 的值，因為 `left` 的值就是 `target` 應該被插入的位置索引。實作如下：
 
 ```js
-find(data) {
-  let ret = null;
+function searchInsert(nums, target) {
+  let left = 0;
+  let right = nums.length - 1;
 
-  function findIt(node, data) {
-    if (node) {
-      if (node.data === data) {
-        ret = node;
-      } else {
-        findIt(node.left, data);
-        findIt(node.right, data);
-      }
+  while (left <= right) {
+    const mid = left + Math.floor((right - left) / 2);
+
+    if (target === nums[mid]) {
+      return mid;
+    }
+
+    if (target < nums[mid]) {
+      right = mid - 1;
+    } else {
+      left = mid + 1;
     }
   }
 
-  findIt(this.root, data);
-  return ret;
+  return left;
 }
 ```
 
-### Tree 的刪除操作
+#### Find Peak Element
 
-刪除可以算是二元樹最為複雜的操作，因為刪除節點後，樹的結構會發生變化，所以刪除操作需要考慮很多情況。
+最後我們來看 [162. Find Peak Element](https://leetcode.com/problems/find-peak-element/)，題目如下：
 
-1. 被刪除的節點是葉節點。
-2. 被刪除的節點只有左子節點。
-3. 被刪除的節點只有右子節點。
-4. 被刪除的節點有左右子節點。
+給你一個陣列 `nums`，你需要找出一個 peak element，peak element 的定義是：陣列中的一個元素，大於左右相鄰的元素。你可以假設 `nums[-1] = nums[n] = -∞`，也就是說陣列的邊界元素是負無窮，此外陣列中可能存在複數個 peak element。現在要請你寫一個時間複雜度為 O(log n) 的演算法來解決這個問題。
 
-在刪除時上面四種情況都必須考慮進去，並且這四種情況還有更細的劃分。實作程式碼如下：
+例如：
+
+```txt
+Input: nums = [1,2,3,1]
+Output: 2
+Explanation: 3 是一個 peak element，因為 3 大於左右相鄰的元素 2 和 1。
+```
+
+```txt
+Input: nums = [1,2,1,3,5,6,4]
+Output: 1 or 5
+Explanation: 這個陣列有兩個 peak element，1 和 5，你可以回傳任何一個。
+```
+
+思路：直覺反應一定是直接迴圈把每一個都掃過一次檢查看是不是 peak，但是這樣的複雜度是 O(n)，題目要求我們必須在 O(log n) 的時間複雜度內完成，所以我們要使用 binary search 來解決這個問題。這題和前面的 binary search 稍微不同的地方在於，我們要找的不是一個特定的值，而是一個條件，也就是 peak element，我們可以從中點元素和它的右邊鄰居的大小關係來縮小搜尋範圍：
+
+- 如果 `nums[mid] < nums[mid + 1]`，那麼在 `mid` 的右邊一定存在一個 peak element。
+- 如果 `nums[mid] > nums[mid + 1]`，那麼在 `mid` 的左邊一定存在一個 peak element。
+
+實作程式碼如下：
 
 ```js
-remove(data) {
-  const node = this.find(data);
-  if (node) {
-    this._size--;
-    if (node === this.root) {
-      this.root = null;
-      return true;
+function findPeakElement(nums) {
+  let left = 0;
+  let right = nums.length - 1;
+
+  while (left < right) {
+    const mid = Math.floor((right + left) / 2);
+
+    if (nums[mid] > nums[mid + 1]) {
+      right = mid;
+    } else {
+      left = mid + 1;
     }
-
-    let left = node.left;
-    let right = node.right;
-    let parent = node.parent;
-    let isLeft = parent && parent.left === node;
-
-    if (!left && !right) { // 沒有子節點
-      // todo 1
-    } else if (left && !right) { // 只有左子節點
-      // todo 2
-    } else if (!left && right) { // 只有右子節點
-      // todo 3
-    } else if (left && right) { // 有左右子節點
-      // todo 4
-    }
   }
+
+  return left;
 }
 ```
 
-(1) 如果被刪除的節點是葉節點，直接刪掉就好了，具體操作是判斷它是父節點哪一邊的子節點，然後將父節點的對應屬性設為 null。
+## 總結
 
-```js
-if (isLeft) {
-  parent.left = null;
-} else {
-  parent.right = null;
-}
-```
+我們比較兩種搜尋法後應該會注意到一件事，如果我們今天在存資料的時候，有事先整理過的話，那麼就可以減少我們將來搜尋的時間，像是我們對資料做了排序後，就可以使用 binary search 來加速搜尋的過程，而不用使用循序搜尋。甚至我們可以使用 hash table 來儲存資料，這樣我們就可以在 O(1) 的時間複雜度內找到我們要的資料。
 
-(2) 被刪除的節點只有左子節點。
+這也是為什麼我們在設計資料結構的時候，要考慮到我們將來會怎麼使用這些資料，如果我們知道我們將來會需要對資料做搜尋，那麼我們就要考慮到如何將資料排序分類，或是使用一些特定的資料結構來儲存資料。
 
-```js
-if (isLeft) {
-  parent.left = left;
-} else {
-  parent.right = left;
-}
-left.parent = parent;
-```
+## 參考資料
 
-當被刪除的節點只有一個子節點時，我們只需要將子節點提升到被刪除的節點的位置即可。只是在最後一步，我們需要將子節點的 parent 屬性指向被刪除節點的 parent 屬性。
-
-(3) 被刪除的節點只有右子節點，這種情況跟第二種情況類似：
-
-```js
-if (isLeft) {
-  parent.left = right;
-} else {
-  parent.right = right;
-}
-right.parent = parent;
-```
-
-(4) 被刪除的節點有兩個子節點，這種情況最為麻煩，如果我們隨便選擇一個子節點來替代被刪除的節點，那麼這個分支上就只有一個子節點了。一個完整的二元樹不能在中間出現只有一個子節點的情況。因此，我們可以在被刪除節點的“孩子”裡找到一個葉節點，先讓它替代被刪除的節點，然後再刪除這個葉節點。
-
-```js
-let child = right;
-while (child.left) {
-  child = child.left;
-}
-this.remove(child.data);
-node.data = child.data;
-```
-
-這樣一來 `remove` 方法就成功了，但有許多可以改進的地方，我們可以將一些重複的程式碼獨立出來，例如連接被刪節點的“子節點”和“父節點”這一步，可以寫成一個 `transplant` 方法：
-
-```js
-transplant(node, child) {
-  if (node.parent == null) {
-    this.root = child;
-  } else if (node === node.parent.left) {
-    node.parent.left = child;
-  } else {
-    node.parent.right = child;
-  }
-  if (child) {
-    child.parent = node.parent;
-  }
-}
-```
-
-移除的方法可以弄成幾個分支：有兩個子節點，只有一個子節點，沒有子節點。程式碼如下：
-
-```js
-remove(data) {
-  const node = this.find(data);
-  if (node) {
-    this.removeNode(node);
-    this._size--;
-  }
-}
-
-removeNode(node) {
-  // 如果有兩個子節點
-  if (node.left !== null && node.right !== null) {
-    let succ = null;
-    for (succ = node.right; succ.left !== null; succ = succ.left); // 找到後繼
-    node.data = succ.data; // 用後繼的值替換當前節點的值
-    this.removeNode(succ); // 遞迴刪除，只可能遞迴一次
-  } else {
-    // 葉節點或只有一個子節點
-    let child = node.left || node.right || null;
-    this.transplant(node, child);
-  }
-}
-```
-
-### 求最大值和最小值
-
-如果這個二元樹是一個二元搜尋樹（BST），那麼最大值和最小值就是最右邊的葉節點和最左邊的葉節點：
-
-```js
-minNode(node) {
-  let current = node || this.root;
-  while (current.left) {
-    current = current.left;
-  }
-  return current;
-}
-
-maxNode(node) {
-  let current = node || this.root;
-  while (current.right) {
-    current = current.right;
-  }
-  return current;
-}
-
-min() {
-  const node = this.minNode();
-  return node ? node.data : null;
-}
-
-max() {
-  const node = this.maxNode();
-  return node ? node.data : null;
-}
-```
-
-如果不是二元搜尋樹，那麼就需要遍歷整棵樹，找到最大值和最小值。
-
-### 取得樹的節點數
-
-要取得二元樹的節點數，需要遍歷所有子樹，然後相加求出總和。
-
-```js
-size() {
-  return this._size; // this.getNodeSize(this.root);
-}
-
-getNodeSize(node) {
-  if (node === null) {
-    return 0;
-  }
-  const leftChildSize = this.getNodeSize(node.left);
-  const rightChildSize = this.getNodeSize(node.right);
-  return leftChildSize + rightChildSize + 1;
-}
-```
-
-### 取得樹高
-
-要取得樹的高度，需要遍歷所有子樹的高度，然後取最大值。
-
-```js
-height() {
-  return this.getNodeHeight(this.root);
-}
-
-getNodeHeight(node) {
-  if (node === null) {
-    return 0;
-  }
-  const leftChildHeight = this.getNodeHeight(node.left);
-  const rightChildHeight = this.getNodeHeight(node.right);
-  const max = Math.max(leftChildHeight, rightChildHeight);
-  return max + 1; // 加上自己本身
-}
-```
-
-## 小結
-
-我們今天已經對 Tree 有了一個初步的認識，並且實作了二元樹的建立、新增、刪除、搜尋、取得樹高、取得樹的節點數等方法，明天我們還要來看如何去走訪一棵樹，這也是一個非常基礎且重要的操作。
-
+- [《Learning JavaScript Data Structures and Algorithms, 3/e》](https://www.tenlong.com.tw/products/9781788623872?list_name=trs-f)

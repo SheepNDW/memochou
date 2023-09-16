@@ -14,7 +14,7 @@ outline: deep
 
 前面說到我對演算法的學習起了興趣，然後沒多久我的主管就給了我一本司徒正美寫和李曉晨寫的《JavaScript 算法：基本原理與代碼實現》，開啟了我學習資料結構與演算法的旅程，這次鐵人賽的內容大部分內容會是參考這本書，然後再加上我自己從網路上各種資源，例如：演算法相關書籍、往年鐵人賽的文章、一些影片教學等等後，將所學到的東西以我自己的理解來整理成文章，並且分享給大家。
 
-這個系列的所有程式碼都會用 JavaScript 來實作，並且會使用 `Vitest` 來進行單元測試，使用單元測試可以減少我們很多在 Console 裡 debug 的時間，如果對單元測試不熟悉的也沒關係，在初始專案中我都會事先將測試程式碼給寫好，到時候只要執行指令就可以看到測試結果了，我在稍後會具體說明。
+這個系列的所有程式碼都會用 JavaScript 來實作，並且會使用 [Vitest](https://vitest.dev/) 來進行單元測試，使用單元測試可以減少我們很多在 Console 裡 debug 的時間，如果對單元測試不熟悉的也沒關係，在初始專案中我都會事先將測試程式碼給寫好，到時候只要執行指令就可以看到測試結果了，我在稍後會具體說明。
 
 ### 什麼人適合看這系列的文章呢？
 
@@ -48,7 +48,7 @@ pnpm test:ui
 
 此時會自動在瀏覽器中開啟 `http://localhost:51204/__vitest__/`，一開始會長這樣：
 
-![](https://media.discordapp.net/attachments/1083289750099738624/1143438440751435786/image.png?width=2136&height=1084)
+![](https://media.discordapp.net/attachments/1080668361618362530/1152181309293199410/image.png?width=2132&height=1084)
 
 然後點擊左邊的 `src/001-day1-code/hello.spec.js`，就可以看到我們的測試結果了：
 
@@ -69,13 +69,13 @@ pnpm test:ui
 - [Day 07 -【資料結構】Linked List (1)](./Day07.md)
 - [Day 08 -【資料結構】Linked List (2)](./Day08.md)
 - [Day 09 -【資料結構】Hash Table](./Day09.md)
-- [Day 10 -【資料結構】Tree & Binary Tree](./Day10.md)
-- [Day 11 -【資料結構】Tree 的深度優先走訪](./Day11.md)
-- [Day 12 -【資料結構】Tree 的廣度優先走訪 & Print a binary tree](./Day12.md)
-- [Day 13 -【資料結構】Binary Search Tree](./Day13.md)
-- [Day 14 -【資料結構】Heap](./Day14.md)
-- [Day 15 -【資料結構】Priority Queue](./Day15.md)
-- [Day 16 -【搜尋演算法】Sequential Search & Binary Search](./Day16.md)
+- [Day 10 -【搜尋演算法】Sequential Search & Binary Search](./Day10.md)
+- [Day 11 -【資料結構】Tree & Binary Tree](./Day11.md)
+- [Day 12 -【資料結構】Tree 的深度優先走訪](./Day12.md)
+- [Day 13 -【資料結構】Tree 的廣度優先走訪 & Print a binary tree](./Day13.md)
+- [Day 14 -【資料結構】Binary Search Tree](./Day14.md)
+- [Day 15 -【資料結構】Heap](./Day15.md)
+- [Day 16 -【資料結構】Priority Queue](./Day16.md)
 - [Day 17 -【排序演算法】Bubble Sort](./Day17.md)
 - [Day 18 -【排序演算法】Selection Sort & Insertion Sort](./Day18.md)
 - [Day 19 -【排序演算法】Shell Sort](./Day19.md)

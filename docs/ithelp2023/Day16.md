@@ -1,185 +1,247 @@
----
-outline: deep
----
+# 優先佇列 Priority Queue
 
-# 搜尋演算法 - Sequential Search & Binary Search
+首先我們來回憶一下佇列，普通的佇列是一種先進先出（FIFO）的資料結構，元素只能從佇列尾部加入，從佇列頭部取出。而優先佇列（Priority Queue）是一種特殊的佇列，它的元素是有優先級的，有最高優先級的元素會被最先取出，就像 VIP，就算他最晚來，也會被優先服務。
 
-從今天開始我們將進入演算法的學習，從前面幾天我們已經學習了各種資料結構，都說資料結構是用來儲存資料，那我們總不可能存進去後就再也不管它了吧？肯定是為了將來再把拿出來使用，那麼問題來了，我們要如何去從一堆資料中找出我們要的那筆資料呢？
+既然 VIP 需要最先得到服務，我們需要將優先級最高的元素在加入佇列時就調整到最前面，如果使用 linked list 或是普通陣列來實作，時間複雜度會是 $O(n)$；如果換成 max heap 或 min heap，每次加入和取出的時間複雜度都是 $O(\log n)$。我們在上面已經學過如何構建 heap 和調整 heap，而想要實作一個 priority queue，還需要實作 heap 的移除與新增元素的方法。
 
-這時候就要考驗我們如何去設計一個好的搜尋演算法，讓我們可以在最短的時間內找到我們要的資料。今天我們就來學習兩個常見的搜尋演算法，分別是循序搜尋（Sequential Search）和二分搜尋（Binary Search）。
-
-## 循序搜尋 Sequential Search
-
-循序或是線性搜尋（Linear Search）是最基本的搜尋演算法，它的概念是將每一個資料結構中的元素和我們要找的元素做比較，直到找到相同的元素為止。
-
-我們在尋找過程有可能在第一個元素就找到，也有可能在最後一個元素才找到，或者是根本找不到。在最壞的情況下，我們需要將所有元素都比較一次，因此時間複雜度為 O(n)，是一種比較低效的搜尋演算法。
-
-下面是循序搜尋的程式碼實作：
+先來看一下 priority queue 的 API：
 
 ```js
-const DOES_NOT_EXIST = -1;
+class PriorityQueue {
+  heap = [];
 
-function sequentialSearch(arr, value) {
-  for (let i = 0; i < arr.length; i++) {
-    if (arr[i] === value) return i;
+  push() {} // 新增元素，調整 heap
+
+  pop() {} // 彈出最大元素，調整 heap
+
+  peek() { // 回傳最大元素
+    return this.heap[0];
   }
-  return DOES_NOT_EXIST;
+
+  size() {
+    return this.heap.length;
+  }
+
+  isEmpty() {
+    return this.heap.length === 0;
+  }
+
+  toString() {
+    return this.heap.toString();
+  }
 }
 ```
 
-實作很簡單，就是直接迭代整個陣列，並將每個陣列元素和搜尋目標做比較，如果找到相同的元素，演算法就會回傳一個值來表示搜尋成功。回傳值可以是元素的索引，或者是一個布林值；如果沒有找到就回傳一個 `-1` 或 `false` 等等。
+困難的地方在新增與刪除元素兩個方法。我們先來看看新增元素，一般是將元素放到最後，然後讓它上浮到適當的位置。元素上浮是“孩子要去找父親”，父節點是基於 `parent = Math.floor((child - 1) / 2)` 計算出來的。我們現在要實作一個 max heap 的 priority queue，因此如果子節點比父節點大，就交換它們的位置，然後繼續上浮，直到無法交換為止。
 
-## 二分搜尋 Binary Search
-
-循序搜尋適合用在**未排序**的資料中，但是如果資料已經排序過了，我們就可以使用更快速的搜尋演算法來加速整個搜尋過程，讓複雜度降低到 O(log n)。而我今天要介紹的是二分搜尋法（Binary Search）。
-
-Binary Search 是一種在**已排序**的資料中尋找目標值的搜尋演算法。它的原理和猜數字遊戲很像，例如在 1 ~ 100 範圍內猜一個數字，然後出題者會根據你猜的數字給你一個提示，例如「太大了」、「太小了」或是「猜對了」，然後我們根據提示來縮小範圍，直到猜對為止。
-
-### Binary Search 的步驟
-
-1. 先找到陣列的中間值。
-2. 將中間值和目標值做比較，如果中間值等於目標值，那麼搜尋結束。
-3. 如果目標值比中間值小，則回到步驟 1 並在中間值的左邊子陣列中尋找。
-4. 如果目標值比中間值大，則回到步驟 1 並在中間值的右邊子陣列中尋找。
-
-### 實作
-
-在開始之前我們要先確認一件事，就是我們的陣列必須是已經排序過的，如果沒有排序過，我們就必須先對陣列做排序，確認已經排序過之後，我們就可以開始利用 binary search 來尋找目標值了。
+push 方法實作如下：
 
 ```js
-function binarySearch(arr, target) {
-  let left = 0;
-  let right = arr.length - 1;
+push(el) {
+  const array = this.heap;
+  array.push(el);
+  let child = array.length - 1;
+  let parent = Math.floor((child - 1) / 2);
 
-  while (left <= right) {
-    const mid = Math.floor((left + right) / 2);
+  while (array[child] > array[parent]) {
+    swap(array, child, parent); // 讓大的元素往上浮
+    child = parent;
+    parent = Math.floor((child - 1) / 2);
+  }
+}
+```
 
-    if (arr[mid] === target) {
-      return mid;
+再來看刪除元素，我們只刪除優先級最高的，也就是第一個元素，當然也可以刪除指定的元素，只要找到目標元素後，就將它與最後一個元素交換。這時要保證新的第一個元素的優先級是最高的，又不能影響到最後一個，所以我們要從第一個元素開始下沉，當我們的元素碰到目標元素後就停止，最後把元素刪除。
+
+pop 方法實作如下：
+
+```js
+pop(el) {
+  const array = this.heap;
+  let index = 0;
+  for (let i = 0; i < array.length; i++) {
+    if (array[i] === el) {
+      index = i;
+      break;
+    }
+  }
+
+  const target = array[index];
+  swap(array, index, array.length - 1);
+
+  // 從父節點開始下沉 (陣列的右邊方向)
+  let parent = 0;
+  let child = parent * 2 + 1;
+  while (true) {
+    if (array[child] < array[child + 1] && array[child + 1] !== target) {
+      child++;
     }
 
-    if (arr[mid] < target) {
-      left = mid + 1;
+    if (array[parent] < array[child] && array[child] !== target) {
+      swap(array, parent, child);
+      parent = child;
+      child = parent * 2 + 1; // 不斷向右
     } else {
-      right = mid - 1;
+      break;
     }
   }
 
-  return -1;
+  return array.pop();
 }
 ```
 
-整個搜尋過程如下圖所示：
+我們可以試著執行一下下面的程式碼，可以發現 heap 值並不是完全按照順序排列的，它只保證第一個值是最大的：
 
-<div align="center">
-  <img src="https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/algorithms/search/binary-search/images/binary-search.png" alt="Binary Search" width="600"/>
-</div>
+```js
+const pq = new PriorityQueue();
 
-### 練習
+pq.push(1);
+pq.push(3);
+pq.push(20);
+pq.push(5);
 
-我們來看幾道關於 binary search 的題目：
+console.log(pq.toString()); // 20,5,3,1
 
-首先是 [704. Binary Search](https://leetcode.com/problems/binary-search/)，這題其實就是要你實作 binary search，我們直接拿剛才的程式碼套進去就可以了，可以試著自己再實作一次看看。
+pq.push(30);
 
-#### Search Insert Position
+console.log(pq.toString()); // 30,20,3,1,5
 
-接下來我們來看 [35. Search Insert Position](https://leetcode.com/problems/search-insert-position/)，題目如下：
+pq.push(25);
 
-給你一個已經排序過的陣列 `nums` 和一個目標值 `target`，如果目標值存在於陣列中，則回傳目標值的索引，如果目標值不存在於陣列中，則回傳目標值應該被插入的位置索引。另外要求你必須在 O(log n) 的時間複雜度內完成。
+console.log(pq.toString()); // 30,20,25,1,5,3
 
-例如：
+pq.pop();
 
-`target` 存在於陣列中：
+console.log(pq.toString()); // 25,20,3,1,5
 
-```txt
-Input: nums = [1,3,5,6], target = 5
-Output: 2
+pq.pop(3);
+
+console.log(pq.toString()); // 25,20,5,1
 ```
 
-`target` 不存在於陣列中：
+透過 priority queue 我們可以很容易地解決前面的 TopK 問題，只要把陣列中的元素全部加入 priority queue，然後再從 priority queue 中 pop 出前 K 個元素即可。
+
+最後再讓我們來實作一下以 min heap 為基礎的 priority queue，其實也非常簡單，只要在 pop 與 push 涉及元素比較的地方將大於和小於符號對調即可。具體程式碼如下：
+
+```js
+class MinPriorityQueue extends PriorityQueue {
+  constructor() {
+    super();
+  }
+
+  push(el) {
+    const array = this.heap;
+    array.push(el);
+    let child = array.length - 1;
+    let parent = Math.floor((child - 1) / 2);
+
+    while (array[child] < array[parent]) {
+      swap(array, child, parent); // 讓小的元素往上浮
+      child = parent;
+      parent = Math.floor((child - 1) / 2);
+    }
+  }
+
+  pop(el) {
+    const array = this.heap;
+    let index = 0;
+    for (let i = 0; i < array.length; i++) {
+      if (array[i] === el) {
+        index = i;
+        break;
+      }
+    }
+
+    const target = array[index];
+    swap(array, index, array.length - 1);
+
+    let parent = 0;
+    let child = parent * 2 + 1;
+    while (true) {
+      if (array[child] > array[child + 1] && array[child + 1] !== target) {
+        child++;
+      }
+
+      if (array[parent] > array[child] && array[child] !== target) {
+        swap(array, parent, child);
+        parent = child;
+        child = parent * 2 + 1;
+      } else {
+        break;
+      }
+    }
+
+    return array.pop();
+  }
+}
+```
+
+## Ugly Number
+
+Ugly number 是一個質因數只包含 2, 3, 5 的正整數，並且我們將 1 當作第一個 ugly number。給你一個整數 `n`，請你求出第 `n` 個 ugly number。也就是要從符合條件的 ugly number 數列中如：1, 2, 3, 4, 5, 6, 8, 9, 10, 12...，找出第 `n` 個數字。
+
+Example 1:
 
 ```txt
-Input: nums = [1,3,5,6], target = 2
+Input: n = 10
+Output: 12
+Explanation: 1, 2, 3, 4, 5, 6, 8, 9, 10, 12 is the sequence of the first 10 ugly numbers.
+```
+
+Example 2:
+
+```txt
+Input: n = 1
 Output: 1
 ```
 
-思路：其實也是一個基本的 binary search，只是當 `target` 不存在於陣列中時，我們要回傳的是 `left` 的值，因為 `left` 的值就是 `target` 應該被插入的位置索引。實作如下：
+稍微分析一下後，我們觀察到除了第一個數字 1 以外，其他的數字都是乘以 2、3、5 得出的，在每次相乘得到的數中，移除被乘數後，找到最小的數，繼續乘以 2、3、5。也就是：
+
+```txt
+[2, 3, 5] => 彈出 2，然後乘以 2、3、5 得到 4, 6, 10 加入佇列
+[3, 5, 4, 6, 10] => 彈出 3，乘以 2、3、5 加入佇列
+[4, 5, 6, 10, 6, 9, 15] => priority queue 會將最小的浮上去，然後彈出 4 繼續同樣操作
+```
+
+我們可以看到會有重複的數字出現，我們可以利用 hash table 來去除重複的數字，並且使用 MinPriorityQueue 來確保每次取出的數字都是最小的。程式碼如下：
 
 ```js
-function searchInsert(nums, target) {
-  let left = 0;
-  let right = nums.length - 1;
+function nthUglyNumber(n) {
+  const hash = new Set();
+  const queue = new MinPriorityQueue();
+  queue.push(1);
+  hash.add(1);
 
-  while (left <= right) {
-    const mid = left + Math.floor((right - left) / 2);
-
-    if (target === nums[mid]) {
-      return mid;
-    }
-
-    if (target < nums[mid]) {
-      right = mid - 1;
-    } else {
-      left = mid + 1;
+  const factors = [2, 3, 5];
+  let result = 1;
+  for (let i = 0; i < n; i++) {
+    result = queue.pop();
+    for (const factor of factors) {
+      const next = result * factor;
+      if (!hash.has(next)) {
+        hash.add(next);
+        queue.push(next);
+      }
     }
   }
 
-  return left;
-}
-```
-
-#### Find Peak Element
-
-最後我們來看 [162. Find Peak Element](https://leetcode.com/problems/find-peak-element/)，題目如下：
-
-給你一個陣列 `nums`，你需要找出一個 peak element，peak element 的定義是：陣列中的一個元素，大於左右相鄰的元素。你可以假設 `nums[-1] = nums[n] = -∞`，也就是說陣列的邊界元素是負無窮，此外陣列中可能存在複數個 peak element。現在要請你寫一個時間複雜度為 O(log n) 的演算法來解決這個問題。
-
-例如：
-
-```txt
-Input: nums = [1,2,3,1]
-Output: 2
-Explanation: 3 是一個 peak element，因為 3 大於左右相鄰的元素 2 和 1。
-```
-
-```txt
-Input: nums = [1,2,1,3,5,6,4]
-Output: 1 or 5
-Explanation: 這個陣列有兩個 peak element，1 和 5，你可以回傳任何一個。
-```
-
-思路：直覺反應一定是直接迴圈把每一個都掃過一次檢查看是不是 peak，但是這樣的複雜度是 O(n)，題目要求我們必須在 O(log n) 的時間複雜度內完成，所以我們要使用 binary search 來解決這個問題。這題和前面的 binary search 稍微不同的地方在於，我們要找的不是一個特定的值，而是一個條件，也就是 peak element，我們可以從中點元素和它的右邊鄰居的大小關係來縮小搜尋範圍：
-
-- 如果 `nums[mid] < nums[mid + 1]`，那麼在 `mid` 的右邊一定存在一個 peak element。
-- 如果 `nums[mid] > nums[mid + 1]`，那麼在 `mid` 的左邊一定存在一個 peak element。
-
-實作程式碼如下：
-
-```js
-function findPeakElement(nums) {
-  let left = 0;
-  let right = nums.length - 1;
-
-  while (left < right) {
-    const mid = Math.floor((right + left) / 2);
-
-    if (nums[mid] > nums[mid + 1]) {
-      right = mid;
-    } else {
-      left = mid + 1;
-    }
-  }
-
-  return left;
+  return result;
 }
 ```
 
 ## 總結
 
-我們比較兩種搜尋法後應該會注意到一件事，如果我們今天在存資料的時候，有事先整理過的話，那麼就可以減少我們將來搜尋的時間，像是我們對資料做了排序後，就可以使用 binary search 來加速搜尋的過程，而不用使用循序搜尋。甚至我們可以使用 hash table 來儲存資料，這樣我們就可以在 O(1) 的時間複雜度內找到我們要的資料。
+binary heap 是 priority queue 的實現方式之一，它有兩個特性：
 
-這也是為什麼我們在設計資料結構的時候，要考慮到我們將來會怎麼使用這些資料，如果我們知道我們將來會需要對資料做搜尋，那麼我們就要考慮到如何將資料排序分類，或是使用一些特定的資料結構來儲存資料。
+1. 它是一棵完整二元樹，因此完整二元樹的特性也適用於它。
+2. 每個節點都比其子節點大（或小）。
+
+JavaScript 沒有內建 priority queue，因此需要自己封裝一個。
+
+heap sort 是一種利用 heap 來實現的排序演算法，它的時間複雜度是 $O(n \log n)$，空間複雜度是 $O(1)$。
+
+TopK 問題很適合使用 heap 來解決，建立 heap 的時間複雜度 $O(n)$，加入元素和取出元素的時間複雜度都是 $O(\log K)$。
 
 ## 參考資料
 
-- [《Learning JavaScript Data Structures and Algorithms, 3/e》](https://www.tenlong.com.tw/products/9781788623872?list_name=trs-f)
+- [《JavaScript 算法：基本原理與代碼實現》](https://www.tenlong.com.tw/products/9787115596154?list_name=r-zh_cn)
