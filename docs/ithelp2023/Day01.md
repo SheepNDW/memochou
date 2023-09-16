@@ -4,6 +4,8 @@ outline: deep
 
 # 前言與系列文簡介
 
+> 本文同步發布於 2023 iThome 鐵人賽：[那些前端不用會，但是可以會的資料結構與演算法](https://ithelp.ithome.com.tw/users/20152758/ironman/6714) 系列文中。
+
 ## 前言
 
 開始從事前端開發已經有 1 年多了，雖然是非 CS 本科出身的工程師，也沒有學過什麼資料結構與演算法，卻也逐漸掌握了商業邏輯的撰寫，也能夠根據 PM 需求進行開發。似乎不需要真的學過書本上那些資料結構或是演算法，也可以成為一名前端工程師。而契機是在今年初，有兩位我很喜歡的工程師 Youtuber 合作出了一支影片，然後在社群以及 PTT 上引起了一陣不小的討論，關於演算法、Big O 等名詞不斷出現在我的視野中，讓我也開始好奇了起來，於是就開始查了相關的資料，也成為了我之後開始學習資料結構與演算法的契機。
@@ -61,31 +63,31 @@ pnpm test:ui
 下面是這 30 天預計要寫的內容，會持續更新，可能會有些許變動。
 
 - Day 01 - 前言與系列文簡介
-- [Day 02 - 什麼是資料結構？演算法又是什麼？](./Day02.md)
-- [Day 03 - 時間與空間複雜度](./Day03.md)
-- [Day 04 -【資料結構】Stack](./Day04.md)
-- [Day 05 -【資料結構】Queue](./Day05.md)
-- [Day 06 -【資料結構】Deque](./Day06.md)
-- [Day 07 -【資料結構】Linked List (1)](./Day07.md)
-- [Day 08 -【資料結構】Linked List (2)](./Day08.md)
-- [Day 09 -【資料結構】Hash Table](./Day09.md)
-- [Day 10 -【搜尋演算法】Sequential Search & Binary Search](./Day10.md)
-- [Day 11 -【資料結構】Tree & Binary Tree](./Day11.md)
-- [Day 12 -【資料結構】Tree 的深度優先走訪](./Day12.md)
-- [Day 13 -【資料結構】Tree 的廣度優先走訪 & Print a binary tree](./Day13.md)
-- [Day 14 -【資料結構】Binary Search Tree](./Day14.md)
-- [Day 15 -【資料結構】Heap](./Day15.md)
-- [Day 16 -【資料結構】Priority Queue](./Day16.md)
-- [Day 17 -【排序演算法】Bubble Sort](./Day17.md)
-- [Day 18 -【排序演算法】Selection Sort & Insertion Sort](./Day18.md)
-- [Day 19 -【排序演算法】Shell Sort](./Day19.md)
-- [Day 20 -【排序演算法】Merge Sort](./Day20.md)
-- [Day 21 -【排序演算法】Quick Sort](./Day21.md)
-- [Day 22 -【排序演算法】Counting Sort & Bucket Sort](./Day22.md)
-- [Day 23 -【排序演算法】Radix Sort](./Day23.md)
-- [Day 24 -【排序演算法】總結](./Day24.md)
-- [Day 25 -【隨機演算法】Fisher-Yates Shuffle](./Day25.md)
-- [Day 26 -【回溯法】Backtracking (1)](./Day26.md)
-- [Day 27 -【回溯法】Backtracking (2)](./Day27.md)
-- [Day 28 -【動態規劃】Dynamic Programming (1)](./Day28.md)
-- [Day 29 -【動態規劃】Dynamic Programming (2)](./Day29.md)
+- [Day 02 - 什麼是資料結構？演算法又是什麼？]()
+- [Day 03 - 時間與空間複雜度]()
+- [Day 04 -【資料結構】Stack]()
+- [Day 05 -【資料結構】Queue]()
+- [Day 06 -【資料結構】Deque]()
+- [Day 07 -【資料結構】Linked List (1)]()
+- [Day 08 -【資料結構】Linked List (2)]()
+- [Day 09 -【資料結構】Hash Table]()
+- [Day 10 -【搜尋演算法】Sequential Search & Binary Search]()
+- [Day 11 -【資料結構】Tree & Binary Tree]()
+- [Day 12 -【資料結構】Tree 的深度優先走訪]()
+- [Day 13 -【資料結構】Tree 的廣度優先走訪 & Print a binary tree]()
+- [Day 14 -【資料結構】Binary Search Tree]()
+- [Day 15 -【資料結構】Heap]()
+- [Day 16 -【資料結構】Priority Queue]()
+- [Day 17 -【排序演算法】Bubble Sort]()
+- [Day 18 -【排序演算法】Selection Sort & Insertion Sort]()
+- [Day 19 -【排序演算法】Shell Sort]()
+- [Day 20 -【排序演算法】Merge Sort]()
+- [Day 21 -【排序演算法】Quick Sort]()
+- [Day 22 -【排序演算法】Counting Sort & Bucket Sort]()
+- [Day 23 -【排序演算法】Radix Sort]()
+- [Day 24 -【排序演算法】總結]()
+- [Day 25 -【隨機演算法】Fisher-Yates Shuffle]()
+- [Day 26 -【回溯法】Backtracking (1)]()
+- [Day 27 -【回溯法】Backtracking (2)]()
+- [Day 28 -【動態規劃】Dynamic Programming (1)]()
+- [Day 29 -【動態規劃】Dynamic Programming (2)]()
