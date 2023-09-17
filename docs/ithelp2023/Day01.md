@@ -63,32 +63,32 @@ pnpm test:ui
 下面是這 30 天預計要寫的內容，會持續更新，可能會有些許變動。
 
 - Day 01 - 前言與系列文簡介
-- Day 02 - 什麼是資料結構？演算法又是什麼？
+- [Day 02 - 什麼是資料結構？演算法又是什麼？](./Day02.md)
 - Day 03 - 時間與空間複雜度
-- Day 04 - 資料結構 Stack
-- Day 05 - 資料結構 Queue
-- Day 06 - 資料結構 Deque
-- Day 07 - 資料結構 Linked List (1)
-- Day 08 - 資料結構 Linked List (2)
-- Day 09 - 資料結構 Hash Table
-- Day 10 - 搜尋演算法 Sequential Search & Binary Search
-- Day 11 - 資料結構 Tree & Binary Tree
-- Day 12 - 資料結構 Tree 的深度優先走訪
-- Day 13 - 資料結構 Tree 的廣度優先走訪 & Print a binary tree
-- Day 14 - 資料結構 Binary Search Tree
-- Day 15 - 資料結構 Heap
-- Day 16 - 資料結構 Priority Queue
-- Day 17 - 排序演算法 Bubble Sort
-- Day 18 - 排序演算法 Selection Sort & Insertion Sort
-- Day 19 - 排序演算法 Shell Sort
-- Day 20 - 排序演算法 Merge Sort
-- Day 21 - 排序演算法 Quick Sort
-- Day 22 - 排序演算法 Counting Sort & Bucket Sort
-- Day 23 - 排序演算法 Radix Sort
-- Day 24 - 排序演算法 總結
-- Day 25 - 隨機演算法 Fisher-Yates Shuffle
-- Day 26 - 回溯法 Backtracking (1)
-- Day 27 - 回溯法 Backtracking (2)
-- Day 28 - 動態規劃 Dynamic Programming (1)
-- Day 29 - 動態規劃 Dynamic Programming (2)
+- Day 04 - 【資料結構】 Stack
+- Day 05 - 【資料結構】 Queue
+- Day 06 - 【資料結構】 Deque
+- Day 07 - 【資料結構】 Linked List (1)
+- Day 08 - 【資料結構】 Linked List (2)
+- Day 09 - 【資料結構】 Hash Table
+- Day 10 - 【搜尋演算法】 Sequential Search & Binary Search
+- Day 11 - 【資料結構】 Tree & Binary Tree
+- Day 12 - 【資料結構】 Tree 的深度優先走訪
+- Day 13 - 【資料結構】 Tree 的廣度優先走訪 & Print a binary tree
+- Day 14 - 【資料結構】 Binary Search Tree
+- Day 15 - 【資料結構】 Heap
+- Day 16 - 【資料結構】 Priority Queue
+- Day 17 - 【排序演算法】 Bubble Sort
+- Day 18 - 【排序演算法】 Selection Sort & Insertion Sort
+- Day 19 - 【排序演算法】 Shell Sort
+- Day 20 - 【排序演算法】 Merge Sort
+- Day 21 - 【排序演算法】 Quick Sort
+- Day 22 - 【排序演算法】 Counting Sort & Bucket Sort
+- Day 23 - 【排序演算法】 Radix Sort
+- Day 24 - 【排序演算法】 總結
+- Day 25 - 【隨機演算法】 Fisher-Yates Shuffle
+- Day 26 - 【回溯法】 Backtracking (1)
+- Day 27 - 【回溯法】 Backtracking (2)
+- Day 28 - 【動態規劃】 Dynamic Programming (1)
+- Day 29 - 【動態規劃】 Dynamic Programming (2)
 

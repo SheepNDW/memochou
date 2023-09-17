@@ -339,10 +339,10 @@ function sidebarIthelp2023(): DefaultTheme.SidebarItem[] {
           text: 'Day 01 - 前言與系列文簡介',
           link: '/ithelp2023/Day01',
         },
-        // {
-        //   text: 'Day 02 - 什麼是資料結構？演算法又是什麼？',
-        //   link: '/ithelp2023/Day02',
-        // },
+        {
+          text: 'Day 02 - 什麼是資料結構？演算法又是什麼？',
+          link: '/ithelp2023/Day02',
+        },
         // {
         //   text: 'Day 03 - 時間與空間複雜度',
         //   link: '/ithelp2023/Day03',
