@@ -4,7 +4,9 @@ outline: deep
 
 # 時間複雜度與空間複雜度
 
-## 時間複雜度 (Time Complexity)
+> 本文同步發布於 2023 iThome 鐵人賽：[那些前端不用會，但是可以會的資料結構與演算法](https://ithelp.ithome.com.tw/users/20152758/ironman/6714) 系列文中。
+
+## 時間複雜度 Time Complexity
 
 假設現在有一個陣列 `persons`，裡面有 1000 個物件：
 
@@ -201,7 +203,7 @@ function fibonacci(n) {
 
 我們主要用時間複雜度的數量級去評價一個演算法的時間效能。時間複雜度和兩個因素有關：演算法中的最大迴圈數和最內層迴圈中執行的次數。
 
-## 空間複雜度（Space Complexity） 
+## 空間複雜度 Space Complexity
 
 空間複雜度是一個衡量演算法在執行過程中**臨時**佔用的記憶體大小的量度。
 
