@@ -4,10 +4,16 @@ outline: deep
 
 # 堆疊 Stack
 
+> 本文同步發布於 2023 iThome 鐵人賽：[那些前端不用會，但是可以會的資料結構與演算法](https://ithelp.ithome.com.tw/users/20152758/ironman/6714) 系列文中。
+
 我們可以把 Stack 看成是一個弱化的陣列，它只有兩個改變長度的方法：push 和 pop。用生活中的例子來描述 Stack，可以想像有一個用來裝書本的箱子，每次只能在最上面放入或取出一本書，這就是 Stack 的 push 和 pop。而且最先放入的書本會在最底下，必須要先取出最上面的書本才能取出下面的書本，這就是 Stack 的“後進先出”（Last In First Out，LIFO）特性。
 
 ![](https://images.pexels.com/photos/4498123/pexels-photo-4498123.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2)
 > 圖片來源：[pexels.com](https://images.pexels.com/photos/4498123/pexels-photo-4498123.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2)
+
+還有一個就是我們常用的網站 Stack Overflow，它的名字就是來自於 Stack 這個資料結構，前面說到有個箱子用來裝書本，那麼如果我們不斷放書進去，當箱子已經被裝滿時，我們還繼續放書進去，那麼箱子就會溢出，書本就會掉出來，這就是 overflow，現在我們再回頭看看這個網站的 Logo，是不是突然知道為什麼它會這樣設計了呢？
+
+![](https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/Stack_Overflow_icon.svg/240px-Stack_Overflow_icon.svg.png)
 
 ## Stack 的特點與概念
 
@@ -39,7 +45,7 @@ push 和 pop 的操作示意圖如下：
 - size：回傳 Stack 的長度
 - top 或 peek：回傳 Stack 最頂端的元素
 
-C++中取得 Stack 最頂端元素的方法叫 top，而 Java 中則是 peek。
+C++ 中取得 Stack 最頂端元素的方法叫 top，而 Java 中則是 peek。
 
 Stack 的實作方式很簡單，就是把陣列再包裝一層，讓陣列只能從最後面插入和刪除元素，這樣就可以達到 Stack 的效果。
 
@@ -108,15 +114,33 @@ class Stack {
 
 ## Stack 的應用
 
-#### 1. 逆序輸出
+### 1. 逆序輸出
 
 Stack 最大的特點就是後進先出，所以逆序輸出是一個經常使用到的場景。先將所有元素依序 push 進到 stack 中，再依序 pop 出來就可以達到逆序的效果。
 
-#### 2. 語法檢查，例如括號是否成對
+例如大家最常用的 `ctrl + z`、瀏覽器的上一頁。
+
+### 2. 語法檢查，例如括號是否成對
 
 這個應用場景是在編譯器中，編譯器會檢查程式碼中的括號是否成對，如果沒有成對就會報錯。例如：`{[()]}`這個括號就是成對的，而`{[(]}`這個括號就是沒有成對的，編譯器會報錯。它其實也是 LeetCode 上的一道題目，[20. Valid Parentheses](https://leetcode.com/problems/valid-parentheses/)。
 
-具體的處理方式就是：只要遇到括號的前半部分就 push 進 Stack 中，遇到括號的後半部分就 pop 出 Stack 中的元素，如果 pop 出來的元素和括號的前半部分不是一對，就代表括號沒有成對，就會報錯。最後要判斷 Stack 是否為空，因為可能有括號只有 push 進去沒有 pop 出來。
+這道題是 Stack 的經典題，但是一般初學者可能沒辦法直接聯想到 Stack，大部分人（像是我一開始）都會去試著數左括號跟右括號的數量有沒有對上，然後就會發現如果是這樣 `([)]` 的字串會無法正確判斷，因為不只括號數要對，它的出現順序也必須要合理，那麼我們怎麼把它跟剛才學的 Stack 做連結呢？
+
+用圖解來看就是像這樣：
+
+我們一開始先準備一個 Stack，然後依序遍歷每個括號：
+
+![](https://hackmd.io/_uploads/SklfA28ya.png)
+
+只要遇到左括號（開啟符號）就將它推入 Stack 中記錄各個括號的開啟順序：
+
+![](https://hackmd.io/_uploads/rJ84A381a.png)
+
+遇到右括號（關閉符號）我們就從 Stack 中彈出最後一次開啟的左括號，然後比較這兩個括號是否能成對：
+
+![](https://hackmd.io/_uploads/HkGBCn8ya.png)
+
+如果發現無法配對，代表我們這組括號對不合法，因為它必須依照後開啟先閉合的規則；如果配對成功我們就繼續往下遍歷，最後還要檢查我們的 Stack 是否已經清空，因為它有可能只有開啟就沒有關上了。
 
 具體的實作如下：
 
@@ -159,7 +183,7 @@ console.log(match('{[()]}')); // true
 console.log(match('{[(])}')); // false
 ```
 
-#### 3. 進位轉換
+### 3. 進位轉換
 
 十進位 N 和其他 d 進位的轉換，解決的方式有很多種，其中一個簡單的算法基於下列原理：
 
@@ -220,7 +244,7 @@ convertDecimalToBase(10, 8) // 12
 convertDecimalToBase(10, 16) // A
 ```
 
-#### 4. 表達式求值
+### 4. 表達式求值
 
 表達式求值是 stack 應用的一個典型例子。這裡介紹一種簡單直觀、廣為使用的算法，通常稱為「算符優先法」。
 

@@ -347,10 +347,10 @@ function sidebarIthelp2023(): DefaultTheme.SidebarItem[] {
           text: 'Day 03 - 時間與空間複雜度',
           link: '/ithelp2023/Day03',
         },
-        // {
-        //   text: 'Day 04 - Stack',
-        //   link: '/ithelp2023/Day04',
-        // },
+        {
+          text: 'Day 04 - Stack',
+          link: '/ithelp2023/Day04',
+        },
         // {
         //   text: 'Day 05 - Queue',
         //   link: '/ithelp2023/Day05',
