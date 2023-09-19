@@ -39,13 +39,13 @@ push 和 pop 的操作示意圖如下：
 
 接著來看 Stack 的相關方法：
 
-- push：推入元素
-- pop：彈出元素
-- isEmpty：判斷 Stack 是否為空
-- size：回傳 Stack 的長度
-- top 或 peek：回傳 Stack 最頂端的元素
+- `push`：推入元素
+- `pop`：彈出元素
+- `isEmpty`：判斷 Stack 是否為空
+- `size`：回傳 Stack 的長度
+- `top` 或 `peek`：回傳 Stack 最頂端的元素
 
-C++ 中取得 Stack 最頂端元素的方法叫 top，而 Java 中則是 peek。
+C++ 中取得 Stack 最頂端元素的方法叫 `top`，而 Java 中則是 `peek`。
 
 Stack 的實作方式很簡單，就是把陣列再包裝一層，讓陣列只能從最後面插入和刪除元素，這樣就可以達到 Stack 的效果。
 
@@ -153,21 +153,18 @@ function match(s) {
       case ')':
         if (stack.pop() === '(') {
           break;
-        } else {
-          return false;
         }
+        return false;
       case ']':
         if (stack.pop() === '[') {
           break;
-        } else {
-          return false;
         }
+        return false;
       case '}':
         if (stack.pop() === '{') {
           break;
-        } else {
-          return false;
         }
+        return false;
       case '(':
       case '[':
       case '{':
@@ -281,7 +278,7 @@ $4 + ((6-10) + 2 \times 2) \times 2 = 4 + (-4 + 4) \times 2 = 4 + 0 \times 2 = 4
 | (     | <   | <   | <   | <   | <   | =   |
 | )     | >   | >   | >   | >   |     | >   |
 
-由規則 3 可知，+、-、* 和 / 為 θ1 時優先度均低於“(”，但高於右括號“)”。基於此，首先我們要來討論如何使用算符優先演算法來實作表達式求值。
+由規則 3 可知，`+`、`-`、`*` 和 `/` 為 θ1 時優先度均低於“`(`”，但高於右括號“`)`”。基於此，首先我們要來討論如何使用算符優先演算法來實作表達式求值。
 
 為了實作這個演算法，我們需要使用兩個 stack，一個用來儲存操作數或運算結果，另一個用來儲存算符。
 
@@ -412,6 +409,12 @@ const operate = (opnd1, optr, opnd2) => {
   return 0;
 };
 ```
+
+我們最後再來檢查一下所有測試是不是都通過了：
+
+![https://ithelp.ithome.com.tw/upload/images/20230919/20152758Kgj9P9rbPP.png](https://ithelp.ithome.com.tw/upload/images/20230919/20152758Kgj9P9rbPP.png)
+
+今天我們介紹了 stack 結構也說明了系列文專案的使用方式，在之後大部分的程式碼實作的檢查我都會交給單元測試來做，大家可以在實作前先觀察測資了解一下需求，然後就可以專注在程式碼上，也能順便體驗到由紅燈轉綠燈的樂趣。
 
 ## 參考資料
 
