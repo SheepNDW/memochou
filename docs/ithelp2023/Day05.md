@@ -4,6 +4,8 @@ outline: deep
 
 # 佇列 Queue
 
+> 本文同步發布於 2023 iThome 鐵人賽：[那些前端不用會，但是可以會的資料結構與演算法](https://ithelp.ithome.com.tw/users/20152758/ironman/6714) 系列文中。
+
 佇列（Queue）是一種先進先出（First In First Out）的資料結構，就像排隊買票一樣，先到的人先買票，後到的人後買票。
 
 和 stack 一樣，queue 也是一種操作受限制的線性結構，但是它只允許在前端（front）進行刪除操作，而在後端（rear）進行插入操作。
@@ -16,11 +18,11 @@ outline: deep
 
 ## Queue 的常用方法
 
-- size：回傳佇列的長度
-- isEmpty：判斷佇列是否為空
-- enqueue/add：在佇列的後端插入元素
-- dequeue/remove：刪除佇列的前端元素
-- peek：存取第一個元素
+- `size`：回傳佇列的長度
+- `isEmpty`：判斷佇列是否為空
+- `enqueue/add`：在佇列的後端插入元素
+- `dequeue/remove`：刪除佇列的前端元素
+- `peek`：存取第一個元素
 
 我們也可以透過陣列來實作 queue，不過要注意的是，陣列的 `push` 和 `shift` 方法分別對應到 queue 的 `enqueue` 和 `dequeue` 方法，實作程式碼如下：
 
@@ -120,7 +122,7 @@ class Queue {
 
 ## 用 Queue 來實作出 Stack
 
-我們來練習一下 Queue 的操作，順便來用 Queue 實作出昨天介紹過的 Stack 結構，這題取自 [225. Implement Stack using Queues](https://leetcode.com/problems/implement-stack-using-queues/)，題目要求實作一個後進先出（LIFO）的 Stack 結構，但條件是僅使用兩個 Queue 來完成。
+我們來練習一下 queue 的操作，順便來用 queue 實作出昨天介紹過的 stack 結構，這題取自 [225. Implement Stack using Queues](https://leetcode.com/problems/implement-stack-using-queues/)，題目要求實作一個後進先出（LIFO）的 stack 結構，但條件是僅使用兩個 queue 來完成。
 
 實作的 MyStack 類別需要具有以下幾個方法：
 
@@ -129,9 +131,9 @@ class Queue {
 - `top()`: 回傳堆疊頂部的元素。
 - `empty()`: 若堆疊為空，則回傳 true，否則回傳 false。
 
-要注意的是，必須僅使用 Queue 的標準操作，例如將元素加入尾端、從前端取出或查看元素、查詢佇列大小（size）和判斷佇列是否為空（isEmpty）。
+要注意的是，必須僅使用 queue 的標準操作，例如將元素加入尾端、從前端取出或查看元素、查詢佇列大小（size）和判斷佇列是否為空（isEmpty）。
 
-一般在解題時，我們會直接利用陣列來模擬 Queue 的操作：
+一般在解題時，我們會直接利用陣列來模擬 queue 的操作：
 
 ```js
 class MyStack {
@@ -164,7 +166,7 @@ class MyStack {
 }
 ```
 
-不過我們剛才已經實作過 Queue 了，所以我們可以直接利用 Queue 來實作：
+不過我們剛才已經實作過 `Queue` 類別了，所以我們可以直接利用這個 `Queue` 來實作：
 
 ```js
 class MyStack {

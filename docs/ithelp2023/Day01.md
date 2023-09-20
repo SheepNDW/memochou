@@ -66,7 +66,7 @@ pnpm test:ui
 - [Day 02 - 什麼是資料結構？演算法又是什麼？](./Day02.md)
 - [Day 03 - 時間與空間複雜度](./Day03.md)
 - [Day 04 - 【資料結構】 Stack](./Day04.md)
-- Day 05 - 【資料結構】 Queue
+- [Day 05 - 【資料結構】 Queue](./Day05.md)
 - Day 06 - 【資料結構】 Deque
 - Day 07 - 【資料結構】 Linked List (1)
 - Day 08 - 【資料結構】 Linked List (2)

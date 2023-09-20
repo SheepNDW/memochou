@@ -351,10 +351,10 @@ function sidebarIthelp2023(): DefaultTheme.SidebarItem[] {
           text: 'Day 04 - Stack',
           link: '/ithelp2023/Day04',
         },
-        // {
-        //   text: 'Day 05 - Queue',
-        //   link: '/ithelp2023/Day05',
-        // },
+        {
+          text: 'Day 05 - Queue',
+          link: '/ithelp2023/Day05',
+        },
         // {
         //   text: 'Day 06 - Deque',
         //   link: '/ithelp2023/Day06',
