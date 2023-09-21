@@ -67,7 +67,7 @@ pnpm test:ui
 - [Day 03 - 時間與空間複雜度](./Day03.md)
 - [Day 04 - 【資料結構】 Stack](./Day04.md)
 - [Day 05 - 【資料結構】 Queue](./Day05.md)
-- Day 06 - 【資料結構】 Deque
+- [Day 06 - 【資料結構】 Deque](./Day06.md)
 - Day 07 - 【資料結構】 Linked List (1)
 - Day 08 - 【資料結構】 Linked List (2)
 - Day 09 - 【資料結構】 Hash Table
