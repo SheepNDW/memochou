@@ -359,10 +359,10 @@ function sidebarIthelp2023(): DefaultTheme.SidebarItem[] {
           text: 'Day 06 - Deque',
           link: '/ithelp2023/Day06',
         },
-        // {
-        //   text: 'Day 07 - Linked List (1)',
-        //   link: '/ithelp2023/Day07',
-        // },
+        {
+          text: 'Day 07 - Linked List (1)',
+          link: '/ithelp2023/Day07',
+        },
         // {
         //   text: 'Day 08 - Linked List (2)',
         //   link: '/ithelp2023/Day08',
