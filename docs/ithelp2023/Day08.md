@@ -1,5 +1,7 @@
 # 鏈結串列 Linked List (2)
 
+> 本文同步發布於 2023 iThome 鐵人賽：[那些前端不用會，但是可以會的資料結構與演算法](https://ithelp.ithome.com.tw/users/20152758/ironman/6714) 系列文中。
+
 我們昨天已經看過了單向及雙向的鏈結串列，今天我們再來看看另外兩種鏈結串列。
 
 ## 有序的鏈結串列 Sorted Linked List
@@ -92,6 +94,14 @@ list.insert(666);
 console.log(list);
 ```
 
+我們在 `main.js` 實際執行上面的程式碼後可以在控制台看到如圖的輸出：
+
+<div>
+  <img src="https://hackmd.io/_uploads/rkbPBCo1a.png" alt="circular linked list" width="550"/>
+</div>
+
+> 可以觀察到節點都是按照 data 的大小排列的。
+
 ## 環狀鏈結串列 Circular Linked List
 
 有一道非常有名的面試題：約瑟夫問題（Josephus problem），會使用到環狀鏈結串列。
@@ -104,15 +114,18 @@ console.log(list);
 
 所描述的規則可以用下圖的約瑟夫環來表示：
 
-<div>
+<div align="center">
   <img src="https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/data-structures/linked-list/circular-linked-list/images/josephus.png" alt="Josephus problem" width="500"/>
+  <p>約瑟夫環</p>
 </div>
 
 接下來你要做的就是：當你在這一群人之間時，你必須選擇一個位置讓你成為剩餘的最後一人。
 
-這看起來很困難，但是有了環狀鏈結串列，就很好解決了。首先在雙向鏈結串列的 head 與 tail 是不同的節點，而環狀鏈結串列的這兩個都指向同一處。既然如此我們只保持一個 head 就足夠了。其次，forEach 與 find 方法需要做一下處理避免無限迴圈。因為只有一個節點的環狀鏈結串列，它的 next 和 prev 都會指向自己。
+這看起來很困難，但是有了環狀鏈結串列，就很好解決了。首先在雙向鏈結串列的 `head` 與 `tail` 是不同的節點，而環狀鏈結串列的這兩個都指向同一處。既然如此我們只保持一個 `head` 就足夠了。其次，`forEach` 與 `find` 方法需要做一下處理避免無限迴圈。因為只有一個節點的環狀鏈結串列，它的 `next` 和 `prev` 都會指向自己。
 
-來看一下雙向鏈結串列和環狀鏈結串列的 forEach 方法：
+![](https://hackmd.io/_uploads/SyXyykhJa.png)
+
+來看一下雙向鏈結串列和環狀鏈結串列的 `forEach` 方法：
 
 ```js
 // 雙向鏈結串列
@@ -142,7 +155,7 @@ forEach(cb) {
 }
 ```
 
-我們模仿實作有序鏈結串列的時候，讓它繼承雙向鏈結串列，然後重寫 forEach、findIndex、insertAt 與 removeAt 方法：
+我們模仿實作有序鏈結串列的時候，讓它繼承雙向鏈結串列，然後重寫 `forEach`、`findIndex`、`insertAt` 與 `removeAt` 方法：
 
 ```js
 class CircularLink extends DoublyList {
@@ -166,7 +179,7 @@ class CircularLink extends DoublyList {
       return null;
     }
     // 判斷尋找方向
-    const dir = index > n >> 1;
+    const dir = index > Math.floor(n / 2);
     let current = dir ? this.head.prev : this.head;
     let first = current;
     let prop = dir ? 'prev' : 'next';
@@ -245,10 +258,10 @@ list.removeAt(0);
 console.log(list);
 ```
 
-實際執行上面的程式碼後可以在控制台看到如圖的輸出：
+我們在 `main.js` 實際執行上面的程式碼後可以在控制台看到如圖的輸出：
 
 <div>
-  <img src="https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/data-structures/linked-list/circular-linked-list/images/circular-link.png" alt="circular linked list" width="550"/>
+  <img src="https://hackmd.io/_uploads/rkbPBCo1a.png" alt="circular linked list" width="550"/>
 </div>
 
 現在讓我們來解決約瑟夫問題，這個問題主要思路來自 `forEach` 與 `remove` 方法。我們先建立一個環狀的 list 與一個不斷遞迴呼叫的 `kill` 方法，`kill` 在只剩一個人時停止，如何判定只剩一個人，可以用 `node.next === node` 或 `list.length === 1` 來判斷。
@@ -290,13 +303,13 @@ function josephus(n, m) {
 }
 ```
 
-其實這道題跟前面在講 Queue 的時候提到的 Hot Potato 問題幾乎一樣，只是這次我們換成使用環狀鏈結串列來解決。
+其實這道題跟前面在講 queue 的時候提到的 Hot Potato 問題幾乎一樣，只是這次我們換成使用環狀鏈結串列來解決。
 
 ## 總結
 
 鏈結串列在建立的過程和陣列不同，陣列是連續的記憶體空間，而鏈結串列是零散的，每個節點都有自己的記憶體空間，並且每個節點都有指向下一個節點的指標，這樣就可以串起來了。當有資料要進來時，我們只需要根據指標找到下一個儲存空間的位置，然後把資料保存起來，接著指向下一個儲存資料的位置，這樣一來就可以把一些零散的記憶體空間利用起來了，雖然串列是線性表，但不會按照線性的順序儲存資料。
 
-也因為鏈結串列是以這種方式儲存資料，所以它在插入和刪除資料時比較容易，只需要改變指標的指向就可以了，舉個例子： 0 -> 1 -> 2 -> 3 -> 4，如果要在 1 和 2 之間插入一個 5，只需要把 1 的指標指向 5，然後把 5 的指標指向 2，這樣就完成了插入操作，不需要去管 5 實際的記憶體位置在哪裡，也不會對其他節點造成影響。但是如果是想要從串列中讀取一條資料，就要從 0 號開始一個一個往下找，直到找到我們要找的資料為止。
+也因為鏈結串列是以這種方式儲存資料，所以它在插入和刪除資料時比較容易，只需要改變指標的指向就可以了，舉個例子： 0 -> 1 -> 2 -> 3 -> 4，如果要在 1 和 2 之間插入一個 5，只需要把 5 的指標指向 2，然後把 1 的指標指向 5，這樣就完成了插入操作，不需要去管 5 實際的記憶體位置在哪裡，也不會對其他節點造成影響。但是如果是想要從串列中讀取一條資料，就要從 0 號開始一個一個往下找，直到找到我們要找的資料為止。
 
 所以我們可以根據實際的需求來選擇使用陣列或鏈結串列，如果需要頻繁的插入和刪除操作，就可以使用鏈結串列，如果需要頻繁的查詢操作，就可以使用陣列。
 
