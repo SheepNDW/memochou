@@ -367,10 +367,10 @@ function sidebarIthelp2023(): DefaultTheme.SidebarItem[] {
           text: 'Day 08 - Linked List (2)',
           link: '/ithelp2023/Day08',
         },
-        // {
-        //   text: 'Day 09 - Hash Table',
-        //   link: '/ithelp2023/Day09',
-        // },
+        {
+          text: 'Day 09 - Hash Table',
+          link: '/ithelp2023/Day09',
+        },
         // {
         //   text: 'Day 10 - Sequential Search & Binary Search',
         //   link: '/ithelp2023/Day10',
