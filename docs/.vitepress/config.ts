@@ -371,10 +371,10 @@ function sidebarIthelp2023(): DefaultTheme.SidebarItem[] {
           text: 'Day 09 - Hash Table',
           link: '/ithelp2023/Day09',
         },
-        // {
-        //   text: 'Day 10 - Sequential Search & Binary Search',
-        //   link: '/ithelp2023/Day10',
-        // },
+        {
+          text: 'Day 10 - Sequential Search & Binary Search',
+          link: '/ithelp2023/Day10',
+        },
         // {
         //   text: 'Day 11 - Tree & Binary Tree',
         //   link: '/ithelp2023/Day11',

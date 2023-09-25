@@ -71,7 +71,7 @@ pnpm test:ui
 - [Day 07 - 【資料結構】 Linked List (1)](./Day07.md)
 - [Day 08 - 【資料結構】 Linked List (2)](./Day08.md)
 - [Day 09 - 【資料結構】 Hash Table](./Day09.md)
-- Day 10 - 【搜尋演算法】 Sequential Search & Binary Search
+- [Day 10 - 【搜尋演算法】 Sequential Search & Binary Search](./Day10.md)
 - Day 11 - 【資料結構】 Tree & Binary Tree
 - Day 12 - 【資料結構】 Tree 的深度優先走訪
 - Day 13 - 【資料結構】 Tree 的廣度優先走訪 & Print a binary tree
