@@ -375,10 +375,10 @@ function sidebarIthelp2023(): DefaultTheme.SidebarItem[] {
           text: 'Day 10 - Sequential Search & Binary Search',
           link: '/ithelp2023/Day10',
         },
-        // {
-        //   text: 'Day 11 - Tree & Binary Tree',
-        //   link: '/ithelp2023/Day11',
-        // },
+        {
+          text: 'Day 11 - Tree & Binary Tree',
+          link: '/ithelp2023/Day11',
+        },
         // {
         //   text: 'Day 12 - Tree 的深度優先走訪',
         //   link: '/ithelp2023/Day12',
