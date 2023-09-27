@@ -379,10 +379,10 @@ function sidebarIthelp2023(): DefaultTheme.SidebarItem[] {
           text: 'Day 11 - Tree & Binary Tree',
           link: '/ithelp2023/Day11',
         },
-        // {
-        //   text: 'Day 12 - Tree 的深度優先走訪',
-        //   link: '/ithelp2023/Day12',
-        // },
+        {
+          text: 'Day 12 - Tree 的深度優先走訪',
+          link: '/ithelp2023/Day12',
+        },
         // {
         //   text: 'Day 13 - Tree 的廣度優先走訪 & 印出一棵 Tree',
         //   link: '/ithelp2023/Day13',
