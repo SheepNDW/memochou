@@ -74,7 +74,7 @@ pnpm test:ui
 - [Day 10 - 【搜尋演算法】 Sequential Search & Binary Search](./Day10.md)
 - [Day 11 - 【資料結構】 Tree & Binary Tree](./Day11.md)
 - [Day 12 - 【資料結構】 Tree 的深度優先走訪](./Day12.md)
-- Day 13 - 【資料結構】 Tree 的廣度優先走訪 & Print a binary tree
+- [Day 13 - 【資料結構】 Tree 的廣度優先走訪 & Print a binary tree](./Day13.md)
 - Day 14 - 【資料結構】 Binary Search Tree
 - Day 15 - 【資料結構】 Heap
 - Day 16 - 【資料結構】 Priority Queue
