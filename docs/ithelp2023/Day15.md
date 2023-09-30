@@ -4,6 +4,8 @@ outline: deep
 
 # 堆積 Heap
 
+> 本文同步發布於 2023 iThome 鐵人賽：[那些前端不用會，但是可以會的資料結構與演算法](https://ithelp.ithome.com.tw/users/20152758/ironman/6714) 系列文中。
+
 不要被標題所迷惑，這個還是以 Tree 為基礎的資料結構。堆積（Heap）是一種根節點比子節點都來得大（或小）的樹，在這裡我們會介紹 binary heap。而之後會提到的優先佇列（Priority Queue）有很多實作方式，但最常見的就是使用 heap 來實作。
 
 ## 二元堆積 Binary Heap

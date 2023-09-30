@@ -391,10 +391,10 @@ function sidebarIthelp2023(): DefaultTheme.SidebarItem[] {
           text: 'Day 14 - Binary Search Tree',
           link: '/ithelp2023/Day14',
         },
-        // {
-        //   text: 'Day 15 - Heap',
-        //   link: '/ithelp2023/Day15',
-        // },
+        {
+          text: 'Day 15 - Heap',
+          link: '/ithelp2023/Day15',
+        },
         // {
         //   text: 'Day 16 - Priority Queue',
         //   link: '/ithelp2023/Day16',
