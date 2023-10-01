@@ -1,8 +1,18 @@
+---
+outline: deep
+---
+
 # 優先佇列 Priority Queue
+
+> 本文同步發布於 2023 iThome 鐵人賽：[那些前端不用會，但是可以會的資料結構與演算法](https://ithelp.ithome.com.tw/users/20152758/ironman/6714) 系列文中。
 
 首先我們來回憶一下佇列，普通的佇列是一種先進先出（FIFO）的資料結構，元素只能從佇列尾部加入，從佇列頭部取出。而優先佇列（Priority Queue）是一種特殊的佇列，它的元素是有優先級的，有最高優先級的元素會被最先取出，就像 VIP，就算他最晚來，也會被優先服務。
 
-既然 VIP 需要最先得到服務，我們需要將優先級最高的元素在加入佇列時就調整到最前面，如果使用 linked list 或是普通陣列來實作，時間複雜度會是 $O(n)$；如果換成 max heap 或 min heap，每次加入和取出的時間複雜度都是 $O(\log n)$。我們在上面已經學過如何構建 heap 和調整 heap，而想要實作一個 priority queue，還需要實作 heap 的移除與新增元素的方法。
+既然 VIP 需要最先得到服務，我們需要將優先級最高的元素在加入佇列時就調整到最前面，如果使用 linked list 或是普通陣列來實作，時間複雜度會是 $O(n)$；如果換成 max heap 或 min heap，每次加入和取出的時間複雜度都是 $O(\log n)$。我們在昨天已經學過如何構建 heap 和調整 heap，而想要實作一個 priority queue，還需要實作 heap 的移除與新增元素的方法。
+
+![](https://hackmd.io/_uploads/Hy-d4aLg6.gif)
+
+## 實作 Priority Queue
 
 先來看一下 priority queue 的 API：
 
@@ -34,7 +44,9 @@ class PriorityQueue {
 
 困難的地方在新增與刪除元素兩個方法。我們先來看看新增元素，一般是將元素放到最後，然後讓它上浮到適當的位置。元素上浮是“孩子要去找父親”，父節點是基於 `parent = Math.floor((child - 1) / 2)` 計算出來的。我們現在要實作一個 max heap 的 priority queue，因此如果子節點比父節點大，就交換它們的位置，然後繼續上浮，直到無法交換為止。
 
-push 方法實作如下：
+### `push` & `pop` 實作
+
+`push` 方法實作如下：
 
 ```js
 push(el) {
@@ -53,7 +65,8 @@ push(el) {
 
 再來看刪除元素，我們只刪除優先級最高的，也就是第一個元素，當然也可以刪除指定的元素，只要找到目標元素後，就將它與最後一個元素交換。這時要保證新的第一個元素的優先級是最高的，又不能影響到最後一個，所以我們要從第一個元素開始下沉，當我們的元素碰到目標元素後就停止，最後把元素刪除。
 
-pop 方法實作如下：
+
+`pop` 方法實作如下：
 
 ```js
 pop(el) {
@@ -121,6 +134,8 @@ console.log(pq.toString()); // 25,20,5,1
 
 透過 priority queue 我們可以很容易地解決前面的 TopK 問題，只要把陣列中的元素全部加入 priority queue，然後再從 priority queue 中 pop 出前 K 個元素即可。
 
+### MinPriorityQueue 實作
+
 最後再讓我們來實作一下以 min heap 為基礎的 priority queue，其實也非常簡單，只要在 pop 與 push 涉及元素比較的地方將大於和小於符號對調即可。具體程式碼如下：
 
 ```js
@@ -176,7 +191,7 @@ class MinPriorityQueue extends PriorityQueue {
 }
 ```
 
-## Ugly Number
+## 題目練習：Ugly Number
 
 Ugly number 是一個質因數只包含 2, 3, 5 的正整數，並且我們將 1 當作第一個 ugly number。給你一個整數 `n`，請你求出第 `n` 個 ugly number。也就是要從符合條件的 ugly number 數列中如：1, 2, 3, 4, 5, 6, 8, 9, 10, 12...，找出第 `n` 個數字。
 

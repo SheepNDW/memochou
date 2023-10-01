@@ -395,10 +395,10 @@ function sidebarIthelp2023(): DefaultTheme.SidebarItem[] {
           text: 'Day 15 - Heap',
           link: '/ithelp2023/Day15',
         },
-        // {
-        //   text: 'Day 16 - Priority Queue',
-        //   link: '/ithelp2023/Day16',
-        // },
+        {
+          text: 'Day 16 - Priority Queue',
+          link: '/ithelp2023/Day16',
+        },
         // {
         //   text: 'Day 17 - 排序簡介 & Bubble Sort',
         //   link: '/ithelp2023/Day17',
