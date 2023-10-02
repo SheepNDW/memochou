@@ -2,9 +2,12 @@
 outline: deep
 ---
 
-# 排序簡介與氣泡排序法（Bubble Sort）
+# 排序簡介與氣泡排序法
+
+> 本文同步發布於 2023 iThome 鐵人賽：[那些前端不用會，但是可以會的資料結構與演算法](https://ithelp.ithome.com.tw/users/20152758/ironman/6714) 系列文中。
 
 在第 10 天談到搜尋演算法時，我們提到了資料如果是有排過序的，那麼我們就可以使用更快速的搜尋演算法來加速整個搜尋過程，那麼要怎麼去對資料進行排序呢？這就是我接下來幾天會介紹到的各種排序演算法。
+
 ## 排序簡介
 
 排序在生活中是一件很常見的事情，例如：將一副牌從大到小排序、將一堆書依照作者的姓氏排序、將一堆學生依照成績排序等等，而在程式設計中，排序也是一個很常見的問題，例如：將一個陣列依照數字大小排序。以一名前端工程師來說，碰到排序的問題，第一時間想到的就是 `Array.prototype.sort()` 這個內建的方法，不過不知道大家有沒有想過這個內建的 `sort` 是怎麼樣去實作的呢？
@@ -122,7 +125,7 @@ function bubbleSort3(array) {
 }
 ```
 
-### 雞尾酒排序法（Cocktail Sort）
+### 雞尾酒排序法 Cocktail Sort
 
 如果我們要將剛才的繼續進行最佳化，前人發明了一種雙向的氣泡排序法，稱為雞尾酒排序法，又叫搖晃排序法（Shaker Sort）。它是氣泡排序的一種變形，與氣泡排序不同之處在於排序時是以雙向在序列中進行排序。具體可以透過範例來了解：
 
@@ -167,7 +170,7 @@ function cocktailSort(array) {
 
 ![](https://media.discordapp.net/attachments/1083289750099738624/1143428476855140362/image.png?width=1638&height=1084)
 
-最後來看四種 bubble sort 的效率比較（可以實際去執行測試看控制台輸出結果），用來測試執行效率的測試程式碼可以在 `sortTestUtils.js` 中找到，具體實作如下：
+最後來看四種 bubble sort 的效率比較（可以實際去執行測試看控制台輸出結果），用來測試執行效率的測試程式碼可以在系列文專案裡的 `sortTestUtils.js` 中找到，具體實作如下：
 
 ```js
 function testRuntime(sortedFn) {
@@ -195,7 +198,7 @@ function testRuntime(sortedFn) {
 
 ![](https://media.discordapp.net/attachments/1080668361618362530/1151798254640566323/image.png?width=1570&height=1084)
 
-## 複雜度（Complexity）
+## 複雜度 Complexity
 
 氣泡排序的複雜度是 $O(n^2)$，但在最好的情況下能達到 $O(n)$，因為它至少要跑一次迴圈掃過每個元素的位置判斷是否需要交換。
 
@@ -208,4 +211,3 @@ function testRuntime(sortedFn) {
 ## 參考資料
 
 - [《JavaScript 算法：基本原理與代碼實現》](https://www.tenlong.com.tw/products/9787115596154?list_name=r-zh_cn)
-
