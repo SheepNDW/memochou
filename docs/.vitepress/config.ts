@@ -403,10 +403,10 @@ function sidebarIthelp2023(): DefaultTheme.SidebarItem[] {
           text: 'Day 17 - 排序簡介 & Bubble Sort',
           link: '/ithelp2023/Day17',
         },
-        // {
-        //   text: 'Day 18 - Selection Sort & Insertion Sort',
-        //   link: '/ithelp2023/Day18',
-        // },
+        {
+          text: 'Day 18 - Selection Sort & Insertion Sort',
+          link: '/ithelp2023/Day18',
+        },
         // {
         //   text: 'Day 19 - Shell Sort',
         //   link: '/ithelp2023/Day19',

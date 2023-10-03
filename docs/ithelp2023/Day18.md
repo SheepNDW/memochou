@@ -1,5 +1,7 @@
 # 選擇排序法與插入排序法
 
+> 本文同步發布於 2023 iThome 鐵人賽：[那些前端不用會，但是可以會的資料結構與演算法](https://ithelp.ithome.com.tw/users/20152758/ironman/6714) 系列文中。
+
 接續前一天，讓我們繼續來看兩個平均複雜度為 $O(n^2)$ 的排序法，分別是選擇排序法與插入排序法。
 
 ## 選擇排序法 Selection Sort
@@ -22,7 +24,7 @@
 
 ![Selection Sort](https://upload.wikimedia.org/wikipedia/commons/9/94/Selection-Sort-Animation.gif)
 
-Selection Sort 的具體實作程式碼如下：
+selection sort 的具體實作程式碼如下：
 
 ```js
 function selectSort(array) {
@@ -95,7 +97,7 @@ function selectSort2(array) {
 完全亂序的情況 selectSort2 35
 ```
 
-### 複雜度（Complexity）
+### 複雜度 Complexity
 
 | Name               | Average  |   Best   |  Worst   | Space  |  Method  | Stable |
 | ------------------ | :------: | :------: | :------: | :----: | :------: | :----: |
@@ -111,7 +113,7 @@ function selectSort2(array) {
 
 ![Insertion Sort](https://upload.wikimedia.org/wikipedia/commons/0/0f/Insertion-sort-example-300px.gif)
 
-Insertion sort 實作起來有點複雜，需要寫兩個內部的迴圈：
+insertion sort 實作起來有點複雜，需要寫兩個內部的迴圈：
 
 ```js
 function insertionSort(array) {
@@ -169,13 +171,13 @@ function insertionSort2(array) {
 }
 ```
 
-### 複雜度（Complexity）
+### 複雜度 Complexity
 
 | Name               | Average  |  Best  |  Worst   | Space  |  Method  | Stable |
 | ------------------ | :------: | :----: | :------: | :----: | :------: | :----: |
 | **Insertion sort** | $O(n^2)$ | $O(n)$ | $O(n^2)$ | $O(1)$ | In-place |  Yes   |
 
-Insertion sort 的時間複雜度也是 $O(n^2)$，但經過測試後發現，在大多數情況下，Insertion sort 的效率比 Bubble sort 和 Selection sort 還要高，這是因為它的平均複雜度為 $O(n^2/4)$，最好的情況能達到 $O(n)$。我們把 Insertion sort 也加入耗時測試一起比較，得出結果為：
+insertion sort 的時間複雜度也是 $O(n^2)$，但經過測試後發現，在大多數情況下，insertion sort 的效率比 bubble sort 和 selection sort 還要高，這是因為它的平均複雜度為 $O(n^2/4)$，最好的情況能達到 $O(n)$。我們把 insertion sort 也加入耗時測試一起比較，得出結果為：
 
 ```bash
 ========
