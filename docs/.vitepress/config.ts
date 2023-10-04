@@ -407,10 +407,10 @@ function sidebarIthelp2023(): DefaultTheme.SidebarItem[] {
           text: 'Day 18 - Selection Sort & Insertion Sort',
           link: '/ithelp2023/Day18',
         },
-        // {
-        //   text: 'Day 19 - Shell Sort',
-        //   link: '/ithelp2023/Day19',
-        // },
+        {
+          text: 'Day 19 - Shell Sort',
+          link: '/ithelp2023/Day19',
+        },
         // {
         //   text: 'Day 20 - Merge Sort',
         //   link: '/ithelp2023/Day20',

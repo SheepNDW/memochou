@@ -4,7 +4,9 @@ outline: deep
 
 # 希爾排序法 Shell Sort
 
-希爾排序法（Shell Sort）是 Donald Shell 於 1959 年提出的一種排序演算法，是插入排序法（Insertion Sort）的一種改良版本，也稱為縮小增量排序法（Diminishing Increment Sort），同時它也是第一批突破 $O(n^2)$ 的演算法之一。
+> 本文同步發布於 2023 iThome 鐵人賽：[那些前端不用會，但是可以會的資料結構與演算法](https://ithelp.ithome.com.tw/users/20152758/ironman/6714) 系列文中。
+
+希爾排序法（Shell Sort）是 Donald Shell 於 1959 年提出的一種排序演算法，是插入排序法（Insertion Sort）的一種改良版本，也稱為縮小增量排序法（Diminishing Increment Sort），同時它也是第一批突破 $O(n^2)$ 的排序演算法之一。
 
 這個演算法的基本思想是：將陣列分割成多個子陣列，每個子陣列是由索引值相差某個 gap（間距或間隔）的元素所組成，並對每個子陣列進行插入排序，然後減少 gap 的值，重新分割大陣列為新的子陣列，重複進行插入排序，直到 gap 為 1。
 
@@ -46,9 +48,9 @@ outline: deep
 
 最後我們將 gap 設為 1，這時陣列就變成了一個子陣列，也就是它本身。此時整個陣列已經接近有序了，可以發現希爾排序的效率非常高。
 
-### 間距序列（Gap Sequence）
+### 間距序列 Gap Sequence
 
-我們每趟用到的 gap，共同組成一個陣列，稱為間距序列（Gap Sequence）。常用的 gap sequence 由 Knuth 提出，透過遞迴表達式 $h = 3 * h + 1$ 計算出來，其中 h 初始化為1。這就是說，這個數列會是：1, 4, 13, 40,...等等。當數值超過陣列長度時，就停止這個遞迴。對於一個含有 1000 個元素的陣列，我們使用數列的前 6 個數值就可以了。
+我們每趟用到的 gap，共同組成一個陣列，稱為間距序列（Gap Sequence）。常用的 gap sequence 由 Knuth 提出，透過遞迴表達式 $h = 3 * h + 1$ 計算出來，其中 h 初始化為 1。這就是說，這個數列會是：1, 4, 13, 40,...等等。當數值超過陣列長度時，就停止這個遞迴。對於一個含有 1000 個元素的陣列，我們使用數列的前 6 個數值就可以了。
 
 ### 實作
 
@@ -85,7 +87,7 @@ function shellSort(array) {
 }
 ```
 
-Shell Sort 沒有規定要用哪種 gap 公式，不同的公式，其時間複雜度也不同。因此 Shell Sort 是一種不穩定的排序演算法。在 Shell 的原稿中，他建議初始的間距為 $n/2$，簡單地把每一次排序分成兩半。因此對於一個 n=100 的陣列，逐漸減少的間距序列會是：50, 25, 12, 6, 3, 1。具體實作如下：
+shell sort 沒有規定要用哪種 gap 公式，不同的公式，其時間複雜度也不同。因此 shell sort 是一種不穩定的排序演算法。在 Shell 的原稿中，他建議初始的間距為 $n/2$，簡單地把每一次排序分成兩半。因此對於一個 `n=100` 的陣列，逐漸減少的間距序列會是：50, 25, 12, 6, 3, 1。具體實作如下：
 
 ```js
 function shellSort2(array) {
@@ -111,7 +113,7 @@ Shell Sort 的排序效率和 gap sequence 有直接關係，相關 gap sequence
 3. Knuth Sequence： $1, 4, 13, ..., (3^k-1)/2$
 4. Sedgewick Sequence： $1, 5, 19, 41, 109, ...$
 
-目前最好的序列是 Sedgewick Sequence，它能讓 Shell Sort 的時間複雜度達到 $O(n^{4/3})$，快於 $O(n\log_2n)$ 的 Heap Sort，其計算公式：
+目前最好的序列是 Sedgewick Sequence，它能讓 Shell Sort 的時間複雜度達到 $O(n^{4/3})$，快於 $O(n\log_2n)$ 的 heap sort，其計算公式：
 
 ```js
 function getSedgewickSeq(n) {
@@ -161,7 +163,7 @@ function shellSort3(array) {
 完全亂序的情況 shellSort3 2
 ```
 
-## 複雜度（Complexity）
+## 複雜度 Complexity
 
 時間複雜度高度依賴於使用的 gap sequence
 
