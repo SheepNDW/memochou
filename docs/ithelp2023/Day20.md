@@ -1,6 +1,8 @@
 # 合併排序法 Merge Sort
 
-Shell Sort 給我們帶來一個新思路，將一個問題拆分成幾個小規模的子問題，然後用現成的方案解決這些子問題，再慢慢合併來解決原問題。後來的人們稱這種思路為分治法（Divide and Conquer）。
+> 本文同步發布於 2023 iThome 鐵人賽：[那些前端不用會，但是可以會的資料結構與演算法](https://ithelp.ithome.com.tw/users/20152758/ironman/6714) 系列文中。
+
+shell sort 給我們帶來一個新思路，將一個問題拆分成幾個小規模的子問題，然後用現成的方案解決這些子問題，再慢慢合併來解決原問題。後來的人們稱這種思路為分治法（Divide and Conquer）。
 
 當解決一個給定問題，演算法需要一次或多次遞迴呼叫自身來解決相關的子問題時，這種演算法通常是採用了 D&C 的策略。分治模式在每 1 層遞迴時都有 3 個步驟：
 
@@ -8,7 +10,7 @@ Shell Sort 給我們帶來一個新思路，將一個問題拆分成幾個小規
 2. **解決**：遞迴地求解各子問題，若子問題足夠小則直接求解。
 3. **合併**：將子問題的解合併成原問題的解。 
 
-Merge Sort 的分解部分被分解得非常徹底，一口氣將每個子陣列切到只剩 1 個元素，因為長度為 1 的陣列可以看作是已排序的。然後將相鄰的兩個有序陣列合併成一個有序陣列，並不斷遞迴這個過程，直到包含元陣列的所有元素。整個合併過程可以參考下面取自 wiki 的圖：
+merge sort 的分解部分被分解得非常徹底，一口氣將每個子陣列切到只剩 1 個元素，因為長度為 1 的陣列可以看作是已排序的。然後將相鄰的兩個有序陣列合併成一個有序陣列，並不斷遞迴這個過程，直到包含元陣列的所有元素。整個合併過程可以參考下面取自 wiki 的圖：
 
 ![Merge Sort](https://upload.wikimedia.org/wikipedia/commons/c/cc/Merge-sort-example-300px.gif)
 
@@ -191,7 +193,7 @@ function mergeArrayByIndex(arr, begin, end, begin2, end2) {
 }
 ```
 
-再仔細想想，其實我們也不需要 `top` 這個屬性，因為 `top` 屬性的存在是為了方變我們找 `neighbor` 元素的。如果我們在經過兩次 mergeSort 操作後，立即進行合併操作，就不需要 `neighbor` 了。接著將程式碼修改成這樣：
+再仔細想想，其實我們也不需要 `top` 這個屬性，因為 `top` 屬性的存在是為了方變我們找 `neighbor` 元素的。如果我們在經過兩次 `mergeSort` 操作後，立即進行合併操作，就不需要 `neighbor` 了。接著將程式碼修改成這樣：
 
 ```js
 function mergeSortObject2(array) {
@@ -304,7 +306,7 @@ function mergeSortedArrays(left, right) {
 }
 ```
 
-## 複雜度（Complexity）
+## 複雜度 Complexity
 
 最後我們來看一下它的複雜度。其空間複雜度為 $O(n)$，因為它申請了一個等長的陣列，會消耗一定的空間。如果用最初的版本，新建了這麼多的陣列，其空間複雜度可能就是 $O(n^2)$ 了。它的時間複雜度可以這樣簡單推導一下，我們每次要取中位數，一共對 $O(\log n)$ 層進行了切割合併的操作。每一層的合併操作都是 $O(n)$，所以這個演算法的時間複雜度為 $O(n \log n)$。 
 
@@ -315,4 +317,5 @@ function mergeSortedArrays(left, right) {
 ## 參考資料
 
 - [《JavaScript 算法：基本原理與代碼實現》](https://www.tenlong.com.tw/products/9787115596154?list_name=r-zh_cn)
+- [《Learning JavaScript Data Structures and Algorithms, 3/e》](https://www.tenlong.com.tw/products/9781788623872?list_name=trs-f)
 - [Wikipedia](https://en.wikipedia.org/wiki/Merge_sort)
