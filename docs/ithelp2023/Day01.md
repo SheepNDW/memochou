@@ -82,7 +82,7 @@ pnpm test:ui
 - [Day 18 - 【排序演算法】 Selection Sort & Insertion Sort](./Day18.md)
 - [Day 19 - 【排序演算法】 Shell Sort](./Day19.md)
 - [Day 20 - 【排序演算法】 Merge Sort](./Day20.md)
-- Day 21 - 【排序演算法】 Quick Sort
+- [Day 21 - 【排序演算法】 Quick Sort](./Day21.md)
 - Day 22 - 【排序演算法】 Counting Sort & Bucket Sort
 - Day 23 - 【排序演算法】 Radix Sort
 - Day 24 - 【排序演算法】 總結

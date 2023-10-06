@@ -4,7 +4,9 @@ outline: deep
 
 # 快速排序法 Quick Sort
 
-快速排序法（Quick Sort）是對氣泡排序法的一種改進，是一個基於分治法（Divide and conquer）的排序演算法。它不像 Merge Sort 那樣一上來就將陣列切成“碎片”，而是逐漸對要處理的陣列進行切割，每次切成兩部分，讓其左邊都小於某個數，右邊都大於某個數，然後再對左右兩邊進行同樣的操作（快速排序），直到每個子陣列長度為 1，原陣列就會變成有序的了。
+> 本文同步發布於 2023 iThome 鐵人賽：[那些前端不用會，但是可以會的資料結構與演算法](https://ithelp.ithome.com.tw/users/20152758/ironman/6714) 系列文中。
+
+快速排序法（Quick Sort）是對氣泡排序法的一種改進，是一個基於分治法（Divide and Conquer）的排序演算法。它不像 merge sort 那樣一上來就將陣列切成“碎片”，而是逐漸對要處理的陣列進行切割，每次切成兩部分，讓其左邊都小於某個數，右邊都大於某個數，然後再對左右兩邊進行同樣的操作（快速排序），直到每個子陣列長度為 1，原陣列就會變成有序的了。
 
 從下面這段程式碼來具體理解一下，它的基本架構如下：
 
@@ -33,7 +35,7 @@ function partition(array, left, right) { // D&C function
 
 對於 quick sort 的 `partition` 函式的實作，通常有以下 3 種。
 
-#### 1. 左右指標法
+### 1. 左右指標法
 
 使用左右指標法實作 `partition` 方法的步驟如下：
 
@@ -71,7 +73,7 @@ function partition(array, left, right) {
   <img src="https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/algorithms/sorting/quick-sort/images/quick-sort1.png" alt="quick-sort" width="550px">
 </div>
 
-#### 2. 挖坑法
+### 2. 挖坑法
 
 使用挖坑法實作 `partition` 方法的步驟如下：
 
@@ -116,7 +118,7 @@ function partition(array, left, right) {
   <img src="https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/algorithms/sorting/quick-sort/images/quick-sort3.jpg" alt="quick-sort" width="650px">
 </div>
 
-#### 3. 前後指標法
+### 3. 前後指標法
 
 使用前後指標法實作 `partition` 方法的步驟如下：
 
@@ -152,9 +154,9 @@ Quick Sort 的最佳化主要涉及到三個方面：
 
 1. pivot 的選擇。最好和最壞情況的區別就是選取 pivot 不正確導致的。之前的程式碼裡，我們會選擇第一個或是最後一個元素作為 pivot，但太大或太小的元素都會影響效率。於是我們有了三數取中位數法，即隨機取 3 個元素進行排序，然後取中間的元素作為 pivot，一般我們會取第一個、中間的、最後一個元素。如果排序的陣列非常大，還可以進行九數取中位，取三次樣本，每次取三個元素，然後再取這三個元素的中位數，最後再取這三個中位數的中位數作為 pivot。
 2. 改進不必要的交換。我們將 pivot 備份到 `A[0]` 中，像在前文中使用 `swap` 方法時一樣，我們只需要做交換的工作，最終 `A[i]` 與 `A[j]` 融合，再將 `A[0]` 位置的數值賦值回 `A[i]`。因為沒有了多次交換的操作，所以效率會有所提升。
-3. 改進小陣列時的排序方案。對於很小的和部分有序的陣列，Quick Sort 的效率不如 Insertion Sort。因此，我們可以對陣列進行切割，當陣列的大小小於一定的值時，使用 Insertion Sort 進行排序。
+3. 改進小陣列時的排序方案。對於很小的和部分有序的陣列，quick sort 的效率不如 insertion Sort。因此，我們可以對陣列進行切割，當陣列的大小小於一定的值時，使用 Insertion Sort 進行排序。（這是以前 Chrome V8 引擎的 sort 實作方式）
 
-待排序序列長度 N = 10，在 5 和 20 之間任一截止範圍都有可能產生類似效果。下面是小陣列使用 Insertion Sort 的程式碼：
+待排序序列長度 N = 10，在 5 和 20 之間任一截止範圍都有可能產生類似效果。下面是小陣列使用 insertion sort 的程式碼：
 
 ```js
 if (high - low + 1 < 10) {
@@ -257,11 +259,11 @@ function quickSortStack(array, start, end) {
 
 ## 應用 - TopK 問題
 
-給你一個由整數組成的陣列，請找出其中最小的 K 個數。例如，給你的陣列是 `[11, 9, 6, 17, 0, 1, 2, 18, 3, 4, 8, 5]` 和 `K = 4`，那麼最小的 4 個數是 `[0, 1, 2, 3]`。
+給你一個由整數組成的陣列，請找出其中最小的 `K` 個數。例如，給你的陣列是 `[11, 9, 6, 17, 0, 1, 2, 18, 3, 4, 8, 5]` 和 `K = 4`，那麼最小的 4 個數是 `[0, 1, 2, 3]`。
 
-思路：我們知道 partition 函式會回傳一個 pivot，pivot 左邊的元素都比 pivot 小，右邊的元素都比 pivot 大。我們可以一直去呼叫 partition 函式，直到 pivot 的位置剛好是 K - 1，那麼 pivot 左邊的元素就是最小的 K 個數。
+思路：TopK 問題也可以利用在實作 quick sort 時用到的 quick select 演算法來解決，我們知道 `partition` 函式會回傳一個 pivot，pivot 左邊的元素都比 pivot 小，右邊的元素都比 pivot 大。我們可以一直去呼叫 `partition` 函式，直到 pivot 的位置剛好是 `K - 1`，那麼 pivot 左邊的元素就是最小的 `K` 個數。
 
-我們打開 `getTopK.js` 來實作看看：
+我們打開 `day21-quick-sort/getTopK.js` 來實作看看：
 
 ```js
 function getTopK(array, k) {
@@ -283,16 +285,12 @@ function getTopK(array, k) {
       }
     }
 
-    let result = [];
-    for (let i = 0; i < k; i++) {
-      result[i] = array[i];
-    }
-    return result;
+    return array.slice(0, k);
   }
 }
 ```
 
-## 複雜度（Complexity）
+## 複雜度 Complexity
 
 | Name           |    Average    |     Best      |  Worst   |    Space    |  Method  | Stable |
 | -------------- | :-----------: | :-----------: | :------: | :---------: | :------: | :----: |
