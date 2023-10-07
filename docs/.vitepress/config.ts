@@ -419,10 +419,10 @@ function sidebarIthelp2023(): DefaultTheme.SidebarItem[] {
           text: 'Day 21 - Quick Sort',
           link: '/ithelp2023/Day21',
         },
-        // {
-        //   text: 'Day 22 - Counting Sort & Bucket Sort',
-        //   link: '/ithelp2023/Day22',
-        // },
+        {
+          text: 'Day 22 - Counting Sort & Bucket Sort',
+          link: '/ithelp2023/Day22',
+        },
         // {
         //   text: 'Day 23 - Radix Sort',
         //   link: '/ithelp2023/Day23',
