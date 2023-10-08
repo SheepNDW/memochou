@@ -1,13 +1,15 @@
 # 基數排序法 Radix Sort
 
+> 本文同步發布於 2023 iThome 鐵人賽：[那些前端不用會，但是可以會的資料結構與演算法](https://ithelp.ithome.com.tw/users/20152758/ironman/6714) 系列文中。
+
 基數排序法（Radix Sort）是一種非比較性質的整數排序演算法。其基本原理是，將整數的每個位數上的值進行分組，在分組的過程中對於不足位的數值補零。
 
-Radix Sort 按照對位數分組的順序的不同，可以分為 LSD（Least Significant Digit）和 MSD（Most Significant Digit）兩種。
-LSD Radix Sort 是按照從低位數到高位數的順序進行分組，而 MSD Radix Sort 則是按照從高位數到低位數的順序進行分組。兩種方式不僅僅是對位數分組的順序不同，其實作原理也不同。
+radix sort 按照對位數分組的順序的不同，可以分為 LSD（Least Significant Digit）和 MSD（Most Significant Digit）兩種。
+LSD radix sort 是按照從低位數到高位數的順序進行分組，而 MSD radix sort 則是按照從高位數到低位數的順序進行分組。兩種方式不僅僅是對位數分組的順序不同，其實作原理也不同。
 
 ## LSD Radix Sort
 
-在 LSD Radix Sort 中，序列中每個整數的每一位數都可以看成一個桶子，而該位數上的數字就可以認為是這個桶子的鍵值。例如下面的陣列：
+在 LSD radix sort 中，序列中每個整數的每一位數都可以看成一個桶子，而該位數上的數字就可以認為是這個桶子的鍵值。例如下面的陣列：
 
 ```txt
 [ 170, 45, 75, 90, 802, 2, 24, 66 ]
@@ -127,7 +129,7 @@ function lsdRadixSort(array, buckets, len, radix) {
 
 ## MSD Radix Sort
 
-接下來我們來看看 MSD Radix Sort。最開始也是遍歷所有元素，取最大值，得到最大的位數，建立 10 個桶子。這次從百位數取起，不足三位的數字補 0：
+接下來我們來看看 MSD radix sort。最開始也是遍歷所有元素，取最大值，得到最大的位數，建立 10 個桶子。這次從百位數取起，不足三位的數字補 0：
 
 ```txt
 0 號 bucket: [ 45, 75, 90, 2, 24, 66 ]
@@ -137,7 +139,7 @@ function lsdRadixSort(array, buckets, len, radix) {
 9 號 bucket: []
 ```
 
-接下來就與 LSD 不一樣了。我們要對每個長度大於 1 的桶子進行內部排序，內部排序也是用 Radix Sort。因此我們需要建立另外 10 個桶子，對 0 號桶子進行入桶操作，這時比原來少一位，也就是十位數：
+接下來就與 LSD 不一樣了。我們要對每個長度大於 1 的桶子進行內部排序，內部排序也是用 radix sort。因此我們需要建立另外 10 個桶子，對 0 號桶子進行入桶操作，這時比原來少一位，也就是十位數：
 
 ```txt
 0 號 bucket: [ 2 ]
@@ -202,9 +204,9 @@ function msdRadixSort(array, len, radix) {
 
 ## 字串使用 Radix Sort 實作字典排序
 
-Radix Sort 只要稍作變換就可以應用於字串的字典排序（lexicographic order）中。例如對都是小寫字母的字串陣列進行排序。
+radix sort 只要稍作變換就可以應用於字串的字典排序（lexicographic order）中。例如對都是小寫字母的字串陣列進行排序。
 
-小寫字母一共 26 個，考慮到長度不一樣的情況，我們需要對短的字串進行填充，這時可以補上空字串。然後根據字母與數字的對應關係，建立 27 個桶子，空字串對應 0，a 對應 1，b 對應 2，以此類推。而字典排序的規則是從左到右，所以會需要用到 MSD Radix Sort。
+小寫字母一共 26 個，考慮到長度不一樣的情況，我們需要對短的字串進行填充，這時可以補上空字串。然後根據字母與數字的對應關係，建立 27 個桶子，空字串對應 0，a 對應 1，b 對應 2，以此類推。而字典排序的規則是從左到右，所以會需要用到 MSD radix sort。
 
 程式碼實作如下：
 
@@ -280,7 +282,7 @@ function msdRadixSort(array, len, radix, radixs) {
 }
 ```
 
-## 複雜度（Complexity）
+## 複雜度 Complexity
 
 | Name           | Average  |   Best   |  Worst   |  Space   |  Method   | Stable |
 | -------------- | :------: | :------: | :------: | :------: | :-------: | :----: |

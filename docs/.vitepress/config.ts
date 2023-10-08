@@ -423,10 +423,10 @@ function sidebarIthelp2023(): DefaultTheme.SidebarItem[] {
           text: 'Day 22 - Counting Sort & Bucket Sort',
           link: '/ithelp2023/Day22',
         },
-        // {
-        //   text: 'Day 23 - Radix Sort',
-        //   link: '/ithelp2023/Day23',
-        // },
+        {
+          text: 'Day 23 - Radix Sort',
+          link: '/ithelp2023/Day23',
+        },
         // {
         //   text: 'Day 24 - Sorting 總結',
         //   link: '/ithelp2023/Day24',

@@ -84,7 +84,7 @@ pnpm test:ui
 - [Day 20 - 【排序演算法】 Merge Sort](./Day20.md)
 - [Day 21 - 【排序演算法】 Quick Sort](./Day21.md)
 - [Day 22 - 【排序演算法】 Counting Sort & Bucket Sort](./Day22.md)
-- Day 23 - 【排序演算法】 Radix Sort
+- [Day 23 - 【排序演算法】 Radix Sort](./Day23.md)
 - Day 24 - 【排序演算法】 總結
 - Day 25 - 【隨機演算法】 Fisher-Yates Shuffle
 - Day 26 - 【回溯法】 Backtracking (1)
