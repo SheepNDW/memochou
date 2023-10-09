@@ -427,10 +427,10 @@ function sidebarIthelp2023(): DefaultTheme.SidebarItem[] {
           text: 'Day 23 - Radix Sort',
           link: '/ithelp2023/Day23',
         },
-        // {
-        //   text: 'Day 24 - Sorting 總結',
-        //   link: '/ithelp2023/Day24',
-        // },
+        {
+          text: 'Day 24 - Sorting 總結',
+          link: '/ithelp2023/Day24',
+        },
         // {
         //   text: 'Day 25 - Fisher-Yates Shuffle',
         //   link: '/ithelp2023/Day25',
