@@ -431,10 +431,10 @@ function sidebarIthelp2023(): DefaultTheme.SidebarItem[] {
           text: 'Day 24 - Sorting 總結',
           link: '/ithelp2023/Day24',
         },
-        // {
-        //   text: 'Day 25 - Fisher-Yates Shuffle',
-        //   link: '/ithelp2023/Day25',
-        // },
+        {
+          text: 'Day 25 - Fisher-Yates Shuffle',
+          link: '/ithelp2023/Day25',
+        },
         // {
         //   text: 'Day 26 - Backtracking (1)',
         //   link: '/ithelp2023/Day26',

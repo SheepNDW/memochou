@@ -4,6 +4,8 @@ outline: deep
 
 # 隨機演算法 - Fisher-Yates Shuffle
 
+> 本文同步發布於 2023 iThome 鐵人賽：[那些前端不用會，但是可以會的資料結構與演算法](https://ithelp.ithome.com.tw/users/20152758/ironman/6714) 系列文中。
+
 我們花了很多時間在學習如何將資料排序，但是有時候我們也需要將資料打亂，例如：在一個網頁中，我們想要隨機顯示一些廣告。今天我們就來學習一下如何將一個陣列隨機打亂。
 
 ## Shuffle an array
