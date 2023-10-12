@@ -4,6 +4,10 @@ outline: deep
 
 # 回溯法 Backtracking (2)
 
+> 本文同步發布於 2023 iThome 鐵人賽：[那些前端不用會，但是可以會的資料結構與演算法](https://ithelp.ithome.com.tw/users/20152758/ironman/6714) 系列文中。
+
+昨天看完了子集問題的相關題目，今天我們來看看另一個經典的回溯法問題：排列問題。
+
 ## 排列問題的相關題目
 
 遍歷整個排列樹需要 $O(n!)$ 的時間，因此在遞回函式中，`for` 迴圈不是從 `start` 開始，而是每次都從 `0` 或 `1` 開始，然後通過 `hash` 看某個索引是否被使用過，實現排列效果。
@@ -49,7 +53,7 @@ function permute(nums) {
 
 ### 質數圓環
 
-輸入正整數 `n`，把整數 `1~n` 組成一個圓環，使得相鄰兩個數之和都是質數，輸出時從整數 `1` 開始逆時針輸出。同一個圓環應該只輸出一次。`0 < n <= 16`，如圖所示：
+輸入正整數 `n`，把整數 `1 ~ n` 組成一個圓環，使得相鄰兩個數之和都是質數，輸出時從整數 `1` 開始逆時針輸出。同一個圓環應該只輸出一次。`0 < n <= 16`，如圖所示：
 
 <div align="center">
 <img src="https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/algorithms/backtracking/images/prime-ring.png" width="250px">
@@ -278,9 +282,14 @@ function findQueen() {
 }
 ```
 
+## 總結
+
+回溯法是一種暴力搜索的方法，它的核心思想是：對於一個問題，我們列舉出所有可能的解，然後逐一判斷是否符合條件，如果符合就加入解集，如果不符合就跳過。我們會透過深度優先搜尋的方式來遍歷所有可能的解，在每一個分支中，都會試圖去解決問題，如果目前的路徑無解，就會回溯到上一個節點，然後嘗試其他的路徑。
+
+由於它本質上還是一種暴力解，因此最壞情況下時間複雜度通常會很高，但是我們會透過剪枝（Pruning）來減少不必要的遍歷，例如：在全排列問題中，我們可以透過 `hash` 來判斷某個索引是否被使用過，如果被使用過就跳過，這樣就可以減少很多不必要的遍歷。
+
 ## 參考資料
 
 - [《JavaScript 算法：基本原理與代碼實現》](https://www.tenlong.com.tw/products/9787115596154?list_name=r-zh_cn)
 - [演算法筆記 - Backtracking](https://web.ntnu.edu.tw/~algo/Backtracking.html)
-- [裝載問題 - by 司徒正美](https://zhuanlan.zhihu.com/p/84807112)
 - [Eight queens puzzle](https://en.wikipedia.org/wiki/Eight_queens_puzzle)
