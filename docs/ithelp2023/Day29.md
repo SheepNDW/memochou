@@ -4,11 +4,162 @@ outline: deep
 
 # 動態規劃 Dynamic Programming (2)
 
+> 本文同步發布於 2023 iThome 鐵人賽：[那些前端不用會，但是可以會的資料結構與演算法](https://ithelp.ithome.com.tw/users/20152758/ironman/6714) 系列文中。
+
+接續昨天的文章，今天我們繼續來練習動態規劃的題目，熟悉一下動態規劃的解題思路。
+
+## 爬樓梯 Climbing Stairs
+
+這題的原題為 [70. Climbing Stairs](https://leetcode.com/problems/climbing-stairs/)，題目如下：假設你正在爬樓梯。需要 `n` 階你才能到達樓頂，每次你可以爬 1 或 2 個台階。你有多少種不同的方法可以爬到樓頂呢？（`1 <= n <= 45`）
+
+例如：
+
+給定 n = 2，回傳 2，因為有兩種方法可以爬到樓頂。
+
+- 1 階 + 1 階
+- 2 階
+
+給定 n = 3，回傳 3，因為有三種方法可以爬到樓頂。
+
+- 1 階 + 1 階 + 1 階
+- 1 階 + 2 階
+- 2 階 + 1 階
+
+思路：我們可以先從範例觀察一下，`dp[1] = 1, dp[2] = 2, dp[3] = dp[1] + dp[2] = 3`。接下來確認一下 `dp[4]` 的值，有 `[1,1,1,1], [1,1,2], [1,2,1], [2,1,1], [2,2]` 這 5 種組合，然後我們發現 `dp[4] = dp[3] + dp[2]`。這樣我們就可以推論出狀態轉移方程：
+
+$$
+f(n) = \begin{cases}
+  1 & \text{if } n = 1 \\
+  2 & \text{if } n = 2 \\
+  f(n - 1) + f(n - 2) & \text{if } n \geq 3
+\end{cases}
+$$
+
+知道規律後就可以利用動態規劃來解題了，實作程式碼如下：
+
+```js
+function climbStairs(n) {
+  const dp = [0, 1, 2];
+  for (let i = 3; i <= n; i++) {
+    dp[i] = dp[i - 1] + dp[i - 2];
+  }
+  return dp[n];
+}
+```
+
+可以發現這題的解法跟費氏數列很像，但是不同的是費氏數列的初始值是 `[0, 1]`，而這題的初始值是 `[0, 1, 2]`，但是它們之後的規律都是一樣的。
+
 ## 最長不下降子序列 Longest Non-decreasing Subsequence
 
 有一個由 n (`n <= 1 <= 200`) 個整數組成的數列，標記為：$a_1, a_2, ..., a_n$。請你從中找出一個**最長的不下降子序列**，也就是說找出一個最長的整數序列 $i_1, i_2, ..., i_k$，使得對於任意的 j (`1 <= j <= k - 1`)，都滿足 $i_j < i_{j + 1}$ 且 $a_{i_j} \leq a_{i_{j + 1}}$。
 
 例如：`[1, 2, 3, -9, 3, 9, 0, 11]`，它的最長不下降子序列為 `[1, 2, 3, 3, 9, 11]`。
+
+### 暴力遞迴
+
+比較直觀的想法會是窮舉出所有的不下降子序列，然後找出最長的那個。我們可以固定序列的最後一項數字，例如 `array` 的最後一個是 11，我們就先以 11 當作序列結尾，往前找到 0、9、3、-9、3、2、1 都可以接上去 11，依此類推繼續找下去，得出以 11 為結尾的最長序列後再接著去找以 9 為結尾的最長序列，一路找下去，最後找出最長的序列。
+
+我們將思路轉為程式碼，實作如下：
+
+```js
+function longestNonDecreasingSequence(array) {
+  const allSubsequences = [];
+
+  for (let i = array.length - 1; i >= 0; i--) {
+    allSubsequences.push(findLongestFromIndex(array, i));
+  }
+
+  return findLongestSubsequence(allSubsequences).reverse();
+}
+
+const findLongestSubsequence = (array) => {
+  return array.reduce((acc, subsequence) => {
+    if (subsequence.length > acc.length) {
+      return subsequence;
+    }
+    return acc;
+  }, []);
+};
+
+const findLongestFromIndex = (array, index) => {
+  if (index === 0) {
+    return [array[0]];
+  }
+
+  const currentNumber = array[index];
+  const subsequences = [];
+
+  for (let i = index - 1; i >= 0; i--) {
+    if (array[i] <= currentNumber) {
+      subsequences.push(findLongestFromIndex(array, i));
+    }
+  }
+
+  if (subsequences.length === 0) {
+    return [currentNumber];
+  }
+
+  const longestSubsequence = findLongestSubsequence(subsequences);
+
+  return [currentNumber, ...longestSubsequence];
+};
+```
+
+### Memoization
+
+但仔細觀察後我們可以注意到我們在遞迴的過程中，有很多重複的計算，例如：`[1, 2, 3, -9, 3, 9, 0, 11]`，當我們計算以 11 為結尾的最長序列時，會先計算以 9 為結尾的最長序列，而當我們計算以 9 為結尾的最長序列時，又會先計算以 3 為結尾的最長序列，以此類推。我們可以用一個快取記下計算過的結果，程式碼如下：
+
+```js
+function longestNonDecreasingSequence(array) {
+  const memo = {};
+  const allSubsequences = [];
+
+  for (let i = array.length - 1; i >= 0; i--) {
+    allSubsequences.push(findLongestFromIndex(array, i, memo));
+  }
+
+  return findLongestSubsequence(allSubsequences).reverse();
+}
+
+const findLongestSubsequence = (array) => {
+  return array.reduce((acc, subsequence) => {
+    if (subsequence.length > acc.length) {
+      return subsequence;
+    }
+    return acc;
+  }, []);
+};
+
+const findLongestFromIndex = (array, index, memo) => {
+  if (memo[index] !== undefined) {
+    return memo[index];
+  }
+
+  if (index === 0) {
+    return [array[0]];
+  }
+
+  const currentNumber = array[index];
+  const subsequences = [];
+
+  for (let i = index - 1; i >= 0; i--) {
+    if (array[i] <= currentNumber) {
+      subsequences.push(findLongestFromIndex(array, i, memo));
+    }
+  }
+
+  let longestSubsequence = [];
+  if (subsequences.length > 0) {
+    longestSubsequence = findLongestSubsequence(subsequences);
+  }
+
+  memo[index] = [currentNumber, ...longestSubsequence];
+
+  return memo[index];
+};
+```
+
+### 動態規劃
 
 思路：我們建立一個 table，長度等於原數列長度，`table[i]` 表示以 `array[i]` 為結束的非下降子序列的長度。一開始它們的值都是 1，可以參考下表。我們分別用 `[4]`、`[1,3]`、`[3,1]` 和 `[1,2,3]` 這些總長為 1、2、3 的陣列來推論規律。
 
@@ -72,7 +223,39 @@ function longestNonDecreasingSequence(array) {
 
 LCS 是一個很實用的問題，它可以是不連續的。它可以用在描述兩段文字之間的“相似度”，也就是雷同程度，進而去判斷是否為抄襲。對一段文字進行修改時，計算修改前後文字的 LCS，將除此子序列外的部分提取出來，用這個方式來判斷修改的部分，往往十分準確。
 
-思路：這題比上一題的還難，上一題只有一個字串（或陣列），這題有兩個字串，因此填表用的 table 會變成二維陣列，也就是矩陣。矩陣的橫列表示第一個字串，縱行表示第二個字串，如果某一列與某一行相交的字元相同，我們就填 1，否則就填 0。但這樣點完之後還需要再清點一次，如圖所示：
+### 暴力遞迴
+
+一開始一樣可以先試著想暴力解要怎麼去解，這題比上一題再難一點，因為多了一個字串，不過我們一樣依循從尾巴開始往前尋找的策略來起手，例如：`abcde` 與 `ace`，我們先找出 `abcde` 的最後一個字母 `e` 和 `ace` 的最後一個字母 `e`，發現它們相同，於是我們把這個 `e` 扣掉然後接這去找 `abcd` 和 `ac` 的 LCS，接著我們又發現 `d` 與 `c` 不同，於是我們可以選擇扣掉 `d` 或是 `c`，然後再去找 `abc` 和 `ac` 的 LCS 和 `abcd` 和 `a` 的 LCS，然後選一個最長的，依此類推，直到其中一個字串為空為止。
+
+實作起來會長這樣：
+
+```js
+function LCS(str1, str2) {
+  const findLCS = (str1, str2, i, j) => {
+    if (i < 0 || j < 0) {
+      return 0;
+    }
+
+    if (str1[i] === str2[j]) {
+      // 如果兩個字元相同，則 LCS 長度加 1，然後繼續往前找
+      return 1 + findLCS(str1, str2, i - 1, j - 1);
+    }
+
+    const option1 = findLCS(str1, str2, i - 1, j); // 從 str1 的前一個字元開始找
+    const option2 = findLCS(str1, str2, i, j - 1); // 從 str2 的前一個字元開始找
+
+    return Math.max(option1, option2); // 取最大值
+  };
+
+  return findLCS(str1, str2, str1.length - 1, str2.length - 1);
+}
+```
+
+不過想當然這樣寫的時間複雜度非常大，用我們系列文專案中的測資下去跑測試會在最後一個情境直接卡住，因此我們需要用動態規劃來解決這個問題。
+
+### 動態規劃
+
+思路：這題有兩個字串，因此填表用的 table 會變成二維陣列，也就是矩陣。矩陣的橫列表示第一個字串，縱行表示第二個字串，如果某一列與某一行相交的字元相同，我們就填 1，否則就填 0。但這樣點完之後還需要再清點一次，如圖所示：
 
 <div align="center">
   <img src="https://github.com/SheepNDW/data-structures-and-algorithms/raw/main/src/algorithms/dynamic-programming/images/lcs.png" width="300px">
@@ -159,46 +342,7 @@ function LCS(str1, str2) {
 LCS('DACB', 'ABC'); // AC
 ```
 
-## 爬樓梯 Climbing Stairs
-
-這題的原題為 [70. Climbing Stairs](https://leetcode.com/problems/climbing-stairs/)，題目如下：假設你正在爬樓梯。需要 n 階你才能到達樓頂，每次你可以爬 1 或 2 個台階。你有多少種不同的方法可以爬到樓頂呢？（`1 <= n <= 45`）
-
-例如：
-
-給定 n = 2，回傳 2，因為有兩種方法可以爬到樓頂。
-
-- 1 階 + 1 階
-- 2 階
-
-給定 n = 3，回傳 3，因為有三種方法可以爬到樓頂。
-
-- 1 階 + 1 階 + 1 階
-- 1 階 + 2 階
-- 2 階 + 1 階
-
-思路：我們可以先從範例觀察一下，`dp[1] = 1, dp[2] = 2, dp[3] = dp[1] + dp[2] = 3`。接下來確認一下 `dp[4]` 的值，有 `[1,1,1,1], [1,1,2], [1,2,1], [2,1,1], [2,2]` 這 5 種組合，然後我們發現 `dp[4] = dp[3] + dp[2]`。這樣我們就可以推論出狀態轉移方程：
-
-$$
-f(n) = \begin{cases}
-  1 & \text{if } n = 1 \\
-  2 & \text{if } n = 2 \\
-  f(n - 1) + f(n - 2) & \text{if } n \geq 3
-\end{cases}
-$$
-
-知道規律後就可以利用動態規劃來解題了，實作程式碼如下：
-
-```js
-function climbStairs(n) {
-  const dp = [0, 1, 2];
-  for (let i = 3; i <= n; i++) {
-    dp[i] = dp[i - 1] + dp[i - 2];
-  }
-  return dp[n];
-}
-```
-
-## 背包問題 0/1 Knapsack Problem
+## 背包問題 - 0/1 Knapsack Problem
 
 一個背包有一定的耐重量 `W`，有一系列物品 `1, 2, ..., n`，每個物品都有自己的重量 `w[i]` 與價值 `v[i]`，在不超過耐重量的情況下，我們如何選擇物品使得總價值最高？
 
@@ -257,4 +401,4 @@ function knapsack01(w, v, W) {
 ## 參考資料
 
 - [《JavaScript 算法：基本原理與代碼實現》](https://www.tenlong.com.tw/products/9787115596154?list_name=r-zh_cn)
-- [演算法筆記](https://web.ntnu.edu.tw/~algo/)
+- [演算法筆記](https://web.ntnu.edu.tw/~algo/DynamicProgramming.html)
