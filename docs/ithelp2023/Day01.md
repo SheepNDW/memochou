@@ -89,6 +89,6 @@ pnpm test:ui
 - [Day 25 - 【隨機演算法】 Fisher-Yates Shuffle](./Day25.md)
 - [Day 26 - 【回溯法】 Backtracking (1)](./Day26.md)
 - [Day 27 - 【回溯法】 Backtracking (2)](./Day27.md)
-- Day 28 - 【動態規劃】 Dynamic Programming (1)
+- [Day 28 - 【動態規劃】 Dynamic Programming (1)](./Day28.md)
 - Day 29 - 【動態規劃】 Dynamic Programming (2)
 

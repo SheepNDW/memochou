@@ -443,10 +443,10 @@ function sidebarIthelp2023(): DefaultTheme.SidebarItem[] {
           text: 'Day 27 - Backtracking (2)',
           link: '/ithelp2023/Day27',
         },
-        // {
-        //   text: 'Day 28 - Dynamic Programming (1)',
-        //   link: '/ithelp2023/Day28',
-        // },
+        {
+          text: 'Day 28 - Dynamic Programming (1)',
+          link: '/ithelp2023/Day28',
+        },
         // {
         //   text: 'Day 29 - Dynamic Programming (2)',
         //   link: '/ithelp2023/Day29',
