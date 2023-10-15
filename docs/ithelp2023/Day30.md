@@ -27,7 +27,7 @@ outline: deep
 
 ```js
 function coinChangeGreedy(coins, amount) {
-  // 假設 coins 陣列已經由大到小排序過
+  // 假設 coins 陣列已經排序過
   let count = 0;
   let i = coins.length - 1;
 
