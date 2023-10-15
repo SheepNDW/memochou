@@ -91,4 +91,4 @@ pnpm test:ui
 - [Day 27 - 【回溯法】 Backtracking (2)](./Day27.md)
 - [Day 28 - 【動態規劃】 Dynamic Programming (1)](./Day28.md)
 - [Day 29 - 【動態規劃】 Dynamic Programming (2)](./Day29.md)
-
+- [Day 30 - 【貪婪演算法】 Greedy Algorithm](./Day30.md)

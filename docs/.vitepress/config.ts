@@ -451,6 +451,10 @@ function sidebarIthelp2023(): DefaultTheme.SidebarItem[] {
           text: 'Day 29 - Dynamic Programming (2)',
           link: '/ithelp2023/Day29',
         },
+        {
+          text: 'Day 30 - Greedy Algorithm',
+          link: '/ithelp2023/Day30',
+        },
       ],
     },
   ];
