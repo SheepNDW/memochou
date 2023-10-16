@@ -1,6 +1,4 @@
 import { defineConfig, type DefaultTheme } from 'vitepress';
-import mathjax3 from 'markdown-it-mathjax3';
-import { customElements } from './config/markdown';
 
 export default defineConfig({
   base: '/memochou/',
@@ -43,19 +41,13 @@ export default defineConfig({
       next: '下一篇',
     },
     socialLinks: [{ icon: 'github', link: 'https://github.com/SheepNDW' }],
+    search: {
+      provider: 'local',
+    },
   },
   markdown: {
     theme: { light: 'vitesse-light', dark: 'vitesse-dark' },
-    config: (md) => {
-      md.use(mathjax3);
-    },
-  },
-  vue: {
-    template: {
-      compilerOptions: {
-        isCustomElement: (tag) => customElements.includes(tag),
-      },
-    },
+    math: true,
   },
 });
 
