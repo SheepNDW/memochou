@@ -60,5 +60,10 @@ export function sidebarTS(): DefaultTheme.SidebarItem[] {
         { text: 'infer 關鍵字', link: '/typescript/infer' },
       ],
     },
+    {
+      text: 'Advent of TypeScript 2023',
+      collapsed: false,
+      items: [{ text: 'Day 21 Tic Tac Toe', link: '/typescript/aot-2023/day21' }],
+    },
   ];
 }
