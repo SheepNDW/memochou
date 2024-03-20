@@ -14,33 +14,34 @@ outline: deep
 
 - 定義一個型別，如果傳入為陣列型別就回傳陣列元素的型別，否則傳入什麼型別就回傳什麼型別
 
-```ts
+```ts twoslash
 type Infer<T> = T extends Array<any> ? T[number] : T;
 
 type A = Infer<(string | number)[]>;
-/* type A = string | number */
 
 type B = Infer<boolean>;
-/* type B = boolean */
 ```
+
 
 使用 `infer` 改寫：
 
-```ts
+```ts twoslash
 type Infer<T> = T extends Array<infer U> ? U : T;
 
 type A = Infer<(string | symbol)[]>;
+//   ^? 
 /* type A = string | symbol */
 ```
 
 - 將 tuple 轉成 union
 
-```ts
+```ts twoslash
 type TupleToUni<T> = T extends Array<infer E> ? E : never;
 
 type SomeTuple = [string, number];
 
 type ToUnion = TupleToUni<SomeTuple>;
+//    ^?
 /* type ToUnion = string | number */
 ```
 
@@ -48,7 +49,7 @@ type ToUnion = TupleToUni<SomeTuple>;
 
 - 提取首個元素
 
-```ts
+```ts twoslash
 type Arr = ['a', 'b', 'c'];
 
 type First<T extends any[]> = T extends [infer First, ...any[]] ? First : [];
@@ -61,7 +62,7 @@ type a = First<Arr>;
 
 - 提取最後一個元素
 
-```ts
+```ts twoslash
 type Arr = ['a', 'b', 'c'];
 
 type Last<T extends any[]> = T extends [...any[], infer Last] ? Last : [];
@@ -72,7 +73,7 @@ type c = Last<Arr>;
 
 - 去掉第一個元素 (shift)
 
-```ts
+```ts twoslash
 type Arr = ['a', 'b', 'c'];
 
 type Shift<T extends any[]> = T extends [unknown, ...infer Rest] ? Rest : [];
@@ -85,7 +86,7 @@ type Rest = Shift<Arr>;
 
 - 去除最後一個元素 (pop)
 
-```ts
+```ts twoslash
 type Arr = ['a', 'b', 'c'];
 
 type Pop<T extends any[]> = T extends [...infer Rest, unknown] ? Rest : [];
@@ -112,7 +113,7 @@ type Arr = [4, 3, 2, 1];
 
 - 實作：
 
-```ts
+```ts twoslash
 type Arr = [1, 2, 3, 4];
 
 type Reverse<T extends any[]> = T extends [infer First, ...infer Rest]

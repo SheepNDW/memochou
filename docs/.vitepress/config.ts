@@ -1,4 +1,5 @@
-import { defineConfig, type DefaultTheme } from 'vitepress';
+import { defineConfig } from 'vitepress';
+import { transformerTwoslash } from '@shikijs/vitepress-twoslash';
 import { nav } from './config/nav';
 import {
   sidebarVue,
@@ -61,5 +62,6 @@ export default defineConfig({
   markdown: {
     theme: { light: 'vitesse-light', dark: 'vitesse-dark' },
     math: true,
+    codeTransformers: [transformerTwoslash()],
   },
 });

@@ -10,9 +10,10 @@
     "serve": "vitepress serve docs"
   },
   "devDependencies": {
+    "@shikijs/vitepress-twoslash": "^1.2.0",
     "markdown-it-mathjax3": "^4.3.2",
-    "vitepress": "1.0.0-rc.22",
-    "vue": "^3.3.4"
+    "vitepress": "1.0.0-rc.45",
+    "vue": "^3.4.21"
   },
   "pnpm": {
     "peerDependencyRules": {
