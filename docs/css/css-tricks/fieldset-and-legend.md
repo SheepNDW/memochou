@@ -76,11 +76,7 @@ legend {
 
 線上 DEMO：
 
-<iframe height="300" style="width: 100%;" scrolling="no" title="fieldset &amp; legend" src="https://codepen.io/SheepNDW/embed/BarvXvE?default-tab=html%2Cresult" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true">
-  See the Pen <a href="https://codepen.io/SheepNDW/pen/BarvXvE">
-  fieldset &amp; legend</a> by Hank Yang (<a href="https://codepen.io/SheepNDW">@SheepNDW</a>)
-  on <a href="https://codepen.io">CodePen</a>.
-</iframe>
+<iframe height="300" style="width: 100%;" scrolling="no" title="fieldset &amp; legend" src="https://codepen.io/SheepNDW/embed/BarvXvE?default-tab=html%2Cresult" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true"></iframe>
 
 
 ## 應用場景
@@ -116,8 +112,4 @@ legend {
 
 ![](https://i.imgur.com/95owz36.png)
 
-<iframe height="300" style="width: 100%;" scrolling="no" title="fieldset &amp; legend 2" src="https://codepen.io/SheepNDW/embed/rNdPBvJ?default-tab=html%2Cresult" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true">
-  See the Pen <a href="https://codepen.io/SheepNDW/pen/rNdPBvJ">
-  fieldset &amp; legend 2</a> by Hank Yang (<a href="https://codepen.io/SheepNDW">@SheepNDW</a>)
-  on <a href="https://codepen.io">CodePen</a>.
-</iframe>
+<iframe height="300" style="width: 100%;" scrolling="no" title="fieldset &amp; legend 2" src="https://codepen.io/SheepNDW/embed/rNdPBvJ?default-tab=html%2Cresult" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true"></iframe>
