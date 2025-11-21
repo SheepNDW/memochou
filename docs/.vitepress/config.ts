@@ -62,6 +62,7 @@ export default defineConfig({
   markdown: {
     theme: { light: 'vitesse-light', dark: 'vitesse-dark' },
     math: true,
+    // @ts-ignore
     codeTransformers: [transformerTwoslash()],
   },
 });
