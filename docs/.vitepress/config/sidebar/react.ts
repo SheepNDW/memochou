@@ -8,6 +8,11 @@ export function sidebarReact(): DefaultTheme.SidebarItem[] {
       items: [{ text: 'vdom, fiber and diff', link: '/react/react-internals/vdom' }],
     },
     {
+      text: 'Hooks',
+      collapsed: false,
+      items: [{ text: 'useState', link: '/react/hooks/useState' }],
+    },
+    {
       text: 'Redux',
       collapsed: false,
       items: [{ text: 'Redux Toolkit（RTK）', link: '/react/redux-toolkit' }],
