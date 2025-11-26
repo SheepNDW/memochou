@@ -10,7 +10,10 @@ export function sidebarReact(): DefaultTheme.SidebarItem[] {
     {
       text: 'Hooks',
       collapsed: false,
-      items: [{ text: 'useState', link: '/react/hooks/useState' }],
+      items: [
+        { text: 'useState', link: '/react/hooks/useState' },
+        { text: 'useRef', link: '/react/hooks/useRef' },
+      ],
     },
     {
       text: 'Redux',

@@ -4,7 +4,7 @@ export function nav(): DefaultTheme.NavItem[] {
   return [
     { text: '關於', link: '/about/', activeMatch: '/about/' },
     { text: 'Vue', link: '/vue/', activeMatch: '/vue/' },
-    { text: 'React', link: '/react/redux-toolkit', activeMatch: '/react/' },
+    { text: 'React', link: '/react/hooks/useState', activeMatch: '/react/' },
     { text: 'TypeScript', link: '/typescript/', activeMatch: '/typescript/' },
     { text: 'Node', link: '/node/basic/commonjs', activeMatch: '/node/' },
     { text: 'JavaScript', link: '/javascript/', activeMatch: '/javascript/' },
