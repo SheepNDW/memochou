@@ -1,17 +1,18 @@
-import { defineConfig } from 'vitepress';
 import { transformerTwoslash } from '@shikijs/vitepress-twoslash';
+import { defineConfig } from 'vitepress';
+import { groupIconMdPlugin, groupIconVitePlugin } from 'vitepress-plugin-group-icons';
 import { nav } from './config/nav';
 import {
-  sidebarVue,
-  sidebarVite,
-  sidebarGit,
-  sidebarTS,
   sidebarCSS,
+  sidebarGit,
+  sidebarIthelp2023,
   sidebarJS,
   sidebarNode,
   sidebarReact,
   sidebarTest,
-  sidebarIthelp2023,
+  sidebarTS,
+  sidebarVite,
+  sidebarVue,
 } from './config/sidebar';
 
 export default defineConfig({
@@ -60,9 +61,15 @@ export default defineConfig({
     },
   },
   markdown: {
-    theme: { light: 'vitesse-light', dark: 'vitesse-dark' },
+    config(md) {
+      md.use(groupIconMdPlugin);
+    },
+    theme: { light: 'github-light', dark: 'github-dark' },
     math: true,
     // @ts-ignore
     codeTransformers: [transformerTwoslash()],
+  },
+  vite: {
+    plugins: [groupIconVitePlugin()],
   },
 });
