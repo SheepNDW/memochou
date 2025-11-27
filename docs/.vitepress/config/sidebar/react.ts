@@ -13,6 +13,7 @@ export function sidebarReact(): DefaultTheme.SidebarItem[] {
       items: [
         { text: 'useState', link: '/react/hooks/useState' },
         { text: 'useRef', link: '/react/hooks/useRef' },
+        { text: 'useImperativeHandle', link: '/react/hooks/useImperativeHandle' },
       ],
     },
     {

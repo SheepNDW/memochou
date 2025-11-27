@@ -173,7 +173,8 @@ function StopWatch() {
 1. 元件在重新渲染時，`useRef` 並不會被重新初始化。
 2. 修改 `ref.current` 不會觸發元件重新渲染。因為 React 不會知道它何時發生變化，因為 ref 只是一個普通的 JavaScript 物件。
 3. `ref.current` 不能被當作其他 hook 的依賴值使用，因為它的變化不會觸發重新渲染。因此不能把它放在 `useEffect`、`useMemo`、`useCallback` 等 hook 的依賴陣列中。
-4. `useRef` 不能直接用來獲取子元件的實例，需要使用 `forwardRef`。
+4. `useRef` 不能直接用來獲取子元件的實例，需要使用 `forwardRef`（*React 18）。
+5. React 19 之後，可以直接夠過 `props` 將 ref 傳遞給子元件，而不需要使用 `forwardRef`。
 
 ## 參考資料
 
