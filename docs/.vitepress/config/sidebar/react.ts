@@ -16,6 +16,7 @@ export function sidebarReact(): DefaultTheme.SidebarItem[] {
         { text: 'useImperativeHandle', link: '/react/hooks/useImperativeHandle' },
         { text: 'useEffect', link: '/react/hooks/useEffect' },
         { text: 'useLayoutEffect', link: '/react/hooks/useLayoutEffect' },
+        { text: 'useReducer', link: '/react/hooks/useReducer' },
       ],
     },
     {
