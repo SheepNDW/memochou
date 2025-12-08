@@ -17,6 +17,7 @@ export function sidebarReact(): DefaultTheme.SidebarItem[] {
         { text: 'useEffect', link: '/react/hooks/useEffect' },
         { text: 'useLayoutEffect', link: '/react/hooks/useLayoutEffect' },
         { text: 'useReducer', link: '/react/hooks/useReducer' },
+        { text: 'useImmer', link: '/react/hooks/useImmer' },
       ],
     },
     {
