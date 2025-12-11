@@ -50,11 +50,11 @@ pnpm test:ui
 
 此時會自動在瀏覽器中開啟 `http://localhost:51204/__vitest__/`，一開始會長這樣：
 
-![](https://media.discordapp.net/attachments/1080668361618362530/1152181309293199410/image.png?width=2132&height=1084)
+![https://ithelp.ithome.com.tw/upload/images/20251211/2015275800olZ2VqzQ.png](https://ithelp.ithome.com.tw/upload/images/20251211/2015275800olZ2VqzQ.png)
 
 然後點擊左邊的 `src/001-day1-code/hello.spec.js`，就可以看到我們的測試結果了：
 
-![](https://media.discordapp.net/attachments/1083289750099738624/1143439024984444989/image.png?width=2178&height=1084)
+![https://ithelp.ithome.com.tw/upload/images/20251211/20152758Cf3txdhzOa.png](https://ithelp.ithome.com.tw/upload/images/20251211/20152758Cf3txdhzOa.png)
 
 如果你能成功看到如上圖的顯示，那就代表你已經成功初始化專案了，接下來就可以開始跟著後面的天數一起跟著敲程式碼了。
 
