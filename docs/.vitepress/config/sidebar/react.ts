@@ -22,6 +22,7 @@ export function sidebarReact(): DefaultTheme.SidebarItem[] {
         { text: 'useMemo', link: '/react/hooks/useMemo' },
         { text: 'useCallback', link: '/react/hooks/useCallback' },
         { text: 'useTransition', link: '/react/hooks/useTransition' },
+        { text: 'useDeferredValue', link: '/react/hooks/useDeferredValue' },
       ],
     },
     {
